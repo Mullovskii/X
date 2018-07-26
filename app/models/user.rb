@@ -4,9 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  enum role: [ :baby, :surfer, :god ]
+  enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :god ]
   
   has_many :picks, as: :author, dependent: :destroy
- 
+
 
 end

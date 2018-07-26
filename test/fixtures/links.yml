@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  linking_id: 1
+  linking_type: MyString
+  linked_id: 1
+  linked_type: MyString
+
+two:
+  linking_id: 1
+  linking_type: MyString
+  linked_id: 1
+  linked_type: MyString

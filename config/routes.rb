@@ -2,7 +2,6 @@ require 'api_constraints'
 
 Rails.application.routes.draw do
   
-  resources :brands
   devise_for :users, controllers: { registrations: "registrations" }
   post '/api/auth_user' => 'authentication#authenticate_user'
 
@@ -12,7 +11,9 @@ Rails.application.routes.draw do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
     	devise_for :users
       resources :picks
+      resources :brands
       resources :media
+      resources :links
     	put '/users/:id', to: 'registrations#update'
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180726121745) do
+ActiveRecord::Schema.define(version: 20180726125538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,16 @@ ActiveRecord::Schema.define(version: 20180726121745) do
     t.integer "main_country_id"
     t.integer "status", default: 0
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.integer "linking_id"
+    t.string "linking_type"
+    t.integer "linked_id"
+    t.string "linked_type"
+    t.string "external_link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
