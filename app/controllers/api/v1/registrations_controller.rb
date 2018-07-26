@@ -4,7 +4,7 @@ module Api
     # class RegistrationsController < Devise::RegistrationsController
 
       before_action :set_user, only: [:update]
-      before_action :authenticate_request!
+      before_action :authenticate_request!, only: [:update]
 
       def create
         user = User.new(user_params)
@@ -12,7 +12,7 @@ module Api
           render json: payload(user), status: :created
         else
           # render_error(user, :unprocessable_entity)
-          head :unprocessable_entity
+          render json: {errors: ['User with this email already exists']}, status: :unauthorized
         end
       end
 

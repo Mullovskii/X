@@ -14,6 +14,8 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       t.integer :country_id
       t.integer :city_id
       t.string :description
+      t.string :avatar
+      t.string :background
       t.string :instagram
       t.string :twitch
       t.string :facebook
