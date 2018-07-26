@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  mana: 1
+  main_category_id: 1
+  description: MyString
+  avatar: MyString
+  background: MyString
+  main_country_id: 1
+  status: 1
+
+two:
+  name: MyString
+  mana: 1
+  main_category_id: 1
+  description: MyString
+  avatar: MyString
+  background: MyString
+  main_country_id: 1
+  status: 1

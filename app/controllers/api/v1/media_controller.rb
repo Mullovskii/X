@@ -4,16 +4,9 @@ module Api
       before_action :set_medium, only: [:show, :update, :destroy]
       before_action :authenticate_request!, only: [:create]
 
-      # GET /media
-      def index
-        @media = Medium.all
-
-        render json: @media
-      end
-
       # GET /media/1
       def show
-        render json: @medium
+        render json: @medium, meta: default_meta, include: [params[:include]]
       end
 
       # POST /media

@@ -10,16 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180726112238) do
+ActiveRecord::Schema.define(version: 20180726121745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "brands", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "avatar"
+    t.string "background"
+    t.integer "main_category_id"
+    t.integer "main_country_id"
+    t.integer "status", default: 0
+    t.decimal "mana", precision: 5, scale: 3, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "media", force: :cascade do |t|
     t.integer "mediable_id"
     t.string "mediable_type"
     t.string "url"
-    t.integer "kind"
+    t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -29,7 +42,7 @@ ActiveRecord::Schema.define(version: 20180726112238) do
     t.string "author_type"
     t.text "body"
     t.string "main_image"
-    t.integer "mana"
+    t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -49,7 +62,7 @@ ActiveRecord::Schema.define(version: 20180726112238) do
     t.string "instagram"
     t.string "twitch"
     t.string "facebook"
-    t.integer "mana", default: 0
+    t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

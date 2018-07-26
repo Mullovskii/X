@@ -7,7 +7,6 @@ module Api
       # GET /picks
       def index
         @picks = Pick.all
-
         render json: @picks, meta: default_meta, include: [params[:include]]
       end
 

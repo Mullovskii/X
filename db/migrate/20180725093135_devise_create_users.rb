@@ -20,7 +20,7 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       t.string :twitch
       t.string :facebook
      
-      t.integer :mana, default: 0
+      t.decimal :mana, default: 0, precision: 5, scale: 3
 
       ## Recoverable
       t.string   :reset_password_token

@@ -2,6 +2,7 @@ require 'api_constraints'
 
 Rails.application.routes.draw do
   
+  resources :brands
   devise_for :users, controllers: { registrations: "registrations" }
   post '/api/auth_user' => 'authentication#authenticate_user'
 
