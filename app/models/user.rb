@@ -7,6 +7,7 @@ class User < ApplicationRecord
   enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :god ]
   
   has_many :picks, as: :author, dependent: :destroy
+  has_one :shop, as: :owner
 
 
 end

@@ -1,0 +1,35 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  legal_name: MyString
+  website: MyString
+  business_type: 1
+  status: 1
+  avatar: MyString
+  background: MyString
+  main_category_id: 1
+  main_country_id: 1
+  mana: 9.99
+  user_id: 1
+  registration_number: 1
+  phone: 1
+  integration_type: 1
+  payment_rules: MyText
+
+two:
+  name: MyString
+  legal_name: MyString
+  website: MyString
+  business_type: 1
+  status: 1
+  avatar: MyString
+  background: MyString
+  main_category_id: 1
+  main_country_id: 1
+  mana: 9.99
+  user_id: 1
+  registration_number: 1
+  phone: 1
+  integration_type: 1
+  payment_rules: MyText
