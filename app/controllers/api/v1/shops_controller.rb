@@ -49,7 +49,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def shop_params
-          params.require(:shop).permit(:name, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules, :owner_id, :owner_type)
+          params.require(:shop).permit(:name, :description, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules, :owner_id, :owner_type)
         end
     end
   end

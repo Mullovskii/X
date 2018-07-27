@@ -3,6 +3,7 @@ class CreateShops < ActiveRecord::Migration[5.1]
     create_table :shops do |t|
       t.string :name
       t.string :legal_name
+      t.string :description
       t.string :website
       t.integer :business_type
       t.integer :status, default: 0
