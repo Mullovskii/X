@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180727135502) do
+ActiveRecord::Schema.define(version: 20180727144041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,22 @@ ActiveRecord::Schema.define(version: 20180727135502) do
     t.integer "main_country_id"
     t.integer "status", default: 0
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "feeds", force: :cascade do |t|
+    t.integer "shop_id"
+    t.integer "mode"
+    t.integer "format"
+    t.integer "target_country_id"
+    t.integer "content_language"
+    t.integer "currency"
+    t.string "name"
+    t.integer "input_type"
+    t.string "url"
+    t.integer "author_id"
+    t.string "author_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
