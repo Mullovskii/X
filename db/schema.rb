@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180730104338) do
+ActiveRecord::Schema.define(version: 20180730181837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,15 @@ ActiveRecord::Schema.define(version: 20180730104338) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.integer "google_category_id"
+    t.integer "parent_id"
+    t.integer "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "feeds", force: :cascade do |t|
     t.integer "shop_id"
     t.integer "main_campaign_id"
@@ -41,6 +50,12 @@ ActiveRecord::Schema.define(version: 20180730104338) do
     t.string "url"
     t.integer "author_id"
     t.string "author_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "hashtags", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -178,6 +193,16 @@ ActiveRecord::Schema.define(version: 20180730104338) do
     t.string "owner_type"
     t.string "description"
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.integer "tagger_id"
+    t.string "tagger_type"
+    t.integer "tagged_id"
+    t.string "tagged_type"
+    t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
