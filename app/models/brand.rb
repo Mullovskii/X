@@ -5,6 +5,7 @@ class Brand < ApplicationRecord
     :source_type => 'Pick'
     has_one :shop, as: :owner
     has_one :showroom, as: :owner
+    has_many :products
     after_create :generate_showroom
 
  	def generate_showroom

@@ -2,6 +2,7 @@ class CreateFeeds < ActiveRecord::Migration[5.1]
   def change
     create_table :feeds do |t|
       t.integer :shop_id
+      t.integer :main_campaign_id
       t.integer :mode
       t.integer :format
       t.integer :target_country_id
