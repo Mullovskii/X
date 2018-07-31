@@ -11,4 +11,5 @@ class Pick < ApplicationRecord
     :source_type => 'Category'
 	has_many :hashtags, through: :tags, :source => :tagger,
     :source_type => 'Hashtag'
+    has_many :clicks
 end

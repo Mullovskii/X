@@ -22,6 +22,14 @@ Rails.application.routes.draw do
       resources :tags
       resources :hashtags
       resources :campaigns
+      resources :countries
+      resources :country_shops
+      resources :deliveries
+      resources :tariffs
+      resources :currencies
+      resources :feed_campaigns
+      resources :clicks
+      resources :user_campaigns
 
     	put '/users/:id', to: 'registrations#update'
     end

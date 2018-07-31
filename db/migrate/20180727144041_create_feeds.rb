@@ -8,6 +8,7 @@ class CreateFeeds < ActiveRecord::Migration[5.1]
       t.integer :target_country_id
       t.integer :content_language
       t.integer :currency
+      t.integer :currency_id
       t.string :name
       t.integer :input_type
       t.string :url

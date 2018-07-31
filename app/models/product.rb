@@ -12,6 +12,7 @@ class Product < ApplicationRecord
     :source_type => 'Pick'
     has_many :campaigns, through: :links, :source => :linking,
     :source_type => 'Campaign'
-
+    belongs_to :campaign, optional: true
+    has_many :clicks
     
 end

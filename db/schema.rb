@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180731074654) do
+ActiveRecord::Schema.define(version: 20180731114023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,66 @@ ActiveRecord::Schema.define(version: 20180731074654) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "clicks", force: :cascade do |t|
+    t.integer "clicker_id"
+    t.integer "winner_id"
+    t.integer "pick_id"
+    t.integer "product_id"
+    t.string "link"
+    t.integer "status", default: 0
+    t.datetime "trigger_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string "name"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "country_shops", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.bigint "country_id"
+    t.integer "mode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_country_shops_on_country_id"
+    t.index ["shop_id"], name: "index_country_shops_on_shop_id"
+  end
+
+  create_table "currencies", force: :cascade do |t|
+    t.string "name"
+    t.decimal "usd_rate", precision: 5, scale: 3, default: "0.0"
+    t.decimal "ruble_rate", precision: 5, scale: 3, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "deliveries", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.bigint "country_id"
+    t.integer "mode", default: 0
+    t.boolean "weekends_delivery"
+    t.boolean "holidays_delivery"
+    t.boolean "pickup"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_deliveries_on_country_id"
+    t.index ["shop_id"], name: "index_deliveries_on_shop_id"
+  end
+
+  create_table "feed_campaigns", force: :cascade do |t|
+    t.bigint "feed_id"
+    t.bigint "campaign_id"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_feed_campaigns_on_campaign_id"
+    t.index ["feed_id"], name: "index_feed_campaigns_on_feed_id"
+  end
+
   create_table "feeds", force: :cascade do |t|
     t.integer "shop_id"
     t.integer "main_campaign_id"
@@ -61,6 +121,7 @@ ActiveRecord::Schema.define(version: 20180731074654) do
     t.integer "target_country_id"
     t.integer "content_language"
     t.integer "currency"
+    t.integer "currency_id"
     t.string "name"
     t.integer "input_type"
     t.string "url"
@@ -195,6 +256,7 @@ ActiveRecord::Schema.define(version: 20180731074654) do
     t.string "background"
     t.integer "main_category_id"
     t.integer "main_country_id"
+    t.integer "main_currency_id"
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.integer "owner_id"
     t.string "owner_type"
@@ -223,6 +285,31 @@ ActiveRecord::Schema.define(version: 20180731074654) do
     t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "tariffs", force: :cascade do |t|
+    t.bigint "delivery_id"
+    t.integer "mode"
+    t.decimal "price_from", precision: 5, scale: 3, default: "0.0"
+    t.decimal "price_to", precision: 5, scale: 3, default: "0.0"
+    t.decimal "weight_from", precision: 5, scale: 3, default: "0.0"
+    t.decimal "weight_to", precision: 5, scale: 3, default: "0.0"
+    t.integer "days", default: 0
+    t.decimal "price", precision: 5, scale: 3, default: "0.0"
+    t.integer "currency_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["delivery_id"], name: "index_tariffs_on_delivery_id"
+  end
+
+  create_table "user_campaigns", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "campaign_id"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_user_campaigns_on_campaign_id"
+    t.index ["user_id"], name: "index_user_campaigns_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -255,4 +342,13 @@ ActiveRecord::Schema.define(version: 20180731074654) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "country_shops", "countries"
+  add_foreign_key "country_shops", "shops"
+  add_foreign_key "deliveries", "countries"
+  add_foreign_key "deliveries", "shops"
+  add_foreign_key "feed_campaigns", "campaigns"
+  add_foreign_key "feed_campaigns", "feeds"
+  add_foreign_key "tariffs", "deliveries"
+  add_foreign_key "user_campaigns", "campaigns"
+  add_foreign_key "user_campaigns", "users"
 end
