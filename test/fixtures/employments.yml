@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  shop: one
+  comment: MyText
+  role: 1
+  status: 1
+
+two:
+  user: two
+  shop: two
+  comment: MyText
+  role: 1
+  status: 1

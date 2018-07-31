@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180731123339) do
+ActiveRecord::Schema.define(version: 20180731125104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,18 @@ ActiveRecord::Schema.define(version: 20180731123339) do
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_deliveries_on_country_id"
     t.index ["shop_id"], name: "index_deliveries_on_shop_id"
+  end
+
+  create_table "employments", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "shop_id"
+    t.text "comment"
+    t.integer "role", default: 0
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_employments_on_shop_id"
+    t.index ["user_id"], name: "index_employments_on_user_id"
   end
 
   create_table "feed_campaigns", force: :cascade do |t|
@@ -355,6 +367,8 @@ ActiveRecord::Schema.define(version: 20180731123339) do
   add_foreign_key "country_shops", "shops"
   add_foreign_key "deliveries", "countries"
   add_foreign_key "deliveries", "shops"
+  add_foreign_key "employments", "shops"
+  add_foreign_key "employments", "users"
   add_foreign_key "feed_campaigns", "campaigns"
   add_foreign_key "feed_campaigns", "feeds"
   add_foreign_key "tariffs", "deliveries"
