@@ -6,4 +6,12 @@ class Product < ApplicationRecord
 	has_many :tags, as: :tagged, dependent: :destroy
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
+
+    has_many :links, as: :linked
+	has_many :picks, through: :links, :source => :linking,
+    :source_type => 'Pick'
+    has_many :campaigns, through: :links, :source => :linking,
+    :source_type => 'Campaign'
+
+    
 end

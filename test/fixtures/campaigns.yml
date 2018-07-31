@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop_id: 1
+  name: MyString
+  kind: 1
+  mode: 1
+  status: 1
+  bid_per_action: 9.99
+  currency_id: 1
+  actions_per_gift: 1
+  gift_id: 1
+  followers_threshold: 1
+
+two:
+  shop_id: 1
+  name: MyString
+  kind: 1
+  mode: 1
+  status: 1
+  bid_per_action: 9.99
+  currency_id: 1
+  actions_per_gift: 1
+  gift_id: 1
+  followers_threshold: 1

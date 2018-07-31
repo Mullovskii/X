@@ -6,6 +6,7 @@ class CreateLinks < ActiveRecord::Migration[5.1]
       t.integer :linked_id
       t.string :linked_type
       t.string :external_link
+      t.integer :kind
 
       t.timestamps
     end

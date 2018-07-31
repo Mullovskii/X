@@ -5,13 +5,14 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.integer :shop_id #surf 
       # t.integer :author_id #surf 
       # t.string :author_type #surf 
-      t.integer :status #surf enum
+      t.integer :status, default: 0 #surf enum
       t.integer :item_id #surf - id of global product card (=Item)
       t.integer :model_id #surf - id of global model card (=Model)
       t.integer :brand_id #surf 
       t.integer :campaign_id #surf - id of unique campaign for product, if varies from feed campaigns
       t.integer :delivery_id #surf - id of product delivery, if varies from feed setting 
       t.integer :venue_id #surf - for events - id of venue
+      t.boolean :is_gift #surf - wheather the product is a gift within campaign
 
       t.integer :custom_id 
       t.string :brand
@@ -34,8 +35,8 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.datetime :availability_date
       t.decimal :cost_of_goods_sold
       t.datetime :expiration_date
-      t.decimal :price
-      t.decimal :sale_price
+      t.decimal :price, default: 0, precision: 5, scale: 3
+      t.decimal :sale_price, default: 0, precision: 5, scale: 3
       t.text :sale_price_effective_date
       t.string :unit_pricing_measure
       t.string :unit_pricing_base_measure

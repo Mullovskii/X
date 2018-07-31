@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       resources :categories
       resources :tags
       resources :hashtags
+      resources :campaigns
 
     	put '/users/:id', to: 'registrations#update'
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180730181837) do
+ActiveRecord::Schema.define(version: 20180731074654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,22 @@ ActiveRecord::Schema.define(version: 20180730181837) do
     t.integer "main_country_id"
     t.integer "status", default: 0
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "campaigns", force: :cascade do |t|
+    t.integer "shop_id"
+    t.string "name"
+    t.integer "kind", default: 0
+    t.integer "mode", default: 1
+    t.integer "status", default: 0
+    t.decimal "bid_per_action", precision: 5, scale: 3, default: "0.0"
+    t.integer "currency_id"
+    t.integer "actions_per_gift", default: 0
+    t.integer "gift_id"
+    t.integer "number_of_gifts"
+    t.integer "followers_threshold", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -66,6 +82,7 @@ ActiveRecord::Schema.define(version: 20180730181837) do
     t.integer "linked_id"
     t.string "linked_type"
     t.string "external_link"
+    t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -92,13 +109,14 @@ ActiveRecord::Schema.define(version: 20180730181837) do
   create_table "products", force: :cascade do |t|
     t.integer "feed_id"
     t.integer "shop_id"
-    t.integer "status"
+    t.integer "status", default: 0
     t.integer "item_id"
     t.integer "model_id"
     t.integer "brand_id"
     t.integer "campaign_id"
     t.integer "delivery_id"
     t.integer "venue_id"
+    t.boolean "is_gift"
     t.integer "custom_id"
     t.string "brand"
     t.string "title"
@@ -119,8 +137,8 @@ ActiveRecord::Schema.define(version: 20180730181837) do
     t.datetime "availability_date"
     t.decimal "cost_of_goods_sold"
     t.datetime "expiration_date"
-    t.decimal "price"
-    t.decimal "sale_price"
+    t.decimal "price", precision: 5, scale: 3, default: "0.0"
+    t.decimal "sale_price", precision: 5, scale: 3, default: "0.0"
     t.text "sale_price_effective_date"
     t.string "unit_pricing_measure"
     t.string "unit_pricing_base_measure"
