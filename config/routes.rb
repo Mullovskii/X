@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       resources :user_campaigns
       resources :relationships
       resources :employments
+      resources :gifts
 
     	put '/users/:id', to: 'registrations#update'
     end

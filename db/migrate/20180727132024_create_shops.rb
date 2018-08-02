@@ -16,6 +16,7 @@ class CreateShops < ActiveRecord::Migration[5.1]
       t.decimal :mana, default: 0, precision: 5, scale: 3
       t.integer :owner_id
       t.string :owner_type
+      t.integer :brand_id
       t.integer :registration_number
       t.integer :phone
       t.integer :integration_type
@@ -23,5 +24,9 @@ class CreateShops < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+    add_index :shops, :name, unique: true
+    add_index :shops, :legal_name, unique: true
+    add_index :shops, :website, unique: true
+    add_index :shops, :registration_number, unique: true
   end
 end

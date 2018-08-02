@@ -8,18 +8,24 @@ module Api
       # POST /links
       def create
         @link = Link.new(link_params)
-
-        if @link.save
-          render json: @link, status: :created, meta: default_meta, include: [params[:include]]
+        if current_user == @link.linking.author 
+          if @link.save
+            render json: @link, status: :created, meta: default_meta, include: [params[:include]]
+          else
+            render json: @link.errors, status: :unprocessable_entity
+          end
         else
-          render json: @link.errors, status: :unprocessable_entity
+          render json: {errors: ['Invalid author']}, status: :unauthorized
         end
       end
 
 
       # DELETE /links/1
       def destroy
-        @link.destroy
+        # if current_user == @link.linking.author 
+          @link.destroy
+        # удыу
+        
       end
 
       private

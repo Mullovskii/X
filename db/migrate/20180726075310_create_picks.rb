@@ -6,6 +6,7 @@ class CreatePicks < ActiveRecord::Migration[5.1]
       t.text :body
       t.string :main_image
       t.decimal :mana, default: 0, precision: 5, scale: 3
+      t.integer :status, default: 0
 
       t.timestamps
     end

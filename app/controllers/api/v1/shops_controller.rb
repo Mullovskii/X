@@ -7,7 +7,6 @@ module Api
       # GET /shops
       def index
         @shops = Shop.all
-
         render json: @shops
       end
 
@@ -18,8 +17,7 @@ module Api
 
       # POST /shops
       def create
-        @shop = Shop.new(shop_params)
-
+        @shop = current_user.shops.build(shop_params.merge({owner_id: current_user.id, owner_type: current_user.class.to_s }))
         if @shop.save
           render json: @shop, status: :created, meta: default_meta, include: [params[:include]]
         else
@@ -37,9 +35,9 @@ module Api
       end
 
       # DELETE /shops/1
-      def destroy
-        @shop.destroy
-      end
+      # def destroy
+      #   @shop.destroy
+      # end
 
       private
         # Use callbacks to share common setup or constraints between actions.
@@ -49,7 +47,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def shop_params
-          params.require(:shop).permit(:name, :description, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules, :owner_id, :owner_type)
+          params.require(:shop).permit(:name, :brand_id, :description, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules)
         end
     end
   end

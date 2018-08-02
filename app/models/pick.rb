@@ -12,4 +12,15 @@ class Pick < ApplicationRecord
 	has_many :hashtags, through: :tags, :source => :tagger,
     :source_type => 'Hashtag'
     has_many :clicks
+
+    enum status: [:edited, :published, :moderated]
+
+    after_update :main_image_updater
+
+
+    def main_image_updater
+    	if self.status == "published" && self.media.first
+    		self.main_image = self.media.first.url
+    	end
+    end
 end

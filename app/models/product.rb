@@ -14,5 +14,6 @@ class Product < ApplicationRecord
     :source_type => 'Campaign'
     belongs_to :campaign, optional: true
     has_many :clicks
+    has_many :gifts
     
 end

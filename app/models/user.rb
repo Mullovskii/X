@@ -5,15 +5,18 @@ class User < ApplicationRecord
 	         :recoverable, :rememberable, :trackable, :validatable
 
 	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :god ]
+	# validates :username, uniqueness: true
+	# validates :phone, uniqueness: true
 
 	has_many :picks, as: :author, dependent: :destroy
-	has_one :shop, as: :owner
+	has_many :shops, as: :owner
 	has_one :showroom, as: :owner
 	has_many :winner_clicks, class_name: "Click", foreign_key: "winner_id"
 	has_many :my_clicks, class_name: "Click", foreign_key: "clicker_id"
 
 	has_many :user_campaigns
 	has_many :campaigns, through: :user_campaigns
+	has_many :launched_campaigns, as: :author, class_name: "Campaign", foreign_key: "author_id"
 
 	after_create :generate_showroom
 
@@ -28,6 +31,11 @@ class User < ApplicationRecord
 
     has_many :employments
     has_many :jobs, through: :employments, :source => :shop
+
+
+    has_many :tags, as: :tagged, dependent: :destroy
+	has_many :categories, through: :tags, :source => :tagger,
+    :source_type => 'Category'
 
 
 

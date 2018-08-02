@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180731125104) do
+ActiveRecord::Schema.define(version: 20180802121915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,10 +26,13 @@ ActiveRecord::Schema.define(version: 20180731125104) do
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_brands_on_name", unique: true
   end
 
   create_table "campaigns", force: :cascade do |t|
     t.integer "shop_id"
+    t.integer "author_id"
+    t.string "author_type"
     t.string "name"
     t.integer "kind", default: 0
     t.integer "mode", default: 1
@@ -143,6 +146,29 @@ ActiveRecord::Schema.define(version: 20180731125104) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "gifts", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.bigint "campaign_id"
+    t.bigint "product_id"
+    t.string "name"
+    t.text "description"
+    t.string "main_image_link"
+    t.string "image_link_0"
+    t.string "image_link_1"
+    t.string "image_link_2"
+    t.string "image_link_3"
+    t.string "image_link_4"
+    t.integer "status", default: 0
+    t.datetime "expiration_date"
+    t.integer "number_of_units"
+    t.text "delivery_details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_gifts_on_campaign_id"
+    t.index ["product_id"], name: "index_gifts_on_product_id"
+    t.index ["shop_id"], name: "index_gifts_on_shop_id"
+  end
+
   create_table "hashtags", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -175,6 +201,7 @@ ActiveRecord::Schema.define(version: 20180731125104) do
     t.text "body"
     t.string "main_image"
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -281,12 +308,17 @@ ActiveRecord::Schema.define(version: 20180731125104) do
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.integer "owner_id"
     t.string "owner_type"
+    t.integer "brand_id"
     t.integer "registration_number"
     t.integer "phone"
     t.integer "integration_type"
     t.text "payment_rules"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["legal_name"], name: "index_shops_on_legal_name", unique: true
+    t.index ["name"], name: "index_shops_on_name", unique: true
+    t.index ["registration_number"], name: "index_shops_on_registration_number", unique: true
+    t.index ["website"], name: "index_shops_on_website", unique: true
   end
 
   create_table "showrooms", force: :cascade do |t|
@@ -360,7 +392,9 @@ ActiveRecord::Schema.define(version: 20180731125104) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["phone"], name: "index_users_on_phone", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "country_shops", "countries"
@@ -371,6 +405,9 @@ ActiveRecord::Schema.define(version: 20180731125104) do
   add_foreign_key "employments", "users"
   add_foreign_key "feed_campaigns", "campaigns"
   add_foreign_key "feed_campaigns", "feeds"
+  add_foreign_key "gifts", "campaigns"
+  add_foreign_key "gifts", "products"
+  add_foreign_key "gifts", "shops"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "users"

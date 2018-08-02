@@ -2,7 +2,7 @@ module Api
   module V1
     class BrandsController < ApplicationController
       before_action :set_brand, only: [:show, :update, :destroy]
-      # before_action :authenticate_request!, only: [:update, :create]
+      before_action :authenticate_request!, only: [:update, :create]
 
 
       # GET /brands
@@ -18,6 +18,7 @@ module Api
 
       # POST /brands
       def create
+        # if current_user.god?
         @brand = Brand.new(brand_params)
         if @brand.save
           render json: @brand, status: :created, meta: default_meta, include: [params[:include]]

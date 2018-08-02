@@ -2,7 +2,7 @@ module Api
   module V1
     class MediaController < ApplicationController
       before_action :set_medium, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:create]
+      before_action :authenticate_request!, only: [:create, :destroy]
 
       # GET /media/1
       def show
@@ -11,16 +11,16 @@ module Api
 
       # POST /media
       def create
-        if current_user #+ логика, если пользователь - автор пика
           @medium = Medium.new(medium_params)
-          if @medium.save
-            render json: @medium, status: :created, meta: default_meta, include: [params[:include]]
+          if current_user == @medium.mediable.author 
+            if @medium.save
+              render json: @medium, status: :created, meta: default_meta, include: [params[:include]]
+            else
+              render json: @medium.errors, status: :unprocessable_entity
+            end
           else
-            render json: @medium.errors, status: :unprocessable_entity
+            render json: {errors: ['Invalid author']}, status: :unauthorized
           end
-        else
-          render json: {errors: ['Invalid author']}, status: :unauthorized
-        end
       end
 
       # PATCH/PUT /media/1
@@ -34,7 +34,12 @@ module Api
 
       # DELETE /media/1
       def destroy
-        @medium.destroy
+        if current_user == @medium.mediable.author 
+          @medium.destroy
+        else
+          render json: {errors: ['Invalid author']}, status: :unauthorized
+        end
+
       end
 
       private

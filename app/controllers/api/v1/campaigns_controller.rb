@@ -2,7 +2,7 @@ module Api
   module V1
     class CampaignsController < ApplicationController
       before_action :set_campaign, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create]
+      before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /campaigns
       def index
@@ -18,7 +18,7 @@ module Api
 
       # POST /campaigns
       def create
-        @campaign = Campaign.new(campaign_params)
+        @campaign = current_user.launched_campaigns.build(campaign_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
 
         if @campaign.save
           render json: @campaign, status: :created

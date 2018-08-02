@@ -2,6 +2,8 @@ class CreateCampaigns < ActiveRecord::Migration[5.1]
   def change
     create_table :campaigns do |t|
       t.integer :shop_id
+      t.integer :author_id
+      t.string :author_type
       t.string :name
       t.integer :kind, default: 0
       t.integer :mode, default: 1

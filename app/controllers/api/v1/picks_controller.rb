@@ -18,7 +18,6 @@ module Api
       # POST /picks
       def create
         @pick = current_user.picks.build(pick_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
-
         if @pick.save
           render json: @pick, status: :created, meta: default_meta, include: [params[:include]]
         else
@@ -56,7 +55,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def pick_params
-          params.require(:pick).permit(:author_id, :author_type, :body)
+          params.require(:pick).permit(:body, :status)
           # ActiveModelSerializers::Deserialization.jsonapi_parse(params)
         end
     end
