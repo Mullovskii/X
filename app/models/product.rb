@@ -15,5 +15,9 @@ class Product < ApplicationRecord
     belongs_to :campaign, optional: true
     has_many :clicks
     has_many :gifts
+
+    def author
+    	
+    end
     
 end

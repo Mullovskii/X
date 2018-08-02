@@ -43,4 +43,12 @@ class User < ApplicationRecord
 		Showroom.create(owner_id: self.id, owner_type: self.class.to_s)
 	end
 
+	def employed_in(shop)
+		if self.employments.where(shop_id: shop.id, status: :approved).take
+			true
+		else
+			false
+		end
+	end
+
 end

@@ -19,21 +19,27 @@ module Api
       # POST /products
       def create
         @product = Product.new(product_params)
-
-        if @product.save
-          render json: @product, status: :created, meta: default_meta, include: [params[:include]]
+        if current_user.employed_in(@product.shop)
+          if @product.save
+            render json: @product, status: :created, meta: default_meta, include: [params[:include]]
+          else
+            render json: @product.errors, status: :unprocessable_entity
+          end
         else
-          render json: @product.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /products/1
       def update
-        # (добавить) и если юзер работает на магазин, публикующий товар
-        if @product.update(product_params)
-          render json: @product
+        if current_user.employed_in(@product.shop)
+          if @product.update(product_params)
+            render json: @product
+          else
+            render json: @product.errors, status: :unprocessable_entity
+          end
         else
-          render json: @product.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 

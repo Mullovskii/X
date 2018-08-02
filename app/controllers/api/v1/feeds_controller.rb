@@ -3,12 +3,11 @@ module Api
 
     class FeedsController < ApplicationController
       before_action :set_feed, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create]
+      before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /feeds
       def index
         @feeds = Feed.all
-
         render json: @feeds
       end
 
@@ -20,26 +19,37 @@ module Api
       # POST /feeds
       def create
         @feed = Feed.new(feed_params)
-
-        if @feed.save
-          render json: @feed, status: :created, meta: default_meta, include: [params[:include]]
+        if current_user.employed_in(@feed.shop)
+          if @feed.save
+            render json: @feed, status: :created, meta: default_meta, include: [params[:include]]
+          else
+            render json: @feed.errors, status: :unprocessable_entity
+          end
         else
-          render json: @feed.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /feeds/1
       def update
-        if @feed.update(feed_params)
-          render json: @feed
+        if current_user.employed_in(@feed.shop)
+          if @feed.update(feed_params)
+            render json: @feed
+          else
+            render json: @feed.errors, status: :unprocessable_entity
+          end
         else
-          render json: @feed.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # DELETE /feeds/1
       def destroy
-        @feed.destroy
+        if current_user.employed_in(@feed.shop)
+          @feed.destroy
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private

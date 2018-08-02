@@ -19,26 +19,37 @@ module Api
       # POST /campaigns
       def create
         @campaign = current_user.launched_campaigns.build(campaign_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
-
-        if @campaign.save
-          render json: @campaign, status: :created
+        if current_user.employed_in(@campaign.shop)
+          if @campaign.save
+            render json: @campaign, status: :created
+          else
+            render json: @campaign.errors, status: :unprocessable_entity
+          end
         else
-          render json: @campaign.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /campaigns/1
       def update
-        if @campaign.update(campaign_params)
-          render json: @campaign
+        if current_user.employed_in(@campaign.shop)
+          if @campaign.update(campaign_params)
+            render json: @campaign
+          else
+            render json: @campaign.errors, status: :unprocessable_entity
+          end
         else
-          render json: @campaign.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # DELETE /campaigns/1
       def destroy
-        @campaign.destroy
+        if current_user.employed_in(@campaign.shop)
+          @campaign.destroy
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private

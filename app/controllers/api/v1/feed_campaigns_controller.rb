@@ -19,26 +19,33 @@ module Api
       # POST /feed_campaigns
       def create
         @feed_campaign = FeedCampaign.new(feed_campaign_params)
-
-        if @feed_campaign.save
-          render json: @feed_campaign, status: :created
+        if current_user.employed_in(@feed_campaign.feed.shop)
+          if @feed_campaign.save
+            render json: @feed_campaign, status: :created
+          else
+            render json: @feed_campaign.errors, status: :unprocessable_entity
+          end
         else
-          render json: @feed_campaign.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /feed_campaigns/1
-      def update
-        if @feed_campaign.update(feed_campaign_params)
-          render json: @feed_campaign
-        else
-          render json: @feed_campaign.errors, status: :unprocessable_entity
-        end
-      end
+      # def update
+      #   if @feed_campaign.update(feed_campaign_params)
+      #     render json: @feed_campaign
+      #   else
+      #     render json: @feed_campaign.errors, status: :unprocessable_entity
+      #   end
+      # end
 
       # DELETE /feed_campaigns/1
       def destroy
-        @feed_campaign.destroy
+        if current_user.employed_in(@feed_campaign.feed.shop)
+          @feed_campaign.destroy
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private

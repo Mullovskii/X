@@ -4,6 +4,7 @@ class Campaign < ApplicationRecord
 	enum mode: [:money, :physical_gifts, :virtual_gifts]
 	enum status: [:fresh, :submitted, :declined, :ongoing, :stopped, :cancelled, :finished]
 
+	belongs_to :shop
 	belongs_to :author, polymorphic: true, optional: true
 
 	has_many :links, as: :linking, dependent: :destroy

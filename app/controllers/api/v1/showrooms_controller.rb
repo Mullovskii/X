@@ -1,8 +1,8 @@
 module Api
   module V1
     class ShowroomsController < ApplicationController
-      before_action :set_showroom, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create]
+      before_action :set_showroom, only: [:show]
+      # before_action :authenticate_request!, only: [:update, :create]
 
       # GET /showrooms
       def index
@@ -28,13 +28,13 @@ module Api
       # end
 
       # PATCH/PUT /showrooms/1
-      def update
-        if @showroom.update(showroom_params)
-          render json: @showroom, meta: default_meta, include: [params[:include]]
-        else
-          render json: @showroom.errors, status: :unprocessable_entity
-        end
-      end
+      # def update
+      #   if @showroom.update(showroom_params)
+      #     render json: @showroom, meta: default_meta, include: [params[:include]]
+      #   else
+      #     render json: @showroom.errors, status: :unprocessable_entity
+      #   end
+      # end
 
       # DELETE /showrooms/1
       # def destroy

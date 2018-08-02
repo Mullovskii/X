@@ -22,9 +22,11 @@ module Api
 
       # DELETE /links/1
       def destroy
-        # if current_user == @link.linking.author 
+        if current_user == @link.linking.author 
           @link.destroy
-        # удыу
+        else
+          render json: {errors: ['Invalid author']}, status: :unauthorized
+        end
         
       end
 

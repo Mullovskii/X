@@ -19,7 +19,6 @@ module Api
       # POST /tags
       def create
         @tag = Tag.new(tag_params)
-
         if @tag.save
           render json: @tag, status: :created
         else

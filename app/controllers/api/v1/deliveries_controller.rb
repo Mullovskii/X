@@ -7,7 +7,6 @@ module Api
       # GET /deliveries
       def index
         @deliveries = Delivery.all
-
         render json: @deliveries
       end
 
@@ -19,26 +18,37 @@ module Api
       # POST /deliveries
       def create
         @delivery = Delivery.new(delivery_params)
-
-        if @delivery.save
-          render json: @delivery, status: :created
+        if current_user.employed_in(@delivery.shop)
+          if @delivery.save
+            render json: @delivery, status: :created
+          else
+            render json: @delivery.errors, status: :unprocessable_entity
+          end
         else
-          render json: @delivery.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /deliveries/1
       def update
-        if @delivery.update(delivery_params)
-          render json: @delivery
+        if current_user.employed_in(@delivery.shop)
+          if @delivery.update(delivery_params)
+            render json: @delivery
+          else
+            render json: @delivery.errors, status: :unprocessable_entity
+          end
         else
-          render json: @delivery.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # DELETE /deliveries/1
       def destroy
-        @delivery.destroy
+        if current_user.employed_in(@delivery.shop)
+          @delivery.destroy
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private

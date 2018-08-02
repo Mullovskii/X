@@ -2,12 +2,11 @@ module Api
   module V1
     class TariffsController < ApplicationController
       before_action :set_tariff, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create]
+      before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /tariffs
       def index
         @tariffs = Tariff.all
-
         render json: @tariffs
       end
 
@@ -19,26 +18,37 @@ module Api
       # POST /tariffs
       def create
         @tariff = Tariff.new(tariff_params)
-
-        if @tariff.save
-          render json: @tariff, status: :created
+        if current_user.employed_in(@tariff.delivery.shop)
+          if @tariff.save
+            render json: @tariff, status: :created
+          else
+            render json: @tariff.errors, status: :unprocessable_entity
+          end
         else
-          render json: @tariff.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /tariffs/1
       def update
-        if @tariff.update(tariff_params)
-          render json: @tariff
+        if current_user.employed_in(@tariff.delivery.shop)
+          if @tariff.update(tariff_params)
+            render json: @tariff
+          else
+            render json: @tariff.errors, status: :unprocessable_entity
+          end
         else
-          render json: @tariff.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # DELETE /tariffs/1
       def destroy
-        @tariff.destroy
+        if current_user.employed_in(@tariff.delivery.shop)
+          @tariff.destroy
+         else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private

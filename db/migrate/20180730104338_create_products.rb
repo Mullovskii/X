@@ -42,8 +42,8 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :unit_pricing_base_measure
       t.text :installment
       t.string :loyalty_points
-      t.integer :main_category_id
-      t.string :product_type
+      t.integer :main_category_id #surf -generating later from product_type
+      t.string :product_type # ex Women > Dresses > Maxi Dresses
       t.integer :gtin
       t.string :mpn
       t.boolean :identifier_exists

@@ -27,10 +27,14 @@ module Api
 
       # PATCH/PUT /shops/1
       def update
-        if @shop.update(shop_params)
-          render json: @shop
+        if current_user.employed_in(@shop)
+          if @shop.update(shop_params)
+            render json: @shop
+          else
+            render json: @shop.errors, status: :unprocessable_entity
+          end
         else
-          render json: @shop.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 

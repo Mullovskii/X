@@ -21,4 +21,10 @@ class Shop < ApplicationRecord
 	enum status: [:user_owned, :brand_owned, :marketplace]
 	enum kyc: [:unverified, :in_progress, :verified]
 
+	after_create :employ_owner
+
+	def employ_owner
+		Employment.create(user_id: self.owner_id, shop_id: self.id, status: :approved)
+	end
+
 end

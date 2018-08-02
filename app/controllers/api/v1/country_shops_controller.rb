@@ -2,12 +2,11 @@ module Api
   module V1
     class CountryShopsController < ApplicationController
       before_action :set_country_shop, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create]
+      before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /country_shops
       def index
         @country_shops = CountryShop.all
-
         render json: @country_shops
       end
 
@@ -19,26 +18,37 @@ module Api
       # POST /country_shops
       def create
         @country_shop = CountryShop.new(country_shop_params)
-
-        if @country_shop.save
-          render json: @country_shop, status: :created
+        if current_user.employed_in(@country_shop.shop)
+          if @country_shop.save
+            render json: @country_shop, status: :created
+          else
+            render json: @country_shop.errors, status: :unprocessable_entity
+          end
         else
-          render json: @country_shop.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /country_shops/1
-      def update
-        if @country_shop.update(country_shop_params)
-          render json: @country_shop
-        else
-          render json: @country_shop.errors, status: :unprocessable_entity
-        end
-      end
+      # def update
+      #   if current_user.employed_in(@country_shop.shop)
+      #     if @country_shop.update(country_shop_params)
+      #       render json: @country_shop
+      #     else
+      #       render json: @country_shop.errors, status: :unprocessable_entity
+      #     end
+      #   else
+      #     render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+      #   end
+      # end
 
       # DELETE /country_shops/1
       def destroy
-        @country_shop.destroy
+        if current_user.employed_in(@country_shop.shop)
+          @country_shop.destroy
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private
