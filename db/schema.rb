@@ -36,11 +36,10 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "name"
     t.boolean "read_user_data"
     t.integer "kind", default: 0
-    t.integer "mode", default: 1
+    t.integer "mode", default: 0
     t.integer "status", default: 0
     t.decimal "bid_per_action", precision: 5, scale: 3, default: "0.0"
     t.integer "currency_id"
-    t.integer "actions_per_gift", default: 0
     t.integer "followers_threshold", default: 0
     t.string "link_1"
     t.string "link_2"
@@ -178,6 +177,8 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.text "delivery_details"
     t.boolean "virtual_good"
     t.text "secret"
+    t.text "comment"
+    t.integer "actions_per_gift", default: 0
     t.integer "number_of_gifts"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

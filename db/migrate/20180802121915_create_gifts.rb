@@ -25,6 +25,8 @@ class CreateGifts < ActiveRecord::Migration[5.1]
       t.text :delivery_details
       t.boolean :virtual_good
       t.text :secret
+      t.text :comment
+      t.integer :actions_per_gift, default: 0
       t.integer :number_of_gifts
 
       t.timestamps

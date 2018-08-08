@@ -27,7 +27,7 @@ module Api
         else
           render json: {errors: ['Invalid author']}, status: :unauthorized
         end
-        
+
       end
 
       private
@@ -38,7 +38,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def link_params
-          params.require(:link).permit(:linking_id, :linking_type, :linked_id, :linked_type, :kind)
+          params.require(:link).permit(:linking_id, :linking_type, :linked_id, :linked_type, :kind, :external_link)
         end
     end
   end

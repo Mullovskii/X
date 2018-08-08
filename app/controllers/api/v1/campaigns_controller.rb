@@ -60,7 +60,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def campaign_params
-          params.require(:campaign).permit(:shop_id, :name, :kind, :mode, :status, :read_user_data, :bid_per_action, :currency_id, :actions_per_gift, :gift_id, :followers_threshold, :actions_per_gift, :link_1, :link_2, :link_3, :link_4, :link_5)
+          params.require(:campaign).permit(:shop_id, :name, :kind, :mode, :status, :read_user_data, :bid_per_action, :currency_id, :followers_threshold, :link_1, :link_2, :link_3, :link_4, :link_5)
         end
     end
   end
