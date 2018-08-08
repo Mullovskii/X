@@ -23,4 +23,11 @@ class Pick < ApplicationRecord
     		self.main_image = self.media.first.url
     	end
     end
+
+    # def check_user_campaigns
+    # 	if self.products.take || self.brands.take
+    		
+    # 	end
+    # end
+
 end

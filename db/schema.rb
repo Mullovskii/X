@@ -34,15 +34,19 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "author_id"
     t.string "author_type"
     t.string "name"
+    t.boolean "read_user_data"
     t.integer "kind", default: 0
     t.integer "mode", default: 1
     t.integer "status", default: 0
     t.decimal "bid_per_action", precision: 5, scale: 3, default: "0.0"
     t.integer "currency_id"
     t.integer "actions_per_gift", default: 0
-    t.integer "gift_id"
-    t.integer "number_of_gifts"
     t.integer "followers_threshold", default: 0
+    t.string "link_1"
+    t.string "link_2"
+    t.string "link_3"
+    t.string "link_4"
+    t.string "link_5"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -131,8 +135,10 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   create_table "feeds", force: :cascade do |t|
     t.integer "shop_id"
     t.integer "main_campaign_id"
+    t.integer "delivery_id"
     t.integer "mode"
     t.integer "format"
+    t.integer "kind"
     t.integer "target_country_id"
     t.integer "content_language"
     t.integer "currency"
@@ -142,15 +148,23 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "url"
     t.integer "author_id"
     t.string "author_type"
+    t.boolean "virtual_goods"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "gifts", force: :cascade do |t|
+    t.integer "feed_id"
     t.bigint "shop_id"
     t.bigint "campaign_id"
     t.bigint "product_id"
-    t.string "name"
+    t.integer "main_category_id"
+    t.string "product_type"
+    t.integer "brand_id"
+    t.integer "custom_id"
+    t.integer "related_product_id"
+    t.string "brand"
+    t.string "title"
     t.text "description"
     t.string "main_image_link"
     t.string "image_link_0"
@@ -162,6 +176,9 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.datetime "expiration_date"
     t.integer "number_of_units"
     t.text "delivery_details"
+    t.boolean "virtual_good"
+    t.text "secret"
+    t.integer "number_of_gifts"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_gifts_on_campaign_id"
@@ -176,6 +193,8 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   end
 
   create_table "links", force: :cascade do |t|
+    t.integer "author_id"
+    t.string "author_type"
     t.integer "linking_id"
     t.string "linking_type"
     t.integer "linked_id"

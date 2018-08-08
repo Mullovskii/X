@@ -1,6 +1,6 @@
 class Campaign < ApplicationRecord
 
-	enum kind: [:referral, :data_transfer, :purchase]
+	enum kind: [:link_referral, :product_referral, :purchase]
 	enum mode: [:money, :physical_gifts, :virtual_gifts]
 	enum status: [:fresh, :submitted, :declined, :ongoing, :stopped, :cancelled, :finished]
 

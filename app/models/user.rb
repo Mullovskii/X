@@ -8,6 +8,7 @@ class User < ApplicationRecord
 	# validates :username, uniqueness: true
 	# validates :phone, uniqueness: true
 
+	has_many :links, as: :author, dependent: :destroy
 	has_many :picks, as: :author, dependent: :destroy
 	has_many :shops, as: :owner
 	has_one :showroom, as: :owner
@@ -49,6 +50,10 @@ class User < ApplicationRecord
 		else
 			false
 		end
+	end
+
+	def true_picker?(pick)
+		
 	end
 
 end

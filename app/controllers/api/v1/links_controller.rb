@@ -7,7 +7,7 @@ module Api
 
       # POST /links
       def create
-        @link = Link.new(link_params)
+        @link = current_user.links.build(link_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
         if current_user == @link.linking.author 
           if @link.save
             render json: @link, status: :created, meta: default_meta, include: [params[:include]]
