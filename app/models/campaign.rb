@@ -1,6 +1,7 @@
 class Campaign < ApplicationRecord
 
 	enum target: [:link, :product, :purchase]
+	enum product_target: [:all_products, :feed, :labeled]
 	enum reward: [:bonus, :gift, :fee]
 	enum status: [:fresh, :submitted, :declined, :ongoing, :stopped, :cancelled, :finished]
 	enum swap_option: [:request_swap, :automatic_swap]

@@ -10,21 +10,27 @@ module Api
         @link = current_user.links.build(link_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
         if current_user == @link.linking.author 
           if @link.save
-            campaigns = []
-            Campaign.all.where(kind: :link_referral).each do |campaign|
-              #нужна еще валидация, что @link.external_link начинается с campaign.link_
-              if @link.external_link.match?(campaign.link_1) 
-                Link.create(linking_id: @link.linking_id, linking_type: @link.linking_type, linked_id: campaign.id, linking_type: "Campaign", kind: :campaign_link)
-              elsif @link.external_link.match?(campaign.link_2)
-
-              elsif @link.external_link.match?(campaign.link_3)
-
-              elsif @link.external_link.match?(campaign.link_4)
-
-              elsif @link.external_link.match?(campaign.link_5)
-                
+            if @link.kind == "external_link"
+              campaigns = []
+              Campaign.all.where(target: :link).each do |campaign|
+                #нужна еще валидация, что @link.external_link начинается с campaign.link_
+                if @link.external_link.match?(campaign.link_1) 
+                  campaigns << campaign
+                elsif @link.external_link.match?(campaign.link_2)
+                  campaigns << campaign
+                elsif @link.external_link.match?(campaign.link_3)
+                  campaigns << campaign
+                elsif @link.external_link.match?(campaign.link_4)
+                  campaigns << campaign
+                elsif @link.external_link.match?(campaign.link_5)
+                  campaigns << campaign
+                end
               end
-            render json: @link, status: :created, meta: default_meta, include: [params[:include]]
+              render json: campaigns
+            else
+              render json: @link, status: :created, meta: default_meta, include: [params[:include]]
+            end
+            # render json: @link, status: :created, meta: default_meta, include: [params[:include]]
           else
             render json: @link.errors, status: :unprocessable_entity
           end

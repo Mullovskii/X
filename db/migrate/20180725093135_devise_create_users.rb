@@ -10,8 +10,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       t.integer :role, default: 0
       t.string :full_name
       t.string :username
-      t.integer :phone
+      t.bigint :phone
       t.integer :country_id
+      t.integer :sex, default: 0
       t.integer :city_id
       t.string :description
       t.string :avatar

@@ -5,6 +5,7 @@ class User < ApplicationRecord
 	         :recoverable, :rememberable, :trackable, :validatable
 
 	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :god ]
+	enum sex: [:female, :male]
 	# validates :username, uniqueness: true
 	# validates :phone, uniqueness: true
 

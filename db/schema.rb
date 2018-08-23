@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "currency_id"
     t.boolean "read_user_data"
     t.integer "target", default: 0
+    t.integer "product_target"
     t.integer "reward", default: 0
     t.integer "status", default: 0
     t.integer "swap_option", default: 0
@@ -51,7 +52,6 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "link_3"
     t.string "link_4"
     t.string "link_5"
-    t.boolean "labeled"
     t.string "label_1"
     t.string "label_2"
     t.string "label_3"
@@ -398,8 +398,9 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "role", default: 0
     t.string "full_name"
     t.string "username"
-    t.integer "phone"
+    t.bigint "phone"
     t.integer "country_id"
+    t.integer "sex", default: 0
     t.integer "city_id"
     t.string "description"
     t.string "avatar"
