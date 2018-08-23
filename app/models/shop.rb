@@ -13,7 +13,7 @@ class Shop < ApplicationRecord
 	has_many :gifts
 	
 	has_many :links, as: :author, dependent: :destroy
-	validates :name, uniqueness: true
+	validates :name, :uniqueness => { :allow_blank => false, :case_sensitive => false }
 	validates :legal_name, uniqueness: true, :uniqueness => { :allow_blank => true, :case_sensitive => false }
 	validates :website, uniqueness: true, :uniqueness => { :allow_blank => true, :case_sensitive => false }
 	validates :registration_number, uniqueness: true, :uniqueness => { :allow_blank => true, :case_sensitive => false }

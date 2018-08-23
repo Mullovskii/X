@@ -1,5 +1,6 @@
 module Api
   module V1
+    
     class DeliveriesController < ApplicationController
       before_action :set_delivery, only: [:show, :update, :destroy]
       before_action :authenticate_request!, only: [:update, :create]
@@ -59,8 +60,9 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def delivery_params
-          params.require(:delivery).permit(:shop_id, :country_id, :mode, :weekends_delivery, :holidays_delivery, :pickup)
+          params.require(:delivery).permit(:name, :timezone, :shop_id, :country_id, :mode, :weekends_delivery, :holidays_delivery, :pickup, :days_from, :days_to)
         end
+    
     end
   end
 end

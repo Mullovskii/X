@@ -34,18 +34,27 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "author_id"
     t.string "author_type"
     t.string "name"
-    t.boolean "read_user_data"
-    t.integer "kind", default: 0
-    t.integer "mode", default: 0
-    t.integer "status", default: 0
-    t.decimal "bid_per_action", precision: 5, scale: 3, default: "0.0"
+    t.date "start_date"
+    t.date "end_date"
+    t.integer "country_id"
     t.integer "currency_id"
+    t.boolean "read_user_data"
+    t.integer "target", default: 0
+    t.integer "reward", default: 0
+    t.integer "status", default: 0
+    t.integer "swap_option", default: 0
+    t.text "swap_details"
+    t.decimal "bonus_per_click", precision: 5, scale: 3, default: "0.0"
     t.integer "followers_threshold", default: 0
     t.string "link_1"
     t.string "link_2"
     t.string "link_3"
     t.string "link_4"
     t.string "link_5"
+    t.boolean "labeled"
+    t.string "label_1"
+    t.string "label_2"
+    t.string "label_3"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -97,12 +106,17 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   end
 
   create_table "deliveries", force: :cascade do |t|
+    t.string "name"
     t.bigint "shop_id"
     t.bigint "country_id"
     t.integer "mode", default: 0
+    t.integer "currency_id"
     t.boolean "weekends_delivery"
     t.boolean "holidays_delivery"
     t.boolean "pickup"
+    t.integer "days_from", default: 0
+    t.integer "days_to", default: 1
+    t.datetime "timezone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_deliveries_on_country_id"
@@ -133,35 +147,28 @@ ActiveRecord::Schema.define(version: 20180802121915) do
 
   create_table "feeds", force: :cascade do |t|
     t.integer "shop_id"
-    t.integer "main_campaign_id"
     t.integer "delivery_id"
     t.integer "mode"
     t.integer "format"
     t.integer "kind"
-    t.integer "target_country_id"
-    t.integer "content_language"
-    t.integer "currency"
+    t.integer "country_id"
     t.integer "currency_id"
     t.string "name"
-    t.integer "input_type"
     t.string "url"
     t.integer "author_id"
     t.string "author_type"
-    t.boolean "virtual_goods"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "gifts", force: :cascade do |t|
-    t.integer "feed_id"
     t.bigint "shop_id"
     t.bigint "campaign_id"
-    t.bigint "product_id"
+    t.integer "product_id"
     t.integer "main_category_id"
     t.string "product_type"
     t.integer "brand_id"
     t.integer "custom_id"
-    t.integer "related_product_id"
     t.string "brand"
     t.string "title"
     t.text "description"
@@ -172,13 +179,12 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "image_link_3"
     t.string "image_link_4"
     t.integer "status", default: 0
-    t.datetime "expiration_date"
-    t.integer "number_of_units"
+    t.integer "delivery_option"
     t.text "delivery_details"
-    t.boolean "virtual_good"
     t.text "secret"
+    t.text "additional_secret"
     t.text "comment"
-    t.integer "actions_per_gift", default: 0
+    t.integer "actions_per_gift", default: 1
     t.integer "number_of_gifts"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -229,16 +235,14 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   create_table "products", force: :cascade do |t|
     t.integer "feed_id"
     t.integer "shop_id"
+    t.integer "custom_id"
     t.integer "status", default: 0
     t.integer "item_id"
     t.integer "model_id"
-    t.integer "brand_id"
-    t.integer "campaign_id"
-    t.integer "delivery_id"
+    t.string "venue"
     t.integer "venue_id"
-    t.boolean "is_gift"
-    t.integer "custom_id"
-    t.string "brand"
+    t.string "brand_name"
+    t.integer "brand_id"
     t.string "title"
     t.text "description"
     t.string "link"
@@ -253,13 +257,13 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "image_link_7"
     t.string "image_link_8"
     t.string "image_link_9"
+    t.float "price", default: 0.0
+    t.float "sale_price", default: 0.0
+    t.datetime "sale_price_effective_date"
     t.string "availability"
     t.datetime "availability_date"
-    t.decimal "cost_of_goods_sold"
     t.datetime "expiration_date"
-    t.decimal "price", precision: 5, scale: 3, default: "0.0"
-    t.decimal "sale_price", precision: 5, scale: 3, default: "0.0"
-    t.text "sale_price_effective_date"
+    t.decimal "cost_of_goods_sold"
     t.string "unit_pricing_measure"
     t.string "unit_pricing_base_measure"
     t.text "installment"
@@ -298,7 +302,7 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "tax_category"
     t.string "production_country"
     t.integer "barcode"
-    t.string "venue"
+    t.string "campaign_label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -330,9 +334,11 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "owner_type"
     t.integer "brand_id"
     t.integer "registration_number"
-    t.integer "phone"
+    t.string "phone"
+    t.string "email"
     t.integer "integration_type"
     t.text "payment_rules"
+    t.boolean "accepted_rules", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["legal_name"], name: "index_shops_on_legal_name", unique: true
@@ -362,14 +368,15 @@ ActiveRecord::Schema.define(version: 20180802121915) do
 
   create_table "tariffs", force: :cascade do |t|
     t.bigint "delivery_id"
-    t.integer "mode"
-    t.decimal "price_from", precision: 5, scale: 3, default: "0.0"
-    t.decimal "price_to", precision: 5, scale: 3, default: "0.0"
-    t.decimal "weight_from", precision: 5, scale: 3, default: "0.0"
-    t.decimal "weight_to", precision: 5, scale: 3, default: "0.0"
-    t.integer "days", default: 0
+    t.string "name"
+    t.integer "mode", default: 0
+    t.integer "kind", default: 0
+    t.integer "product_price_from"
+    t.integer "product_price_to"
+    t.integer "weight_from"
+    t.integer "weight_to"
+    t.integer "unit", default: 0
     t.decimal "price", precision: 5, scale: 3, default: "0.0"
-    t.integer "currency_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["delivery_id"], name: "index_tariffs_on_delivery_id"

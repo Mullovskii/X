@@ -60,7 +60,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def feed_params
-          params.require(:feed).permit(:mode, :kind, :delivery_id, :main_campaign_id, :shop_id, :format, :target_country_id, :content_language, :currency, :name, :input_type, :url, :author_id, :author_type)
+          params.require(:feed).permit(:mode, :kind, :delivery_id, :shop_id, :format, :country_id, :currency_id, :name, :url, :author_id, :author_type)
         end
     end
   end

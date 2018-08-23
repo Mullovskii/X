@@ -3,19 +3,19 @@ class CreateProducts < ActiveRecord::Migration[5.1]
     create_table :products do |t|
       t.integer :feed_id #surf
       t.integer :shop_id #surf 
+      t.integer :custom_id 
       # t.integer :author_id #surf 
       # t.string :author_type #surf 
+      #future
       t.integer :status, default: 0 #surf enum
       t.integer :item_id #surf - id of global product card (=Item)
       t.integer :model_id #surf - id of global model card (=Model)
+      t.string :venue
+      t.integer :venue_id #surf - for events - id of venue - taken from venue name above
+      #future
+      
+      t.string :brand_name #name is passed for .xlsx import. Surf checks if the brand is in the DB (if not - creates) + updates brand_id
       t.integer :brand_id #surf 
-      t.integer :campaign_id #surf - id of unique campaign for product, if varies from feed campaigns
-      t.integer :delivery_id #surf - id of product delivery, if varies from feed setting 
-      t.integer :venue_id #surf - for events - id of venue
-      t.boolean :is_gift #surf - wheather the product is a gift within campaign
-
-      t.integer :custom_id 
-      t.string :brand
       
       t.string :title
       t.text :description
@@ -31,13 +31,13 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :image_link_7
       t.string :image_link_8
       t.string :image_link_9
+      t.float :price, default: 0, precision: 5, scale: 3
+      t.float :sale_price, default: 0, precision: 5, scale: 3
+      t.datetime :sale_price_effective_date
       t.string :availability
       t.datetime :availability_date
-      t.decimal :cost_of_goods_sold
       t.datetime :expiration_date
-      t.decimal :price, default: 0, precision: 5, scale: 3
-      t.decimal :sale_price, default: 0, precision: 5, scale: 3
-      t.text :sale_price_effective_date
+      t.decimal :cost_of_goods_sold
       t.string :unit_pricing_measure
       t.string :unit_pricing_base_measure
       t.text :installment
@@ -64,7 +64,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :item_group_id
       t.string :custom_label_0
       t.string :custom_label_1
-
+      
       t.string :shipping
       t.string :shipping_label
       t.string :shipping_weight
@@ -78,8 +78,8 @@ class CreateProducts < ActiveRecord::Migration[5.1]
 
       t.string :production_country
       t.integer :barcode 
-
-      t.string :venue
+      
+      t.string :campaign_label
 
       t.timestamps
     end

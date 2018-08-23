@@ -59,7 +59,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def tariff_params
-          params.require(:tariff).permit(:delivery_id, :mode, :price_from, :price_to, :weight_from, :weight_to, :days, :price, :currency_id)
+          params.require(:tariff).permit(:name, :kind, :delivery_id, :mode, :product_price_from, :product_price_to, :weight_from, :weight_to, :price)
         end
     end
   end

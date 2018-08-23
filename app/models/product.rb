@@ -1,7 +1,7 @@
 class Product < ApplicationRecord
 	belongs_to :shop
-	belongs_to :feed
-	belongs_to :brand
+	belongs_to :feed, optional: true
+	belongs_to :brand, optional: true
 
 	has_many :tags, as: :tagged, dependent: :destroy
 	has_many :categories, through: :tags, :source => :tagger,
@@ -16,8 +16,6 @@ class Product < ApplicationRecord
     has_many :clicks
     has_many :gifts
 
-    def author
-    	
-    end
+ 
     
 end

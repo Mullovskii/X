@@ -6,6 +6,8 @@ class Pick < ApplicationRecord
     :source_type => 'Brand'
     has_many :products, through: :links, :source => :linked,
     :source_type => 'Product'
+    has_many :campaigns, through: :links, :source => :linked,
+    :source_type => 'Campaign'
     has_many :tags, as: :tagged, dependent: :destroy
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
