@@ -53,8 +53,18 @@ class User < ApplicationRecord
 		end
 	end
 
-	def true_picker?(pick)
-		
+	def true_picker?(user_campaign)
+		if user_campaign.link.linking.author == self
+			if user_campaign.campaign.target == "link" && user_campaign.link.kind == "external_link" 
+				if user_campaign.link.external_link.match?(user_campaign.campaign.link_1) || user_campaign.link.external_link.match?(user_campaign.campaign.link_2) || user_campaign.link.external_link.match?(user_campaign.campaign.link_3) || user_campaign.link.external_link.match?(user_campaign.campaign.link_4) || user_campaign.link.external_link.match?(user_campaign.campaign.link_5)
+					true
+				end
+			elsif user_campaign.campaign.target == "product" && user_campaign.link.kind == "product_pick" 
+				if user_campaign.campaign.product_target == "all_products" && user_campaign.link.linked.shop == user_campaign.campaign.shop || user_campaign.campaign.target == "product" && user_campaign.campaign.product_target == "feed" && user_campaign.campaign.feeds.where(id: user_campaign.link.linked.feed.id).take || user_campaign.campaign.label_1 == user_campaign.link.linked.campaign_label && user_campaign.link.linked.shop == user_campaign.campaign.shop
+					true
+				end
+			end
+		end
 	end
 
 end

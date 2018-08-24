@@ -10,27 +10,30 @@ module Api
         @link = current_user.links.build(link_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
         if current_user == @link.linking.author 
           if @link.save
+            
             if @link.kind == "external_link"
               campaigns = []
               Campaign.all.where(target: :link).each do |campaign|
                 #нужна еще валидация, что @link.external_link начинается с campaign.link_
-                if @link.external_link.match?(campaign.link_1) 
-                  campaigns << campaign
-                elsif @link.external_link.match?(campaign.link_2)
-                  campaigns << campaign
-                elsif @link.external_link.match?(campaign.link_3)
-                  campaigns << campaign
-                elsif @link.external_link.match?(campaign.link_4)
-                  campaigns << campaign
-                elsif @link.external_link.match?(campaign.link_5)
+                if @link.external_link.match?(campaign.link_1) || @link.external_link.match?(campaign.link_2) || @link.external_link.match?(campaign.link_3) || @link.external_link.match?(campaign.link_4) || @link.external_link.match?(campaign.link_5)
                   campaigns << campaign
                 end
               end
-              render json: campaigns
+              render json: campaigns 
+            
+            elsif @link.kind == "product_pick"
+              campaigns = []
+              @link.linked.shop.campaigns.each do |campaign|
+                if campaign.product_target == "all_products" || campaign.label_1 == @link.linked.campaign_label
+                  campaigns << campaign
+                elsif campaign.product_target == "feed" && campaign.feeds.where(id: @link.linked.feed.id).take
+                  campaigns << campaign
+                end
+              end
+              render json: campaigns         
             else
               render json: @link, status: :created, meta: default_meta, include: [params[:include]]
             end
-            # render json: @link, status: :created, meta: default_meta, include: [params[:include]]
           else
             render json: @link.errors, status: :unprocessable_entity
           end

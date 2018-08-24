@@ -385,10 +385,13 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   create_table "user_campaigns", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "campaign_id"
+    t.bigint "link_id"
+    t.integer "gift_id"
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_user_campaigns_on_campaign_id"
+    t.index ["link_id"], name: "index_user_campaigns_on_link_id"
     t.index ["user_id"], name: "index_user_campaigns_on_user_id"
   end
 
@@ -438,5 +441,6 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   add_foreign_key "gifts", "shops"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "user_campaigns", "campaigns"
+  add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"
 end
