@@ -21,7 +21,7 @@ module Api
         @coupon = Coupon.new(coupon_params)
         if current_user.employed_in(@coupon.shop)
           if @coupon.save
-            render json: @coupon, status: :created, location: @coupon
+            render json: @coupon, status: :created
           else
             render json: @coupon.errors, status: :unprocessable_entity
           end
@@ -60,7 +60,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def coupon_params
-          params.require(:coupon).permit(:shop_id, :kind, :discount_mode, :discount, :discount_products, :additional_info, :coupon_use, :instruction, :background, :point_price, :secret_key, :generated_amount, :generated_number, :parent_id, :status, :buyer_id, :purchased_at, :utilized_at)
+          params.require(:coupon).permit(:shop_id, :country_id, :kind, :discount_mode, :discount, :discount_products, :additional_info, :coupon_use, :instruction, :background, :points_per_coupon, :secret, :number_of_coupons, :number, :status, :buyer_id, :purchased_at, :utilized_at, :currency_id)
         end
     end
   end

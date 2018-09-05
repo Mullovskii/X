@@ -1,7 +1,7 @@
 module Api
   module V1
     class CampaignsController < ApplicationController
-      before_action :set_campaign, only: [:show, :update, :destroy, :generate_gifts]
+      before_action :set_campaign, only: [:show, :update, :destroy, :generate_gifts, :campaign_products]
       before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /campaigns
@@ -14,6 +14,20 @@ module Api
       # GET /campaigns/1
       def show
         render json: @campaign
+      end
+
+      def campaign_products
+        @products = []
+        if @campaign.campaign_products == "all_country_products" || @campaign.campaign_products == "selected_feeds" 
+          @campaign.feeds.each do |feed|
+            @products << feed.products
+          end
+        else
+          @products << @campaign.shop.products.where(campaign_label: @campaign.label_1)
+        end
+        
+        render json: @products, adapter: nil
+
       end
 
       # POST /campaigns

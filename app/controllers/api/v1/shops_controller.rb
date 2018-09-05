@@ -38,6 +38,7 @@ module Api
         end
       end
 
+
       # DELETE /shops/1
       # def destroy
       #   @shop.destroy

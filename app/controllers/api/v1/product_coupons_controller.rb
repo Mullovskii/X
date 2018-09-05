@@ -19,9 +19,9 @@ module Api
       # POST /product_coupons
       def create
         @product_coupon = ProductCoupon.new(product_coupon_params)
-        if current_user.employed_in(@product_coupon.coupon.shop)
+        if current_user.employed_in(@product_coupon.product.shop)
           if @product_coupon.save
-            render json: @product_coupon, status: :created, location: @product_coupon
+            render json: @product_coupon, status: :created
           else
             render json: @product_coupon.errors, status: :unprocessable_entity
           end

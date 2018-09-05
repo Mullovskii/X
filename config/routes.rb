@@ -15,28 +15,46 @@ Rails.application.routes.draw do
       resources :brands
       resources :media
       resources :links
-      resources :shops
-      resources :feeds
+      resources :shops do
+        resources :deliveries do
+          resources :tariffs
+        end
+        resources :feeds
+        resources :products
+        resources :gifts
+        resources :rewards
+        resources :coupons do
+          resources :product_coupons
+        end
+        resources :campaigns do
+          resources :feed_campaigns  
+          member do
+            get 'campaign_products', to: 'campaigns#campaign_products'
+          end        
+        end
+        # resources :feeds
+      end
+      
       resources :showrooms
       resources :products
       resources :categories
       resources :tags
       resources :hashtags
-      resources :campaigns
+      
       resources :countries
       resources :country_shops
-      resources :deliveries
-      resources :tariffs
+      
+      
       resources :currencies
-      resources :feed_campaigns
+      
       resources :clicks
       resources :user_campaigns
       resources :relationships
       resources :employments
-      resources :gifts
-      resources :product_coupons
-      resources :coupons
-      resources :rewards
+      
+      
+      
+      
 
     	put '/users/:id', to: 'registrations#update'
     end

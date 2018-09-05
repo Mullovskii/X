@@ -24,7 +24,7 @@ class Campaign < ApplicationRecord
     def activate_products
     	if self.campaign_products == "all_country_products"
     		self.shop.feeds.where(country_id: self.country_id).each do |feed|
-    			FeedCampaigns.create(feed_id: feed.id, campaign_id: self.id)
+    			FeedCampaign.create(feed_id: feed.id, campaign_id: self.id)
     		end
     	end
     end

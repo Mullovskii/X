@@ -94,6 +94,8 @@ ActiveRecord::Schema.define(version: 20180903160623) do
 
   create_table "coupons", force: :cascade do |t|
     t.bigint "shop_id"
+    t.bigint "country_id"
+    t.bigint "currency_id"
     t.integer "kind"
     t.integer "discount_mode"
     t.integer "discount"
@@ -102,10 +104,10 @@ ActiveRecord::Schema.define(version: 20180903160623) do
     t.integer "coupon_use"
     t.text "instruction"
     t.string "background"
-    t.float "point_price"
-    t.string "secret_key"
-    t.integer "generated_amount"
-    t.integer "generated_number"
+    t.float "points_per_coupon"
+    t.string "secret"
+    t.integer "number_of_coupons"
+    t.integer "number"
     t.integer "parent_id"
     t.integer "status"
     t.integer "buyer_id"
@@ -113,6 +115,8 @@ ActiveRecord::Schema.define(version: 20180903160623) do
     t.integer "utilized_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_coupons_on_country_id"
+    t.index ["currency_id"], name: "index_coupons_on_currency_id"
     t.index ["shop_id"], name: "index_coupons_on_shop_id"
   end
 
@@ -182,14 +186,15 @@ ActiveRecord::Schema.define(version: 20180903160623) do
   end
 
   create_table "gifts", force: :cascade do |t|
+    t.integer "status", default: 0
+    t.integer "feed_id"
     t.bigint "shop_id"
-    t.bigint "campaign_id"
-    t.integer "product_id"
-    t.integer "main_category_id"
+    t.bigint "country_id"
     t.string "product_type"
-    t.integer "brand_id"
+    t.integer "main_category_id"
     t.integer "custom_id"
     t.string "brand"
+    t.integer "brand_id"
     t.string "title"
     t.text "description"
     t.string "main_image_link"
@@ -198,18 +203,14 @@ ActiveRecord::Schema.define(version: 20180903160623) do
     t.string "image_link_2"
     t.string "image_link_3"
     t.string "image_link_4"
-    t.integer "status", default: 0
-    t.integer "delivery_option"
-    t.text "delivery_details"
     t.text "secret"
-    t.text "additional_secret"
     t.text "comment"
-    t.integer "actions_per_gift", default: 1
+    t.bigint "points_per_gift", default: 1
     t.integer "number_of_gifts"
+    t.integer "number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campaign_id"], name: "index_gifts_on_campaign_id"
-    t.index ["product_id"], name: "index_gifts_on_product_id"
+    t.index ["country_id"], name: "index_gifts_on_country_id"
     t.index ["shop_id"], name: "index_gifts_on_shop_id"
   end
 
@@ -490,6 +491,8 @@ ActiveRecord::Schema.define(version: 20180903160623) do
 
   add_foreign_key "country_shops", "countries"
   add_foreign_key "country_shops", "shops"
+  add_foreign_key "coupons", "countries"
+  add_foreign_key "coupons", "currencies"
   add_foreign_key "coupons", "shops"
   add_foreign_key "deliveries", "countries"
   add_foreign_key "deliveries", "shops"
@@ -497,8 +500,7 @@ ActiveRecord::Schema.define(version: 20180903160623) do
   add_foreign_key "employments", "users"
   add_foreign_key "feed_campaigns", "campaigns"
   add_foreign_key "feed_campaigns", "feeds"
-  add_foreign_key "gifts", "campaigns"
-  add_foreign_key "gifts", "products"
+  add_foreign_key "gifts", "countries"
   add_foreign_key "gifts", "shops"
   add_foreign_key "product_coupons", "coupons"
   add_foreign_key "product_coupons", "products"

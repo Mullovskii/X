@@ -15,6 +15,9 @@ class Product < ApplicationRecord
     belongs_to :campaign, optional: true
     has_many :clicks
     has_many :gifts
+    has_many :product_coupons
+    has_many :coupons, through: :product_coupons
+
 
  
     
