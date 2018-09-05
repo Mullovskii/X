@@ -1,7 +1,7 @@
 module Api
   module V1
     class CampaignsController < ApplicationController
-      before_action :set_campaign, only: [:show, :update, :destroy]
+      before_action :set_campaign, only: [:show, :update, :destroy, :generate_gifts]
       before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /campaigns
@@ -52,6 +52,14 @@ module Api
         end
       end
 
+      def generate_gifts
+        if current_user.employed_in(@campaign.shop)
+          @campaign.shop.feeds.where(country_id)
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
+      end
+
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_campaign
@@ -60,7 +68,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def campaign_params
-          params.require(:campaign).permit(:shop_id, :name, :target, :reward, :status, :bonus_per_click, :currency_id, :read_user_data, :followers_threshold, :link_1, :link_2, :link_3, :link_4, :link_5, :label_1, :label_2, :label_3, :product_target)
+          params.require(:campaign).permit(:shop_id, :status, :name, :country_id, :kind, :link_referral, :link_1, :link_2, :link_3, :link_4, :link_5, :points_per_referral, :product_tagging, :points_per_tag, :campaign_products, :label_1, :label_2, :label_3)
         end
     end
   end

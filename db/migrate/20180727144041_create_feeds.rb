@@ -10,6 +10,7 @@ class CreateFeeds < ActiveRecord::Migration[5.1]
       t.integer :currency_id
       t.string :name
       t.string :url
+      t.boolean :gift_mode
       t.integer :author_id
       t.string :author_type
 

@@ -11,12 +11,17 @@ class Shop < ApplicationRecord
 	has_many :employments
 	has_many :employees, through: :employments, :source => :user
 	has_many :gifts
+	has_one :reward
+
+	has_many :tags, as: :tagged, dependent: :destroy
+	has_many :categories, through: :tags, :source => :tagger,
+    :source_type => 'Category'
 	
 	has_many :links, as: :author, dependent: :destroy
 	validates :name, :uniqueness => { :allow_blank => false, :case_sensitive => false }
-	validates :legal_name, uniqueness: true, :uniqueness => { :allow_blank => true, :case_sensitive => false }
-	validates :website, uniqueness: true, :uniqueness => { :allow_blank => true, :case_sensitive => false }
-	validates :registration_number, uniqueness: true, :uniqueness => { :allow_blank => true, :case_sensitive => false }
+	validates :legal_name, :uniqueness => { :allow_blank => true, :case_sensitive => false }
+	validates :website, :uniqueness => { :allow_blank => true, :case_sensitive => false }
+	validates :registration_number, :uniqueness => { :allow_blank => true, :case_sensitive => false }
 
 	enum status: [:user_owned, :brand_owned, :marketplace]
 	enum kyc: [:unverified, :in_progress, :verified]

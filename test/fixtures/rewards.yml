@@ -1,0 +1,49 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop: one
+  country: one
+  product_reward: false
+  point_to_usd: 1.5
+  point_to_lcy: 1.5
+  currency: one
+  fullfilment_mode: 1
+  gift_products: 1
+  prize_rewards: false
+  delivery_mode: 1
+  gift_delivery_id: 1
+  surf_voucher_generation: false
+  voucher_use: 1
+  voucher_instruction: MyText
+  bonus_exchange: false
+  point_to_bonus: 1.5
+  bonus_min_time: 1
+  bonus_max_time: 1
+  gift_min_time: 1
+  gift_max_time: 1
+  no_card_instruction: MyText
+  other_instruction: MyText
+
+two:
+  shop: two
+  country: two
+  product_reward: false
+  point_to_usd: 1.5
+  point_to_lcy: 1.5
+  currency: two
+  fullfilment_mode: 1
+  gift_products: 1
+  prize_rewards: false
+  delivery_mode: 1
+  gift_delivery_id: 1
+  surf_voucher_generation: false
+  voucher_use: 1
+  voucher_instruction: MyText
+  bonus_exchange: false
+  point_to_bonus: 1.5
+  bonus_min_time: 1
+  bonus_max_time: 1
+  gift_min_time: 1
+  gift_max_time: 1
+  no_card_instruction: MyText
+  other_instruction: MyText

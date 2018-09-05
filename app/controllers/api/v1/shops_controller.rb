@@ -12,7 +12,7 @@ module Api
 
       # GET /shops/1
       def show
-        render json: @shop
+        render json: @shop, meta: default_meta, include: [params[:include]]
       end
 
       # POST /shops
@@ -51,7 +51,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def shop_params
-          params.require(:shop).permit(:name, :brand_id, :accepted_rules, :email, :description, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules)
+          params.require(:shop).permit(:name, :brand_id, :accepted_rules, :customer_email, :order_email, :description, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules)
         end
     end
   end

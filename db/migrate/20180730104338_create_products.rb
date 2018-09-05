@@ -80,6 +80,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.integer :barcode 
       
       t.string :campaign_label
+      t.boolean :gift_mode
 
       t.timestamps
     end

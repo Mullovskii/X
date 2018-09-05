@@ -21,6 +21,11 @@ module Api
         @feed = Feed.new(feed_params)
         if current_user.employed_in(@feed.shop)
           if @feed.save
+            if reward = @feed.shop.reward 
+              if reward.country_id == @feed.country_id && reward.available_products == "all_country_products" && reward.product_reward == true
+                @feed.update(gift_mode: true)
+              end 
+            end
             render json: @feed, status: :created, meta: default_meta, include: [params[:include]]
           else
             render json: @feed.errors, status: :unprocessable_entity
@@ -60,7 +65,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def feed_params
-          params.require(:feed).permit(:mode, :kind, :delivery_id, :shop_id, :format, :country_id, :currency_id, :name, :url, :author_id, :author_type)
+          params.require(:feed).permit(:mode, :kind, :delivery_id, :shop_id, :format, :country_id, :currency_id, :name, :url, :author_id, :author_type, :gift_mode)
         end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180802121915) do
+ActiveRecord::Schema.define(version: 20180903160623) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,25 +33,20 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "shop_id"
     t.integer "author_id"
     t.string "author_type"
-    t.string "name"
-    t.date "start_date"
-    t.date "end_date"
-    t.integer "country_id"
-    t.integer "currency_id"
-    t.boolean "read_user_data"
-    t.integer "target", default: 0
-    t.integer "product_target"
-    t.integer "reward", default: 0
     t.integer "status", default: 0
-    t.integer "swap_option", default: 0
-    t.text "swap_details"
-    t.decimal "bonus_per_click", precision: 5, scale: 3, default: "0.0"
-    t.integer "followers_threshold", default: 0
+    t.string "name"
+    t.integer "country_id"
+    t.integer "kind", default: 0
+    t.boolean "link_referral"
     t.string "link_1"
     t.string "link_2"
     t.string "link_3"
     t.string "link_4"
     t.string "link_5"
+    t.float "points_per_referral", default: 0.0
+    t.boolean "product_tagging"
+    t.float "points_per_tag", default: 0.0
+    t.integer "campaign_products", default: 0
     t.string "label_1"
     t.string "label_2"
     t.string "label_3"
@@ -95,6 +90,30 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_country_shops_on_country_id"
     t.index ["shop_id"], name: "index_country_shops_on_shop_id"
+  end
+
+  create_table "coupons", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.integer "kind"
+    t.integer "discount_mode"
+    t.integer "discount"
+    t.integer "discount_products"
+    t.integer "additional_info"
+    t.integer "coupon_use"
+    t.text "instruction"
+    t.string "background"
+    t.float "point_price"
+    t.string "secret_key"
+    t.integer "generated_amount"
+    t.integer "generated_number"
+    t.integer "parent_id"
+    t.integer "status"
+    t.integer "buyer_id"
+    t.integer "purchased_at"
+    t.integer "utilized_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_coupons_on_shop_id"
   end
 
   create_table "currencies", force: :cascade do |t|
@@ -155,6 +174,7 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "currency_id"
     t.string "name"
     t.string "url"
+    t.boolean "gift_mode"
     t.integer "author_id"
     t.string "author_type"
     t.datetime "created_at", null: false
@@ -232,6 +252,15 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "product_coupons", force: :cascade do |t|
+    t.bigint "product_id"
+    t.bigint "coupon_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coupon_id"], name: "index_product_coupons_on_coupon_id"
+    t.index ["product_id"], name: "index_product_coupons_on_product_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.integer "feed_id"
     t.integer "shop_id"
@@ -303,6 +332,7 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "production_country"
     t.integer "barcode"
     t.string "campaign_label"
+    t.boolean "gift_mode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -314,6 +344,35 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.string "followed_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "rewards", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.bigint "country_id"
+    t.boolean "product_reward"
+    t.float "point_to_usd", default: 0.0
+    t.float "point_to_lcy", default: 0.0
+    t.bigint "currency_id"
+    t.integer "fullfilment_mode"
+    t.integer "available_products"
+    t.integer "delivery_mode"
+    t.integer "gift_delivery_id"
+    t.boolean "surf_voucher_generation"
+    t.integer "voucher_use"
+    t.text "voucher_instruction"
+    t.boolean "bonus_exchange"
+    t.float "point_to_bonus", default: 0.0
+    t.integer "bonus_min_time"
+    t.integer "bonus_max_time"
+    t.integer "gift_min_time"
+    t.integer "gift_max_time"
+    t.text "no_card_instruction"
+    t.text "other_instruction"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_rewards_on_country_id"
+    t.index ["currency_id"], name: "index_rewards_on_currency_id"
+    t.index ["shop_id"], name: "index_rewards_on_shop_id"
   end
 
   create_table "shops", force: :cascade do |t|
@@ -335,7 +394,8 @@ ActiveRecord::Schema.define(version: 20180802121915) do
     t.integer "brand_id"
     t.integer "registration_number"
     t.string "phone"
-    t.string "email"
+    t.string "customer_email"
+    t.string "order_email"
     t.integer "integration_type"
     t.text "payment_rules"
     t.boolean "accepted_rules", default: false
@@ -430,6 +490,7 @@ ActiveRecord::Schema.define(version: 20180802121915) do
 
   add_foreign_key "country_shops", "countries"
   add_foreign_key "country_shops", "shops"
+  add_foreign_key "coupons", "shops"
   add_foreign_key "deliveries", "countries"
   add_foreign_key "deliveries", "shops"
   add_foreign_key "employments", "shops"
@@ -439,6 +500,11 @@ ActiveRecord::Schema.define(version: 20180802121915) do
   add_foreign_key "gifts", "campaigns"
   add_foreign_key "gifts", "products"
   add_foreign_key "gifts", "shops"
+  add_foreign_key "product_coupons", "coupons"
+  add_foreign_key "product_coupons", "products"
+  add_foreign_key "rewards", "countries"
+  add_foreign_key "rewards", "currencies"
+  add_foreign_key "rewards", "shops"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"

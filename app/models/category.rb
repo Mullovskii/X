@@ -4,4 +4,6 @@ class Category < ApplicationRecord
 	has_many :tags, as: :tagger, dependent: :destroy
 	has_many :products, through: :tags, :source => :tagged,
     :source_type => 'Product'
+    has_many :shops, through: :tags, :source => :tagged,
+    :source_type => 'Shop'
 end
