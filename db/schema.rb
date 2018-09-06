@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180903160623) do
+ActiveRecord::Schema.define(version: 20180905203340) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -242,6 +242,21 @@ ActiveRecord::Schema.define(version: 20180903160623) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.integer "ordered_id"
+    t.string "ordered_type"
+    t.bigint "shop_id"
+    t.bigint "user_id"
+    t.integer "status"
+    t.integer "kind"
+    t.float "value"
+    t.datetime "confirmed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_orders_on_shop_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "picks", force: :cascade do |t|
     t.integer "author_id"
     t.string "author_type"
@@ -417,6 +432,19 @@ ActiveRecord::Schema.define(version: 20180903160623) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "swaps", force: :cascade do |t|
+    t.bigint "user_id"
+    t.float "points"
+    t.float "bonuses"
+    t.bigint "shop_id"
+    t.integer "status"
+    t.bigint "card_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_swaps_on_shop_id"
+    t.index ["user_id"], name: "index_swaps_on_user_id"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.integer "tagger_id"
     t.string "tagger_type"
@@ -502,11 +530,15 @@ ActiveRecord::Schema.define(version: 20180903160623) do
   add_foreign_key "feed_campaigns", "feeds"
   add_foreign_key "gifts", "countries"
   add_foreign_key "gifts", "shops"
+  add_foreign_key "orders", "shops"
+  add_foreign_key "orders", "users"
   add_foreign_key "product_coupons", "coupons"
   add_foreign_key "product_coupons", "products"
   add_foreign_key "rewards", "countries"
   add_foreign_key "rewards", "currencies"
   add_foreign_key "rewards", "shops"
+  add_foreign_key "swaps", "shops"
+  add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"

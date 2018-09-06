@@ -53,10 +53,9 @@ Rails.application.routes.draw do
       resources :employments
       
       
-      
-      
-
     	put '/users/:id', to: 'registrations#update'
+      get 'users/:id/feed' => 'users#feed'
+      get '/users/:username' => 'users#show', :constrain => { :username => /[a-zA-Z-]+/ }
     end
   end
 

@@ -14,11 +14,17 @@ class Pick < ApplicationRecord
 	has_many :hashtags, through: :tags, :source => :tagger,
     :source_type => 'Hashtag'
     has_many :clicks
+    has_many :external_links
 
     enum status: [:edited, :published, :moderated]
 
     after_update :main_image_updater
 
+    default_scope { order("created_at DESC") }
+
+    def external_links
+        self.links.where(kind: "external_link")
+    end
 
     def main_image_updater
     	if self.status == "published" && self.media.first

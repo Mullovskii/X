@@ -18,7 +18,11 @@ class Product < ApplicationRecord
     has_many :product_coupons
     has_many :coupons, through: :product_coupons
 
+    has_many :active_campaigns
 
+    def active_campaigns
+        self.feed.campaigns.where(status: "fresh")
+    end
  
     
 end
