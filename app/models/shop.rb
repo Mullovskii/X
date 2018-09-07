@@ -12,10 +12,22 @@ class Shop < ApplicationRecord
 	has_many :employees, through: :employments, :source => :user
 	has_many :gifts
 	has_one :reward
+	has_many :picks, as: :author, dependent: :destroy
+
+	has_many :active_relationships, as: :follower, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+	has_many :passive_relationships, as: :followed, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
+
+	  
+	has_many :following, through: :active_relationships, :source => :follower,
+	    :source_type => 'User'
+	has_many :followers, through: :passive_relationships, :source => :followed,
+	    :source_type => 'User'
 
 	has_many :tags, as: :tagged, dependent: :destroy
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
+    has_many :hashtags, through: :tags, :source => :tagger,
+    :source_type => 'Hashtag'
 	
 	has_many :links, as: :author, dependent: :destroy
 	validates :name, :uniqueness => { :allow_blank => false, :case_sensitive => false }
@@ -30,6 +42,20 @@ class Shop < ApplicationRecord
 
 	def employ_owner
 		Employment.create(user_id: self.owner_id, shop_id: self.id, status: :approved)
+	end
+
+	def active_campaigns
+		self.campaigns.where(status: "fresh")
+	end
+
+	def gift_products
+		products = []
+		self.products.each do |product|
+			if product.feed.gift_mode == true || product.gift_mode == true
+				products << product
+			end
+		end
+		products
 	end
 
 end

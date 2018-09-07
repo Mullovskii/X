@@ -4,4 +4,7 @@ class Link < ApplicationRecord
 	belongs_to :author, polymorphic: true
 	belongs_to :campaign, polymorphic: true, optional: true
 	enum kind: [:product_pick, :brand_pick, :external_link]
+
+	default_scope { order("created_at DESC") }
+	
 end

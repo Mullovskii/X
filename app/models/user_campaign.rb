@@ -3,5 +3,5 @@ class UserCampaign < ApplicationRecord
   belongs_to :campaign
   belongs_to :link
   belongs_to :gift, optional: true
-  enum status: [:off, :on]
+  enum status: [:on, :off]
 end

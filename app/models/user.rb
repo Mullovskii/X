@@ -36,6 +36,9 @@ class User < ApplicationRecord
 
 
     has_many :tags, as: :tagged, dependent: :destroy
+    has_many :hashtags, through: :tags, :source => :tagger,
+    :source_type => 'Hashtag'
+    
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
 
@@ -55,12 +58,12 @@ class User < ApplicationRecord
 
 	def true_picker?(user_campaign)
 		if user_campaign.link.linking.author == self
-			if user_campaign.campaign.target == "link" && user_campaign.link.kind == "external_link" 
+			if user_campaign.campaign.link_referral == true && user_campaign.link.kind == "external_link" 
 				if user_campaign.link.external_link.match?(user_campaign.campaign.link_1) || user_campaign.link.external_link.match?(user_campaign.campaign.link_2) || user_campaign.link.external_link.match?(user_campaign.campaign.link_3) || user_campaign.link.external_link.match?(user_campaign.campaign.link_4) || user_campaign.link.external_link.match?(user_campaign.campaign.link_5)
 					true
 				end
-			elsif user_campaign.campaign.target == "product" && user_campaign.link.kind == "product_pick" 
-				if user_campaign.campaign.product_target == "all_products" && user_campaign.link.linked.shop == user_campaign.campaign.shop || user_campaign.campaign.target == "product" && user_campaign.campaign.product_target == "feed" && user_campaign.campaign.feeds.where(id: user_campaign.link.linked.feed.id).take || user_campaign.campaign.label_1 == user_campaign.link.linked.campaign_label && user_campaign.link.linked.shop == user_campaign.campaign.shop
+			elsif user_campaign.campaign.product_tagging == true && user_campaign.link.kind == "product_pick" 
+				if user_campaign.campaign.campaign_products == "all_country_products" && user_campaign.link.linked.shop == user_campaign.campaign.shop || user_campaign.campaign.campaign_products == "selected_feeds" && user_campaign.campaign.feeds.where(id: user_campaign.link.linked.feed.id).take || user_campaign.campaign.label_1 == user_campaign.link.linked.campaign_label && user_campaign.link.linked.shop == user_campaign.campaign.shop
 					true
 				end
 			end

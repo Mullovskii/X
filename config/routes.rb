@@ -11,16 +11,18 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
     	devise_for :users
-      resources :picks
+      resources :picks do
+        resources :media
+        resources :links
+      end
       resources :brands
-      resources :media
-      resources :links
       resources :shops do
         resources :deliveries do
           resources :tariffs
         end
         resources :feeds
-        resources :products
+        resources :products do 
+        end
         resources :gifts
         resources :rewards
         resources :coupons do

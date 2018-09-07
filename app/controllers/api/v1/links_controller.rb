@@ -19,7 +19,8 @@ module Api
                   campaigns << campaign
                 end
               end
-              render json: campaigns 
+              response = { :link => @link, :campaigns => campaigns }
+              render json: response
             
             elsif @link.kind == "product_pick"
               campaigns = []
@@ -28,8 +29,10 @@ module Api
               elsif active_campaigns = @link.linked.shop.campaigns.where(label_1: @link.linked.campaign_label).take
                 campaigns << active_campaigns
               end
-      
-              render json: campaigns         
+              
+              response = { :link => @link, :campaigns => campaigns }
+              render json: response
+    
             else
               render json: @link, status: :created, meta: default_meta, include: [params[:include]]
             end

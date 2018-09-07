@@ -20,6 +20,8 @@ class Product < ApplicationRecord
 
     has_many :active_campaigns
 
+    default_scope { order("created_at DESC") }
+
     def active_campaigns
         self.feed.campaigns.where(status: "fresh")
     end
