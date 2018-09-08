@@ -37,6 +37,7 @@ class Shop < ApplicationRecord
 
 	enum status: [:user_owned, :brand_owned, :marketplace]
 	enum kyc: [:unverified, :in_progress, :verified]
+	enum integration_type: [:manual, :api]
 
 	after_create :employ_owner
 
@@ -49,13 +50,8 @@ class Shop < ApplicationRecord
 	end
 
 	def gift_products
-		products = []
-		self.products.each do |product|
-			if product.feed.gift_mode == true || product.gift_mode == true
-				products << product
-			end
-		end
-		products
+		self.products.where(gift_mode: true)
 	end
+
 
 end

@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180905203340) do
+ActiveRecord::Schema.define(version: 20180907134757) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "shop_id"
+    t.float "balance", default: 0.0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_accounts_on_shop_id"
+    t.index ["user_id"], name: "index_accounts_on_user_id"
+  end
 
   create_table "brands", force: :cascade do |t|
     t.string "name"
@@ -109,7 +119,7 @@ ActiveRecord::Schema.define(version: 20180905203340) do
     t.integer "number_of_coupons"
     t.integer "number"
     t.integer "parent_id"
-    t.integer "status"
+    t.integer "status", default: 0
     t.integer "buyer_id"
     t.integer "purchased_at"
     t.integer "utilized_at"
@@ -227,10 +237,14 @@ ActiveRecord::Schema.define(version: 20180905203340) do
     t.string "linking_type"
     t.integer "linked_id"
     t.string "linked_type"
+    t.bigint "medium_id"
+    t.bigint "x"
+    t.bigint "y"
     t.string "external_link"
     t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["medium_id"], name: "index_links_on_medium_id"
   end
 
   create_table "media", force: :cascade do |t|
@@ -243,14 +257,16 @@ ActiveRecord::Schema.define(version: 20180905203340) do
   end
 
   create_table "orders", force: :cascade do |t|
+    t.integer "transaction_id"
     t.integer "ordered_id"
     t.string "ordered_type"
     t.bigint "shop_id"
     t.bigint "user_id"
     t.integer "status"
     t.integer "kind"
-    t.float "value"
+    t.float "amount"
     t.datetime "confirmed_at"
+    t.datetime "cancelled_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["shop_id"], name: "index_orders_on_shop_id"
@@ -279,6 +295,7 @@ ActiveRecord::Schema.define(version: 20180905203340) do
 
   create_table "products", force: :cascade do |t|
     t.integer "feed_id"
+    t.integer "country_id"
     t.integer "shop_id"
     t.integer "custom_id"
     t.integer "status", default: 0
@@ -305,6 +322,7 @@ ActiveRecord::Schema.define(version: 20180905203340) do
     t.float "price", default: 0.0
     t.float "sale_price", default: 0.0
     t.datetime "sale_price_effective_date"
+    t.float "point_price", default: 0.0
     t.string "availability"
     t.datetime "availability_date"
     t.datetime "expiration_date"
@@ -412,7 +430,7 @@ ActiveRecord::Schema.define(version: 20180905203340) do
     t.string "phone"
     t.string "customer_email"
     t.string "order_email"
-    t.integer "integration_type"
+    t.integer "integration_type", default: 0
     t.text "payment_rules"
     t.boolean "accepted_rules", default: false
     t.datetime "created_at", null: false
@@ -471,11 +489,24 @@ ActiveRecord::Schema.define(version: 20180905203340) do
     t.index ["delivery_id"], name: "index_tariffs_on_delivery_id"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "order_id_id"
+    t.integer "purchased_id"
+    t.string "purchased_type"
+    t.float "amount", default: 0.0
+    t.integer "status", default: 0
+    t.integer "kind", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_transactions_on_account_id"
+    t.index ["order_id_id"], name: "index_transactions_on_order_id_id"
+  end
+
   create_table "user_campaigns", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "campaign_id"
     t.bigint "link_id"
-    t.integer "gift_id"
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -517,6 +548,8 @@ ActiveRecord::Schema.define(version: 20180905203340) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "accounts", "shops"
+  add_foreign_key "accounts", "users"
   add_foreign_key "country_shops", "countries"
   add_foreign_key "country_shops", "shops"
   add_foreign_key "coupons", "countries"
@@ -530,6 +563,7 @@ ActiveRecord::Schema.define(version: 20180905203340) do
   add_foreign_key "feed_campaigns", "feeds"
   add_foreign_key "gifts", "countries"
   add_foreign_key "gifts", "shops"
+  add_foreign_key "links", "media"
   add_foreign_key "orders", "shops"
   add_foreign_key "orders", "users"
   add_foreign_key "product_coupons", "coupons"
@@ -540,6 +574,7 @@ ActiveRecord::Schema.define(version: 20180905203340) do
   add_foreign_key "swaps", "shops"
   add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
+  add_foreign_key "transactions", "accounts"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"

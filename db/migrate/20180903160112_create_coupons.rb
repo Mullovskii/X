@@ -17,7 +17,7 @@ class CreateCoupons < ActiveRecord::Migration[5.1]
       t.integer :number_of_coupons
       t.integer :number
       t.integer :parent_id
-      t.integer :status
+      t.integer :status, default: 0
       t.integer :buyer_id
       t.integer :purchased_at
       t.integer :utilized_at

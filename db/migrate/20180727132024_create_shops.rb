@@ -21,7 +21,7 @@ class CreateShops < ActiveRecord::Migration[5.1]
       t.string :phone
       t.string :customer_email
       t.string :order_email
-      t.integer :integration_type
+      t.integer :integration_type, default: 0
       t.text :payment_rules
       t.boolean :accepted_rules, default: false
 

@@ -3,4 +3,5 @@ class RewardSerializer < ActiveModel::Serializer
   has_one :shop
   has_one :country
   has_one :currency
+  has_many :gift_products
 end

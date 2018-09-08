@@ -2,6 +2,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
   def change
     create_table :products do |t|
       t.integer :feed_id #surf
+      t.integer :country_id #surf
       t.integer :shop_id #surf 
       t.integer :custom_id 
       # t.integer :author_id #surf 
@@ -34,6 +35,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.float :price, default: 0, precision: 5, scale: 3
       t.float :sale_price, default: 0, precision: 5, scale: 3
       t.datetime :sale_price_effective_date
+      t.float :point_price, default: 0, precision: 5, scale: 3
       t.string :availability
       t.datetime :availability_date
       t.datetime :expiration_date

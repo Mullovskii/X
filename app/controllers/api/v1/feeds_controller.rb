@@ -39,6 +39,15 @@ module Api
       def update
         if current_user.employed_in(@feed.shop)
           if @feed.update(feed_params)
+            if @feed.gift_mode_changed? || @feed.gift_mode == true
+              @feed.products.each do |product|
+                product.update(gift_mode: true)
+              end
+            elsif @feed.gift_mode_changed? || @feed.gift_mode == false
+               @feed.products.each do |product|
+                product.update(gift_mode: false)
+              end
+            end
             render json: @feed
           else
             render json: @feed.errors, status: :unprocessable_entity

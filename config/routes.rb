@@ -2,6 +2,7 @@ require 'api_constraints'
 
 Rails.application.routes.draw do
    
+
  
   devise_for :users, controllers: { registrations: "registrations" }
   post '/api/auth_user' => 'authentication#authenticate_user'
@@ -10,7 +11,10 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
-    	devise_for :users
+    	devise_for :users do 
+         resources :accounts, only: [:index, :show]
+         resources :transactions
+      end
       resources :picks do
         resources :media
         resources :links
@@ -38,7 +42,11 @@ Rails.application.routes.draw do
       end
       
       resources :showrooms
-      resources :products
+      resources :products do
+        collection do
+          get 'gift_products', to: 'products#gift_products'
+        end
+      end
       resources :categories
       resources :tags
       resources :hashtags
@@ -53,6 +61,7 @@ Rails.application.routes.draw do
       resources :user_campaigns
       resources :relationships
       resources :employments
+
       
       
     	put '/users/:id', to: 'registrations#update'

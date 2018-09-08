@@ -23,7 +23,7 @@ class Product < ApplicationRecord
     default_scope { order("created_at DESC") }
 
     def active_campaigns
-        self.feed.campaigns.where(status: "fresh")
+        self.feed.campaigns.where(status: "fresh") if self.feed
     end
  
     

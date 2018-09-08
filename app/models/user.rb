@@ -38,9 +38,13 @@ class User < ApplicationRecord
     has_many :tags, as: :tagged, dependent: :destroy
     has_many :hashtags, through: :tags, :source => :tagger,
     :source_type => 'Hashtag'
-    
+
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
+
+    has_many :accounts
+    has_many :transactions
+    has_many :orders
 
 
 
@@ -69,5 +73,22 @@ class User < ApplicationRecord
 			end
 		end
 	end
+
+	def has_account?(transaction)
+		if self.accounts.where(shop_id == transaction.purchased.shop_id).take
+			true
+		else
+			false
+		end
+	end
+
+	def has_points?(transaction)
+		if self.accounts.where(shop_id == transaction.purchased.shop_id).take.balance >= transaction.amount
+			true
+		else 
+			false
+		end
+	end
+
 
 end

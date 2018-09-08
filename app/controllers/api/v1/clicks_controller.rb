@@ -7,7 +7,6 @@ module Api
       # GET /clicks
       def index
         @clicks = Click.all
-
         render json: @clicks
       end
 
@@ -49,7 +48,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def click_params
-          params.require(:click).permit(:pick_id, :product_id, :link, :status, :trigger_time)
+          params.require(:click).permit(:pick_id, :user_id, :link_id, :status, :trigger_time)
         end
     end
    end
