@@ -5,33 +5,41 @@ module Api
       before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /clicks
-      def index
-        @clicks = Click.all
-        render json: @clicks
-      end
+      # def index
+      #   @clicks = Click.all
+      #   render json: @clicks
+      # end
 
       # GET /clicks/1
-      def show
-        render json: @click
-      end
+      # def show
+      #   render json: @click
+      # end
 
       # POST /clicks
       def create
-        @click = current_user.my_clicks.build(click_params.merge({ clicker_id: current_user.id }))
-        
-        if @click.save
-          render json: @click, status: :created
-        else
-          render json: @click.errors, status: :unprocessable_entity
-        end
+          @click = current_user.clicks.build(click_params.merge({ user_id: current_user.id }))
+          if @click.valid && @click.authentic
+            if @click.save
+              render json: @click, status: :created
+            else
+              render json: @click.errors, status: :unprocessable_entity
+            end
+          else
+            render json: {errors: ['Click exists. Dont fraud']}, status: :unauthorized
+          end        
       end
 
       # PATCH/PUT /clicks/1
       def update
-        if @click.update(click_params)
-          render json: @click
+        unless @click.status == "on"
+          if @click.update(click_params)
+            @click.add_points
+            render json: @click
+          else
+            render json: @click.errors, status: :unprocessable_entity
+          end
         else
-          render json: @click.errors, status: :unprocessable_entity
+          render json: {errors: ['Click is already on. Dont fraud']}, status: :unauthorized
         end
       end
 
@@ -48,7 +56,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def click_params
-          params.require(:click).permit(:pick_id, :user_id, :link_id, :status, :trigger_time)
+          params.require(:click).permit(:pick_id, :link_id, :status, :trigger_time)
         end
     end
    end

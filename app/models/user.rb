@@ -13,8 +13,8 @@ class User < ApplicationRecord
 	has_many :picks, as: :author, dependent: :destroy
 	has_many :shops, as: :owner
 	has_one :showroom, as: :owner
-	has_many :winner_clicks, class_name: "Click", foreign_key: "winner_id"
-	has_many :my_clicks, class_name: "Click", foreign_key: "clicker_id"
+	has_many :clicks
+	
 
 	has_many :user_campaigns
 	has_many :campaigns, through: :user_campaigns
@@ -74,16 +74,17 @@ class User < ApplicationRecord
 		end
 	end
 
-	def has_account?(transaction)
-		if self.accounts.where(shop_id == transaction.purchased.shop_id).take
+	def has_account?(order)
+		if self.accounts.where(shop_id: order.shop_id).take
 			true
 		else
 			false
 		end
 	end
 
-	def has_points?(transaction)
-		if self.accounts.where(shop_id == transaction.purchased.shop_id).take.balance >= transaction.amount
+	def has_points?(order)
+		
+		if self.accounts.where(shop_id: order.shop_id).take.balance >= order.amount
 			true
 		else 
 			false

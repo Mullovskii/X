@@ -17,7 +17,9 @@ Rails.application.routes.draw do
       end
       resources :picks do
         resources :media
-        resources :links
+        resources :links do
+          resources :clicks
+        end
       end
       resources :brands
       resources :shops do
@@ -50,20 +52,13 @@ Rails.application.routes.draw do
       resources :categories
       resources :tags
       resources :hashtags
-      
       resources :countries
       resources :country_shops
-      
-      
       resources :currencies
-      
-      resources :clicks
       resources :user_campaigns
       resources :relationships
       resources :employments
-
-      
-      
+      resources :orders
     	put '/users/:id', to: 'registrations#update'
       get 'users/:id/feed' => 'users#feed'
       get '/users/:username' => 'users#show', :constrain => { :username => /[a-zA-Z-]+/ }

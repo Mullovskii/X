@@ -1,7 +1,7 @@
 class CreateOrders < ActiveRecord::Migration[5.1]
   def change
     create_table :orders do |t|
-      t.integer :transaction_id
+      # t.integer :transaction_id
       t.integer :ordered_id
       t.string :ordered_type
       t.references :shop, foreign_key: true

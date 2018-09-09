@@ -1,13 +1,28 @@
 class Click < ApplicationRecord
-	belongs_to :winner, class_name: "User", foreign_key: "winner_id", optional: true
-	belongs_to :clicker, class_name: "User", foreign_key: "clicker_id"
+	
+	belongs_to :user
 	belongs_to :pick
-	belongs_to :product
-	after_create :add_winner
+	belongs_to :link
+	after_create :add_points
 
 	enum status: [:off, :on]
 
-	def add_winner
-		self.update(winner_id: self.pick.author_id)
+	def authentic
+		unless Click.where(link_id: self.link_id, user_id: self.user_id).take
+			true
+		end
 	end
+
+	def valid
+		self.link.campaign
+	end
+
+	def add_points
+		if self.status == "on"
+			account = self.link.linking.author.accounts.where(shop_id: self.link.campaign.shop.id).take 
+			account.balance += self.link.campaign.points_per_referral
+			account.save
+		end
+	end
+
 end

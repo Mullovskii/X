@@ -74,11 +74,9 @@ ActiveRecord::Schema.define(version: 20180907134757) do
   end
 
   create_table "clicks", force: :cascade do |t|
-    t.integer "clicker_id"
-    t.integer "winner_id"
+    t.integer "user_id"
     t.integer "pick_id"
-    t.integer "product_id"
-    t.string "link"
+    t.integer "link_id"
     t.integer "status", default: 0
     t.datetime "trigger_time"
     t.datetime "created_at", null: false
@@ -257,7 +255,6 @@ ActiveRecord::Schema.define(version: 20180907134757) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.integer "transaction_id"
     t.integer "ordered_id"
     t.string "ordered_type"
     t.bigint "shop_id"
@@ -491,7 +488,7 @@ ActiveRecord::Schema.define(version: 20180907134757) do
 
   create_table "transactions", force: :cascade do |t|
     t.bigint "account_id"
-    t.bigint "order_id_id"
+    t.bigint "order_id"
     t.integer "purchased_id"
     t.string "purchased_type"
     t.float "amount", default: 0.0
@@ -500,7 +497,7 @@ ActiveRecord::Schema.define(version: 20180907134757) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_transactions_on_account_id"
-    t.index ["order_id_id"], name: "index_transactions_on_order_id_id"
+    t.index ["order_id"], name: "index_transactions_on_order_id"
   end
 
   create_table "user_campaigns", force: :cascade do |t|
@@ -575,6 +572,7 @@ ActiveRecord::Schema.define(version: 20180907134757) do
   add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "transactions", "accounts"
+  add_foreign_key "transactions", "orders"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"

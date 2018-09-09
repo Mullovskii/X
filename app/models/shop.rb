@@ -12,6 +12,7 @@ class Shop < ApplicationRecord
 	has_many :employees, through: :employments, :source => :user
 	has_many :gifts
 	has_one :reward
+	has_many :orders
 	has_many :picks, as: :author, dependent: :destroy
 
 	has_many :active_relationships, as: :follower, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
