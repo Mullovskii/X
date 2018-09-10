@@ -20,21 +20,29 @@ module Api
       # POST /orders
       def create
         @order = current_user.orders.build(order_params.merge({user_id: current_user.id}))
-        if current_user.has_account?(@order) && current_user.has_points?(@order)   
-          if @order.save
-            render json: @order, status: :created
+        unless Order.where(user_id: @order.user_id, ordered_id: @order.ordered_id, ordered_type: @order.ordered_type, status: ["pending", "authorized", "fulfilled"]).take 
+          if @order.ordered.gift_mode == true && current_user.has_account?(@order) && current_user.has_points?(@order) 
+            if @order.save
+              render json: @order, status: :created
+            else
+              render json: @order.errors, status: :unprocessable_entity
+            end
           else
-            render json: @order.errors, status: :unprocessable_entity
+            render json: {errors: ['Low funds']}, status: :unauthorized
           end
         else
-          render json: {errors: ['Low funds']}, status: :unauthorized
+          render json: {errors: ['Order already exists']}, status: :unauthorized
         end
+        
       end
 
       # PATCH/PUT /orders/1
       def update
-        if current_user.employed_in(@order.shop) 
+        if current_user.employed_in(@order.shop) || @order.user_id == current_user.id
           if @order.update(order_params)
+            if @order.status == "cancelled"
+              @order.operation.destroy if @order.operation
+            end
             render json: @order
           else
             render json: @order.errors, status: :unprocessable_entity

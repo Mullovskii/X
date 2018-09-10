@@ -5,7 +5,7 @@ class CreateLinks < ActiveRecord::Migration[5.1]
       t.string :author_type
       t.integer :linking_id
       t.string :linking_type
-      t.integer :linked_id
+      t.integer :linked_id #product/brand/external link
       t.string :linked_type
       t.references :medium, foreign_key: true
       t.bigint :x

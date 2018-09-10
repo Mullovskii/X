@@ -8,5 +8,17 @@ class Link < ApplicationRecord
 	enum kind: [:product_pick, :brand_pick, :external_link]
 
 	default_scope { order("created_at DESC") }
-	
+
+	after_create :add_to_showroom
+
+	def add_to_showroom
+		if self.kind == "product_pick"
+			if self.author_type == "User"
+				unless self.author.showroom
+					ProductShowroom.create(product_id: self.linked_id, showroom_id: self.author.showroom.id) 
+				end
+			end
+		end
+	end
+
 end

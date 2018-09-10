@@ -10,7 +10,6 @@ module Api
         @link = current_user.links.build(link_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
         if current_user == @link.linking.author 
           if @link.save
-            
             if @link.kind == "external_link"
               campaigns = []
               Campaign.all.where(link_referral: true).each do |campaign|

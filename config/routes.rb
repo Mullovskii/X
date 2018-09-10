@@ -43,11 +43,14 @@ Rails.application.routes.draw do
         # resources :feeds
       end
       
-      resources :showrooms
+      
       resources :products do
         collection do
           get 'gift_products', to: 'products#gift_products'
         end
+      end
+      resources :showrooms do
+        resources :product_showrooms
       end
       resources :categories
       resources :tags

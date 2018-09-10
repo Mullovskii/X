@@ -2,6 +2,7 @@ class Product < ApplicationRecord
 	belongs_to :shop
 	belongs_to :feed, optional: true
 	belongs_to :brand, optional: true
+    has_many :orders, as: :ordered
 
 	has_many :tags, as: :tagged, dependent: :destroy
 	has_many :categories, through: :tags, :source => :tagger,

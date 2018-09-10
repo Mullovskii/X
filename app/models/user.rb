@@ -45,7 +45,7 @@ class User < ApplicationRecord
     has_many :accounts
     has_many :transactions
     has_many :orders
-
+    
 
 
 	def generate_showroom
