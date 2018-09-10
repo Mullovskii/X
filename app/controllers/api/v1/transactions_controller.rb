@@ -63,7 +63,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def transaction_params
-          params.require(:transaction).permit(:account_id, :purchased_id, :purchased_type, :amount, :status, :order_id)
+          params.require(:transaction).permit(:account_id, :purchased_id, :purchased_type, :amount, :status, :order_id, :swap_id)
         end
     end
   end

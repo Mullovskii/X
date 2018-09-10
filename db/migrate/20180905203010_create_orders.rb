@@ -6,8 +6,8 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.string :ordered_type
       t.references :shop, foreign_key: true
       t.references :user, foreign_key: true
-      t.integer :status
-      t.integer :kind
+      t.integer :status, default: 0
+      t.integer :kind, default: 0
       t.float :amount
       t.datetime :confirmed_at 
       t.datetime :cancelled_at 

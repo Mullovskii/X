@@ -14,7 +14,7 @@ class Link < ApplicationRecord
 	def add_to_showroom
 		if self.kind == "product_pick"
 			if self.author_type == "User"
-				unless self.author.showroom
+				unless self.author.showroom.products.where(id: self.linked_id).take
 					ProductShowroom.create(product_id: self.linked_id, showroom_id: self.author.showroom.id) 
 				end
 			end

@@ -10,9 +10,11 @@ class CreateFeeds < ActiveRecord::Migration[5.1]
       t.integer :currency_id
       t.string :name
       t.string :url
-      t.boolean :gift_mode
+      t.boolean :gift_mode, default: false
       t.integer :author_id
       t.string :author_type
+      t.boolean :sample_mode, default: false
+      t.bigint :sample_threshold
 
       t.timestamps
     end

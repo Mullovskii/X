@@ -82,7 +82,9 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.integer :barcode 
       
       t.string :campaign_label
-      t.boolean :gift_mode
+      t.boolean :gift_mode, default: false
+      t.boolean :sample_mode, default: false
+      t.bigint :sample_threshold
 
       t.timestamps
     end

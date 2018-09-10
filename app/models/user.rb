@@ -14,6 +14,7 @@ class User < ApplicationRecord
 	has_many :shops, as: :owner
 	has_one :showroom, as: :owner
 	has_many :clicks
+	has_many :addresses, as: :owner
 	
 
 	has_many :user_campaigns

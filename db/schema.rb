@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180910091130) do
+ActiveRecord::Schema.define(version: 20180910112736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,21 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.datetime "updated_at", null: false
     t.index ["shop_id"], name: "index_accounts_on_shop_id"
     t.index ["user_id"], name: "index_accounts_on_user_id"
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.bigint "country_id"
+    t.bigint "city_id"
+    t.bigint "street_id"
+    t.bigint "owner_id"
+    t.string "owner_type"
+    t.text "additional"
+    t.string "postcode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_addresses_on_city_id"
+    t.index ["country_id"], name: "index_addresses_on_country_id"
+    t.index ["street_id"], name: "index_addresses_on_street_id"
   end
 
   create_table "brands", force: :cascade do |t|
@@ -71,6 +86,14 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.integer "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "cities", force: :cascade do |t|
+    t.bigint "country_id"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_cities_on_country_id"
   end
 
   create_table "clicks", force: :cascade do |t|
@@ -186,9 +209,11 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.integer "currency_id"
     t.string "name"
     t.string "url"
-    t.boolean "gift_mode"
+    t.boolean "gift_mode", default: false
     t.integer "author_id"
     t.string "author_type"
+    t.boolean "sample_mode", default: false
+    t.bigint "sample_threshold"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -259,8 +284,8 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.string "ordered_type"
     t.bigint "shop_id"
     t.bigint "user_id"
-    t.integer "status"
-    t.integer "kind"
+    t.integer "status", default: 0
+    t.integer "kind", default: 0
     t.float "amount"
     t.datetime "confirmed_at"
     t.datetime "cancelled_at"
@@ -373,7 +398,9 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.string "production_country"
     t.integer "barcode"
     t.string "campaign_label"
-    t.boolean "gift_mode"
+    t.boolean "gift_mode", default: false
+    t.boolean "sample_mode", default: false
+    t.bigint "sample_threshold"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -457,15 +484,25 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "streets", force: :cascade do |t|
+    t.bigint "city_id"
+    t.text "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_streets_on_city_id"
+  end
+
   create_table "swaps", force: :cascade do |t|
     t.bigint "user_id"
-    t.float "points"
+    t.bigint "account_id"
+    t.float "amount"
     t.float "bonuses"
     t.bigint "shop_id"
     t.integer "status"
     t.bigint "card_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_swaps_on_account_id"
     t.index ["shop_id"], name: "index_swaps_on_shop_id"
     t.index ["user_id"], name: "index_swaps_on_user_id"
   end
@@ -499,6 +536,7 @@ ActiveRecord::Schema.define(version: 20180910091130) do
   create_table "transactions", force: :cascade do |t|
     t.bigint "account_id"
     t.bigint "order_id"
+    t.bigint "swap_id"
     t.integer "purchased_id"
     t.string "purchased_type"
     t.float "amount", default: 0.0
@@ -508,6 +546,7 @@ ActiveRecord::Schema.define(version: 20180910091130) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["order_id"], name: "index_transactions_on_order_id"
+    t.index ["swap_id"], name: "index_transactions_on_swap_id"
   end
 
   create_table "user_campaigns", force: :cascade do |t|
@@ -557,6 +596,10 @@ ActiveRecord::Schema.define(version: 20180910091130) do
 
   add_foreign_key "accounts", "shops"
   add_foreign_key "accounts", "users"
+  add_foreign_key "addresses", "cities"
+  add_foreign_key "addresses", "countries"
+  add_foreign_key "addresses", "streets"
+  add_foreign_key "cities", "countries"
   add_foreign_key "country_shops", "countries"
   add_foreign_key "country_shops", "shops"
   add_foreign_key "coupons", "countries"
@@ -580,11 +623,14 @@ ActiveRecord::Schema.define(version: 20180910091130) do
   add_foreign_key "rewards", "countries"
   add_foreign_key "rewards", "currencies"
   add_foreign_key "rewards", "shops"
+  add_foreign_key "streets", "cities"
+  add_foreign_key "swaps", "accounts"
   add_foreign_key "swaps", "shops"
   add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "orders"
+  add_foreign_key "transactions", "swaps"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"

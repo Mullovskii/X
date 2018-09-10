@@ -1,6 +1,7 @@
 class Feed < ApplicationRecord
 	belongs_to :shop
 	belongs_to :country
+	belongs_to :delivery
 	has_many :products, dependent: :destroy
 	has_many :gifts, dependent: :destroy
 	has_many :feed_campaigns

@@ -20,8 +20,13 @@ class Product < ApplicationRecord
     has_many :coupons, through: :product_coupons
 
     has_many :active_campaigns
+    has_one :delivery
 
     default_scope { order("created_at DESC") }
+
+    def delivery
+        self.feed.delivery if self.feed
+    end
 
     def active_campaigns
         self.feed.campaigns.where(status: "fresh") if self.feed

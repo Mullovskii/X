@@ -14,6 +14,7 @@ class Shop < ApplicationRecord
 	has_one :reward
 	has_many :orders
 	has_many :picks, as: :author, dependent: :destroy
+	has_many :addresses, as: :owner
 
 	has_many :active_relationships, as: :follower, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
 	has_many :passive_relationships, as: :followed, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy

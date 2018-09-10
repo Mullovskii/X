@@ -13,7 +13,7 @@ module Api
 
       # GET /showrooms/1
       def show
-        render json: @showroom
+        render json: @showroom.products, meta: default_meta, include: [params[:include]]
       end
 
       # POST /showrooms
