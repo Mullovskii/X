@@ -22,6 +22,9 @@ class Product < ApplicationRecord
     has_many :active_campaigns
     has_one :delivery
 
+    after_create :add_country
+    after_update :add_point_prices
+
     default_scope { order("created_at DESC") }
 
     def delivery
@@ -30,6 +33,23 @@ class Product < ApplicationRecord
 
     def active_campaigns
         self.feed.campaigns.where(status: "fresh") if self.feed
+    end
+
+    def add_country
+        self.update(country_id: self.feed.country_id) if self.feed        
+    end
+
+    def add_point_prices
+        if self.saved_change_to_gift_mode?
+            if self.shop.reward && self.shop.reward.product_reward == true
+                if self.shop.reward.currency_id == self.feed.currency_id 
+                    self.point_price = (self.price / self.shop.reward.point_to_lcy*100).round / 100.0
+                else
+                    self.point_price = (self.price / self.feed.currency.usd_rate / self.shop.reward.point_to_usd*100).round / 100.0 
+                end 
+            end
+            self.save
+        end
     end
  
     

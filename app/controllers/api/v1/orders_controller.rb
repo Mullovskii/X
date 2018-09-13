@@ -21,7 +21,7 @@ module Api
       def create
         @order = current_user.orders.build(order_params.merge({user_id: current_user.id}))
         unless Order.where(user_id: @order.user_id, ordered_id: @order.ordered_id, ordered_type: @order.ordered_type, status: ["pending", "authorized", "fulfilled"]).take 
-          if @order.ordered.gift_mode == true && current_user.has_account?(@order) && current_user.has_points?(@order) 
+          if @order.ordered.gift_mode == true && @order.shop_id == @order.ordered.shop_id && current_user.has_account?(@order) && @order.amount == @order.ordered.point_price && current_user.has_points?(@order) 
             if @order.save
               render json: @order, status: :created
             else
@@ -64,7 +64,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def order_params
-          params.require(:order).permit(:ordered_id, :ordered_type, :shop_id, :user_id, :status, :kind, :amount, :confirmed_at, :cancelled_at  )
+          params.require(:order).permit(:ordered_id, :ordered_type, :shop_id, :amount, :status, :kind, :confirmed_at, :cancelled_at  )
         end
     end
   end

@@ -7,4 +7,8 @@ class Gift < ApplicationRecord
 
   enum status: [:on, :off]
 
+  def gift_mode
+    true
+  end
+
 end

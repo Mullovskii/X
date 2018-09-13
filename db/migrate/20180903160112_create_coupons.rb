@@ -12,7 +12,7 @@ class CreateCoupons < ActiveRecord::Migration[5.1]
       t.integer :coupon_use
       t.text :instruction
       t.string :background
-      t.float :points_per_coupon
+      t.float :point_price, default: 0, precision: 5, scale: 3
       t.string :secret
       t.integer :number_of_coupons
       t.integer :number

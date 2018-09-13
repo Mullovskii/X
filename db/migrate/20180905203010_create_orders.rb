@@ -8,7 +8,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.references :user, foreign_key: true
       t.integer :status, default: 0
       t.integer :kind, default: 0
-      t.float :amount
+      t.float :amount, default: 0, precision: 5, scale: 3
       t.datetime :confirmed_at 
       t.datetime :cancelled_at 
 

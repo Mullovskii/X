@@ -65,8 +65,17 @@ Rails.application.routes.draw do
       resources :employments
       resources :orders
       resources :cities
-      resources :countries
-      
+      resources :countries do
+        member do
+            get 'gifts', to: 'countries#gifts'
+            get 'products', to: 'countries#products'
+            get 'shops', to: 'countries#shops'
+          end
+      end
+      resources :streets
+      resources :swaps
+      resources :addresses
+
     	put '/users/:id', to: 'registrations#update'
       get 'users/:id/accounts' => 'users#accounts'
       get 'users/:id/showroom' => 'users#showroom'

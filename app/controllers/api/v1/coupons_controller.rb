@@ -2,7 +2,7 @@ module Api
   module V1
     class CouponsController < ApplicationController
       before_action :set_coupon, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create, :destroy]
+      before_action :authenticate_request!, only: [:show, :update, :create, :destroy]
 
       # GET /coupons
       def index
@@ -13,7 +13,12 @@ module Api
 
       # GET /coupons/1
       def show
-        render json: @coupon
+        if current_user.coupons.where(id: @coupon.id).take
+          response = { :coupon => @coupon, :secret => @coupon.secret }
+          render json: response
+        else
+          render json: @coupon
+        end
       end
 
       # POST /coupons
@@ -60,7 +65,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def coupon_params
-          params.require(:coupon).permit(:shop_id, :country_id, :kind, :discount_mode, :discount, :discount_products, :additional_info, :coupon_use, :instruction, :background, :points_per_coupon, :secret, :number_of_coupons, :number, :status, :buyer_id, :purchased_at, :utilized_at, :currency_id)
+          params.require(:coupon).permit(:shop_id, :country_id, :kind, :discount_mode, :discount, :discount_products, :additional_info, :coupon_use, :instruction, :background, :point_price, :secret, :number_of_coupons, :number, :status, :buyer_id, :purchased_at, :utilized_at, :currency_id)
         end
     end
   end

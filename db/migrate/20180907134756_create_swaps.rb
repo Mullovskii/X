@@ -6,7 +6,7 @@ class CreateSwaps < ActiveRecord::Migration[5.1]
       t.float :amount
       t.float :bonuses
       t.references :shop, foreign_key: true
-      t.integer :status
+      t.integer :status, default: 0
       t.bigint :card_number
 
       t.timestamps

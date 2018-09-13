@@ -31,8 +31,10 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.bigint "street_id"
     t.bigint "owner_id"
     t.string "owner_type"
-    t.text "additional"
+    t.string "building"
+    t.string "apartment"
     t.string "postcode"
+    t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["city_id"], name: "index_addresses_on_city_id"
@@ -135,7 +137,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.integer "coupon_use"
     t.text "instruction"
     t.string "background"
-    t.float "points_per_coupon"
+    t.float "point_price", default: 0.0
     t.string "secret"
     t.integer "number_of_coupons"
     t.integer "number"
@@ -153,7 +155,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
 
   create_table "currencies", force: :cascade do |t|
     t.string "name"
-    t.decimal "usd_rate", precision: 5, scale: 3, default: "0.0"
+    t.decimal "usd_rate", precision: 5, scale: 3, default: "1.0"
     t.decimal "ruble_rate", precision: 5, scale: 3, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -238,7 +240,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.string "image_link_4"
     t.text "secret"
     t.text "comment"
-    t.bigint "points_per_gift", default: 1
+    t.float "point_price", default: 0.0
     t.integer "number_of_gifts"
     t.integer "number"
     t.datetime "created_at", null: false
@@ -286,7 +288,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.bigint "user_id"
     t.integer "status", default: 0
     t.integer "kind", default: 0
-    t.float "amount"
+    t.float "amount", default: 0.0
     t.datetime "confirmed_at"
     t.datetime "cancelled_at"
     t.datetime "created_at", null: false
@@ -487,6 +489,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
   create_table "streets", force: :cascade do |t|
     t.bigint "city_id"
     t.text "name"
+    t.string "postcode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["city_id"], name: "index_streets_on_city_id"
@@ -498,7 +501,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.float "amount"
     t.float "bonuses"
     t.bigint "shop_id"
-    t.integer "status"
+    t.integer "status", default: 0
     t.bigint "card_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

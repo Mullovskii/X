@@ -1,5 +1,6 @@
 class Transaction < ApplicationRecord
   belongs_to :account
+  belongs_to :purchased, polymorphic: true
   belongs_to :order, optional: true
   belongs_to :swap, optional: true
   enum kind: [:points, :real]

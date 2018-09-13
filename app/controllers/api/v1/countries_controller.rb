@@ -1,7 +1,7 @@
 module Api
   module V1
     class CountriesController < ApplicationController
-      before_action :set_country, only: [:show, :update, :destroy]
+      before_action :set_country, only: [:gifts, :show, :update, :destroy, :products, :shops]
       before_action :authenticate_request!, only: [:update, :create]
 
 
@@ -35,6 +35,26 @@ module Api
         else
           render json: @country.errors, status: :unprocessable_entity
         end
+      end
+
+      def gifts
+        @gift_products = Product.all.where(country_id: @country.id, gift_mode: true)
+        render json: @gift_products
+      end
+
+      def products
+        @products = Product.all.where(country_id: @country.id)
+        render json: @products
+      end
+
+      def shops
+        @shops = []
+        Shop.all.each do |shop|
+          if shop.deliveries.where(country_id: @country.id).take
+            @shops << shop
+          end
+        end
+        render json: @shops
       end
 
       # DELETE /countries/1

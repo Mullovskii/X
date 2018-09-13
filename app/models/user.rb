@@ -44,10 +44,14 @@ class User < ApplicationRecord
     :source_type => 'Category'
 
     has_many :accounts
-    has_many :transactions
+    has_many :transactions, through: :accounts
     has_many :orders
+    has_many :authorized_orders
+    has_many :swaps
+    has_many :coupons, through: :transactions, source: :purchased, :source_type => 'Coupon'
+    has_many :products, through: :transactions, source: :purchased, :source_type => 'Coupon'
+    has_many :gifts, through: :transactions, source: :purchased, :source_type => 'Coupon'
     
-
 
 	def generate_showroom
 		Showroom.create(owner_id: self.id, owner_type: self.class.to_s)

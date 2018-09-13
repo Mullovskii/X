@@ -11,5 +11,7 @@ class Coupon < ApplicationRecord
   enum status: [:active, :purchased, :utilized, :cancelled]
 
 
-
+  def gift_mode
+    true
+  end
 end

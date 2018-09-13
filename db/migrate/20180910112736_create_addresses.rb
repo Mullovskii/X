@@ -6,8 +6,10 @@ class CreateAddresses < ActiveRecord::Migration[5.1]
       t.references :street, foreign_key: true
       t.bigint :owner_id
       t.string :owner_type
-      t.text :additional
+      t.string :building
+      t.string :apartment
       t.string :postcode
+      t.integer :kind
 
       t.timestamps
     end

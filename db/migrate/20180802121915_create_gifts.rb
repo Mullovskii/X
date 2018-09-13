@@ -19,10 +19,9 @@ class CreateGifts < ActiveRecord::Migration[5.1]
       t.string :image_link_3
       t.string :image_link_4
       
-
       t.text :secret
       t.text :comment
-      t.bigint :points_per_gift, default: 1
+      t.float :point_price, default: 0, precision: 5, scale: 3
       t.integer :number_of_gifts
       t.integer :number
 
