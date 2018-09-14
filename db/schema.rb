@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180910112736) do
+ActiveRecord::Schema.define(version: 20180914082703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -402,7 +402,7 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.string "campaign_label"
     t.boolean "gift_mode", default: false
     t.boolean "sample_mode", default: false
-    t.bigint "sample_threshold"
+    t.bigint "sample_threshold", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -443,6 +443,21 @@ ActiveRecord::Schema.define(version: 20180910112736) do
     t.index ["country_id"], name: "index_rewards_on_country_id"
     t.index ["currency_id"], name: "index_rewards_on_currency_id"
     t.index ["shop_id"], name: "index_rewards_on_shop_id"
+  end
+
+  create_table "sample_requests", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "product_id"
+    t.bigint "shop_id"
+    t.integer "status", default: 0
+    t.boolean "shop_approval", default: false
+    t.boolean "user_approval", default: false
+    t.integer "kind", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sample_requests_on_product_id"
+    t.index ["shop_id"], name: "index_sample_requests_on_shop_id"
+    t.index ["user_id"], name: "index_sample_requests_on_user_id"
   end
 
   create_table "shops", force: :cascade do |t|
@@ -626,6 +641,9 @@ ActiveRecord::Schema.define(version: 20180910112736) do
   add_foreign_key "rewards", "countries"
   add_foreign_key "rewards", "currencies"
   add_foreign_key "rewards", "shops"
+  add_foreign_key "sample_requests", "products"
+  add_foreign_key "sample_requests", "shops"
+  add_foreign_key "sample_requests", "users"
   add_foreign_key "streets", "cities"
   add_foreign_key "swaps", "accounts"
   add_foreign_key "swaps", "shops"

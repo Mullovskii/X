@@ -20,7 +20,7 @@ module Api
       # POST /orders
       def create
         @order = current_user.orders.build(order_params.merge({user_id: current_user.id}))
-        unless Order.where(user_id: @order.user_id, ordered_id: @order.ordered_id, ordered_type: @order.ordered_type, status: ["pending", "authorized", "fulfilled"]).take 
+        unless Order.where(user_id: @order.user_id, ordered_id: @order.ordered_id, ordered_type: @order.ordered_type, status: ["pending", "authorized"]).take 
           if @order.ordered.gift_mode == true && @order.shop_id == @order.ordered.shop_id && current_user.has_account?(@order) && @order.amount == @order.ordered.point_price && current_user.has_points?(@order) 
             if @order.save
               render json: @order, status: :created

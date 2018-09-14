@@ -54,6 +54,7 @@ Rails.application.routes.draw do
       resources :showrooms do
         resources :product_showrooms
       end
+      resources :sample_requests
       resources :categories
       resources :tags
       resources :hashtags
@@ -64,7 +65,7 @@ Rails.application.routes.draw do
       resources :relationships
       resources :employments
       resources :orders
-      resources :cities
+    resources :cities
       resources :countries do
         member do
             get 'gifts', to: 'countries#gifts'
