@@ -46,7 +46,7 @@ module Api
 
       # PATCH/PUT /sample_requests/1
       def update
-        if @sample_request.kind = "shop_request" && current_user.employed_in(@sample_request.shop)
+        if @sample_request.kind == "shop_request" && current_user.employed_in(@sample_request.shop)
           if @sample_request.saved_change_to_user_approval?
             render json: {errors: ['Unauthorized to change user status']}, status: :unauthorized
           else 
@@ -62,6 +62,8 @@ module Api
             render json: {errors: ['Unauthorized to change shop status']}, status: :unauthorized
           else 
             if @sample_request.update(sample_request_params)
+              @sample_request.status = "approved"
+              @sample_request.save
               render json: @sample_request
             else
               render json: @sample_request.errors, status: :unprocessable_entity
