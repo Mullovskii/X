@@ -1,7 +1,7 @@
 module Api
   module V1
     class CountriesController < ApplicationController
-      before_action :set_country, only: [:gifts, :show, :update, :destroy, :products, :shops]
+      before_action :set_country, only: [:gifts, :show, :update, :destroy, :products, :shops, :samples]
       before_action :authenticate_request!, only: [:update, :create]
 
 
@@ -45,6 +45,11 @@ module Api
       def products
         @products = Product.all.where(country_id: @country.id)
         render json: @products
+      end
+
+      def samples
+        @samples = Product.all.where(country_id: @country.id, sample_mode: true)
+        render json: @samples
       end
 
       def shops

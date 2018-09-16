@@ -71,6 +71,7 @@ Rails.application.routes.draw do
             get 'gifts', to: 'countries#gifts'
             get 'products', to: 'countries#products'
             get 'shops', to: 'countries#shops'
+            get 'samples', to: 'countries#samples'
           end
       end
       resources :streets
