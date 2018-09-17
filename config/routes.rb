@@ -32,6 +32,7 @@ Rails.application.routes.draw do
           member do
             post :upload
             delete :remove_file
+            get :generate_products
           end
         end
         resources :products do 

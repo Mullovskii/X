@@ -2,8 +2,8 @@ module Api
   module V1
 
     class FeedsController < ApplicationController
-      before_action :set_feed, only: [:show, :update, :destroy, :upload, :remove_file]
-      before_action :authenticate_request!, only: [:update, :create, :destroy, :upload, :remove_file]
+      before_action :set_feed, only: [:show, :update, :destroy, :upload, :remove_file, :generate_products]
+      before_action :authenticate_request!, only: [:update, :create, :destroy, :upload, :remove_file, :generate_products]
 
       # GET /feeds
       def index
@@ -84,6 +84,11 @@ module Api
         else
           render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
+      end
+
+      def generate_products
+        @feed.load_products
+        render json: @feed.products, status: :created, meta: default_meta, include: [params[:include]]
       end
 
       private

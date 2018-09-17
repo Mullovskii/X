@@ -4,7 +4,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.integer :feed_id #surf
       t.integer :country_id #surf
       t.integer :shop_id #surf 
-      t.integer :custom_id 
+      t.string :custom_id 
       # t.integer :author_id #surf 
       # t.string :author_type #surf 
       #future
