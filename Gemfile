@@ -15,6 +15,9 @@ gem 'puma', '~> 3.7'
 gem 'devise'
 gem 'jwt'
 gem 'active_model_serializers'
+gem 'carrierwave'
+
+
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'

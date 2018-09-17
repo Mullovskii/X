@@ -28,7 +28,12 @@ Rails.application.routes.draw do
         resources :deliveries do
           resources :tariffs
         end
-        resources :feeds
+        resources :feeds do
+          member do
+            post :upload
+            delete :remove_file
+          end
+        end
         resources :products do 
         end
         resources :gifts

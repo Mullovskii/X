@@ -10,6 +10,7 @@ class Feed < ApplicationRecord
 	enum mode: [:file, :mannual]
 	enum format: [:xlsx, :csv, :txt]
 	enum kind: [:product_feed, :gift_feed]
+	mount_uploader :file, FeedUploader
 
 	after_update :products_gift_mode
 

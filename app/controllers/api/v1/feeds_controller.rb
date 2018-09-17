@@ -2,8 +2,8 @@ module Api
   module V1
 
     class FeedsController < ApplicationController
-      before_action :set_feed, only: [:show, :update, :destroy]
-      before_action :authenticate_request!, only: [:update, :create, :destroy]
+      before_action :set_feed, only: [:show, :update, :destroy, :upload, :remove_file]
+      before_action :authenticate_request!, only: [:update, :create, :destroy, :upload, :remove_file]
 
       # GET /feeds
       def index
@@ -16,10 +16,29 @@ module Api
         render json: @feed
       end
 
+      def upload
+        @feed.update(params.permit(:file, :id))
+        if @feed.save
+          render json: @feed, meta: default_meta
+        else
+          render json: @feed.errors, status: :unprocessable_entity
+        end
+      end
+
+      def remove_file
+        @feed.remove_file!
+        if @feed.save
+          render json: @feed, meta: default_meta
+        else
+          render json: @feed.errors, status: :unprocessable_entity
+        end
+      end
+
       # POST /feeds
       def create
         @feed = Feed.new(feed_params)
         if current_user.employed_in(@feed.shop)
+          @feed.url = params[:file]
           if @feed.save
             if reward = @feed.shop.reward 
               if reward.country_id == @feed.country_id && reward.available_products == "all_country_products" && reward.product_reward == true
@@ -38,6 +57,7 @@ module Api
       # PATCH/PUT /feeds/1
       def update
         if current_user.employed_in(@feed.shop)
+          # @feed.url = params[:file]
           if @feed.update(feed_params)
             if @feed.gift_mode_changed? || @feed.gift_mode == true
               @feed.products.each do |product|
@@ -74,7 +94,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def feed_params
-          params.require(:feed).permit(:mode, :kind, :delivery_id, :shop_id, :format, :country_id, :currency_id, :name, :url, :author_id, :author_type, :gift_mode, :sample_mode, :sample_threshold)
+          params.require(:feed).permit(:mode, :kind, :delivery_id, :shop_id, :format, :country_id, :currency_id, :name, :url, :author_id, :author_type, :gift_mode, :sample_mode, :sample_threshold, :file)
         end
     end
   end
