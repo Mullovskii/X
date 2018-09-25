@@ -49,9 +49,9 @@ module Api
         end
 
         # Only allow a trusted parameter "white list" through.
-        def account_params
-          params.require(:account).permit(:user_id, :shop_id, :balance)
-        end
+        # def account_params
+        #   params.require(:account).permit(:user_id, :shop_id, :balance, :campaign_id)
+        # end
     end
   end
 end

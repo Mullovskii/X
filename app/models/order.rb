@@ -6,7 +6,7 @@ class Order < ApplicationRecord
   has_one :operation, class_name: "Transaction", foreign_key: "order_id"
 
   enum status: [:pending, :authorized, :fulfilled, :cancelled]
-  enum kind: [:product, :gift, :coupon, :sample]
+  enum kind: [:product, :gift, :coupon, :sample, :campaign_topup]
 
 
   after_create :authorize_order

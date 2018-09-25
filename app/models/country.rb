@@ -3,4 +3,5 @@ class Country < ApplicationRecord
 	has_many :country_shops
 	has_many :shops, through: :country_shops
 	has_many :cities
+	has_one :currency
 end

@@ -49,7 +49,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def currency_params
-          params.require(:currency).permit(:name, :usd_rate, :ruble_rate)
+          params.require(:currency).permit(:name, :usd_rate, :ruble_rate, :country_id)
         end
     end
    end

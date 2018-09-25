@@ -16,9 +16,10 @@ class CreateCampaigns < ActiveRecord::Migration[5.1]
       t.string :link_5
       t.float :points_per_referral, default: 0, precision: 5, scale: 3
       t.boolean :product_tagging
-      t.float :points_per_tag, default: 0, precision: 5, scale: 3
+      t.float :currency_per_referral, default: 0, precision: 5, scale: 3
+      t.references :currency, foreign_key: true
       t.integer :campaign_products, default: 0
-       t.string :label_1
+      t.string :label_1
       t.string :label_2
       t.string :label_3
       # t.date :start_date

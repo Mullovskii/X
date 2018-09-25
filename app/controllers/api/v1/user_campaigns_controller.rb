@@ -19,14 +19,18 @@ module Api
       # POST /user_campaigns
       def create
         @user_campaign = current_user.user_campaigns.build(user_campaign_params.merge({ user_id: current_user.id}))
-        if current_user.true_picker?(@user_campaign)
-          if @user_campaign.save
-            render json: @user_campaign, status: :created
+        unless current_user.campaigns.where(id: @user_campaign.campaign.id)
+          if current_user.true_picker?(@user_campaign)
+            if @user_campaign.save
+              render json: @user_campaign, status: :created
+            else
+              render json: @user_campaign.errors, status: :unprocessable_entity
+            end
           else
-            render json: @user_campaign.errors, status: :unprocessable_entity
+            render json: {errors: ['Unauthorized to participate']}, status: :unauthorized
           end
         else
-          render json: {errors: ['Unauthorized to participate']}, status: :unauthorized
+          render json: {errors: ['Already participating']}, status: :unauthorized
         end
       end
 

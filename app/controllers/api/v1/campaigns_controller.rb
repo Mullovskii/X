@@ -33,6 +33,7 @@ module Api
       # POST /campaigns
       def create
         @campaign = current_user.launched_campaigns.build(campaign_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
+        @campaign.currency_id = @campaign.country.currency.id
         if current_user.employed_in(@campaign.shop)
           if @campaign.save
             render json: @campaign, status: :created
@@ -82,7 +83,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def campaign_params
-          params.require(:campaign).permit(:shop_id, :status, :name, :country_id, :kind, :link_referral, :link_1, :link_2, :link_3, :link_4, :link_5, :points_per_referral, :product_tagging, :points_per_tag, :campaign_products, :label_1, :label_2, :label_3)
+          params.require(:campaign).permit(:shop_id, :status, :name, :country_id, :kind, :link_referral, :link_1, :link_2, :link_3, :link_4, :link_5, :points_per_referral, :product_tagging, :currency_per_referral, :campaign_products, :label_1, :label_2, :label_3)
         end
     end
   end

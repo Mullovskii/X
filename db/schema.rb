@@ -10,17 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180914082703) do
+ActiveRecord::Schema.define(version: 2018_09_22_183808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
     t.bigint "user_id"
+    t.bigint "campaign_id"
+    t.bigint "currency_id"
     t.bigint "shop_id"
     t.float "balance", default: 0.0
+    t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_accounts_on_campaign_id"
+    t.index ["currency_id"], name: "index_accounts_on_currency_id"
     t.index ["shop_id"], name: "index_accounts_on_shop_id"
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
@@ -72,13 +77,15 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.string "link_5"
     t.float "points_per_referral", default: 0.0
     t.boolean "product_tagging"
-    t.float "points_per_tag", default: 0.0
+    t.float "currency_per_referral", default: 0.0
+    t.bigint "currency_id"
     t.integer "campaign_products", default: 0
     t.string "label_1"
     t.string "label_2"
     t.string "label_3"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["currency_id"], name: "index_campaigns_on_currency_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -111,6 +118,7 @@ ActiveRecord::Schema.define(version: 20180914082703) do
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.integer "status"
+    t.integer "vat"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -157,8 +165,10 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.string "name"
     t.decimal "usd_rate", precision: 5, scale: 3, default: "1.0"
     t.decimal "ruble_rate", precision: 5, scale: 3, default: "0.0"
+    t.bigint "country_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_currencies_on_country_id"
   end
 
   create_table "deliveries", force: :cascade do |t|
@@ -255,6 +265,24 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "invoices", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "campaign_id"
+    t.bigint "shop_id"
+    t.integer "payment_method", default: 0
+    t.float "amount", default: 0.0
+    t.bigint "currency_id"
+    t.integer "vat"
+    t.string "custom_id"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_invoices_on_account_id"
+    t.index ["campaign_id"], name: "index_invoices_on_campaign_id"
+    t.index ["currency_id"], name: "index_invoices_on_currency_id"
+    t.index ["shop_id"], name: "index_invoices_on_shop_id"
+  end
+
   create_table "links", force: :cascade do |t|
     t.integer "author_id"
     t.string "author_type"
@@ -277,6 +305,18 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.string "mediable_type"
     t.string "url"
     t.integer "kind", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer "notified_id"
+    t.string "notified_type"
+    t.integer "notifier_id"
+    t.string "notifier_type"
+    t.integer "kind"
+    t.integer "attached_id"
+    t.string "attached_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -331,7 +371,7 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.integer "feed_id"
     t.integer "country_id"
     t.integer "shop_id"
-    t.integer "custom_id"
+    t.string "custom_id"
     t.integer "status", default: 0
     t.integer "item_id"
     t.integer "model_id"
@@ -552,9 +592,12 @@ ActiveRecord::Schema.define(version: 20180914082703) do
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.bigint "account_id"
+    t.bigint "credit_account_id"
+    t.bigint "debit_account_id"
     t.bigint "order_id"
     t.bigint "swap_id"
+    t.bigint "invoice_id"
+    t.bigint "click_id"
     t.integer "purchased_id"
     t.string "purchased_type"
     t.float "amount", default: 0.0
@@ -562,7 +605,10 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_transactions_on_account_id"
+    t.index ["click_id"], name: "index_transactions_on_click_id"
+    t.index ["credit_account_id"], name: "index_transactions_on_credit_account_id"
+    t.index ["debit_account_id"], name: "index_transactions_on_debit_account_id"
+    t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
     t.index ["order_id"], name: "index_transactions_on_order_id"
     t.index ["swap_id"], name: "index_transactions_on_swap_id"
   end
@@ -612,17 +658,21 @@ ActiveRecord::Schema.define(version: 20180914082703) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "accounts", "campaigns"
+  add_foreign_key "accounts", "currencies"
   add_foreign_key "accounts", "shops"
   add_foreign_key "accounts", "users"
   add_foreign_key "addresses", "cities"
   add_foreign_key "addresses", "countries"
   add_foreign_key "addresses", "streets"
+  add_foreign_key "campaigns", "currencies"
   add_foreign_key "cities", "countries"
   add_foreign_key "country_shops", "countries"
   add_foreign_key "country_shops", "shops"
   add_foreign_key "coupons", "countries"
   add_foreign_key "coupons", "currencies"
   add_foreign_key "coupons", "shops"
+  add_foreign_key "currencies", "countries"
   add_foreign_key "deliveries", "countries"
   add_foreign_key "deliveries", "shops"
   add_foreign_key "employments", "shops"
@@ -631,6 +681,10 @@ ActiveRecord::Schema.define(version: 20180914082703) do
   add_foreign_key "feed_campaigns", "feeds"
   add_foreign_key "gifts", "countries"
   add_foreign_key "gifts", "shops"
+  add_foreign_key "invoices", "accounts"
+  add_foreign_key "invoices", "campaigns"
+  add_foreign_key "invoices", "currencies"
+  add_foreign_key "invoices", "shops"
   add_foreign_key "links", "media"
   add_foreign_key "orders", "shops"
   add_foreign_key "orders", "users"
@@ -649,7 +703,8 @@ ActiveRecord::Schema.define(version: 20180914082703) do
   add_foreign_key "swaps", "shops"
   add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
-  add_foreign_key "transactions", "accounts"
+  add_foreign_key "transactions", "clicks"
+  add_foreign_key "transactions", "invoices"
   add_foreign_key "transactions", "orders"
   add_foreign_key "transactions", "swaps"
   add_foreign_key "user_campaigns", "campaigns"

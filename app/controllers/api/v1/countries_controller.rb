@@ -75,7 +75,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def country_params
-          params.require(:country).permit(:name, :status)
+          params.require(:country).permit(:name, :status, :vat)
         end
     end
   end
