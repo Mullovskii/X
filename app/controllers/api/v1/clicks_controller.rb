@@ -24,7 +24,7 @@ module Api
             else
               render json: @click.errors, status: :unprocessable_entity
             end
-          else
+        else
             render json: {errors: ['Click exists. Dont fraud']}, status: :unauthorized
           end        
       end

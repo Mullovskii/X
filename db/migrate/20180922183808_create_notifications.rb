@@ -8,6 +8,8 @@ class CreateNotifications < ActiveRecord::Migration[5.2]
       t.integer :kind
       t.integer :attached_id
       t.string :attached_type
+      t.float :amount
+      t.integer :currency_id
 
       t.timestamps
     end

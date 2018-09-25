@@ -17,7 +17,7 @@ class Invoice < ApplicationRecord
   def topup_balance
   	if self.saved_change_to_status? 
   		if self.status == "cleared_and_paid"
-  			Transaction.create(credit_account_id: self.account.id, amount: self.amount, kind: "topup", invoice_id: self.id)	 
+  			Transaction.create(credit_account_id: self.account.id, amount: self.amount, currency_id: self.currency_id , kind: "topup", invoice_id: self.id)	 
   		elsif self.status == "cancelled_and_refunded"
   			self.operation.destroy if self.operation 
   		end  	

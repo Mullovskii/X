@@ -1,11 +1,12 @@
 class Transaction < ApplicationRecord
   belongs_to :credit_account, class_name: "Account", optional: true
   belongs_to :debit_account, class_name: "Account", optional: true
-  belongs_to :purchased, polymorphic: true, optional: true
-  belongs_to :order, optional: true
-  belongs_to :swap, optional: true
+  # belongs_to :purchased, polymorphic: true, optional: true
+  # belongs_to :order, optional: true
+  # belongs_to :swap, optional: true
   belongs_to :invoice, optional: true
   belongs_to :click, optional: true
+  belongs_to :currency
   enum kind: [:points, :real, :topup, :reward]
 
   after_create :change_balance

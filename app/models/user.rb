@@ -15,6 +15,7 @@ class User < ApplicationRecord
 	has_one :showroom, as: :owner
 	has_many :clicks
 	has_many :addresses, as: :owner
+	has_many :notifications, as: :notified, dependent: :destroy
 	
 
 	has_many :user_campaigns

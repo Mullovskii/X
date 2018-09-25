@@ -317,6 +317,8 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.integer "kind"
     t.integer "attached_id"
     t.string "attached_type"
+    t.float "amount"
+    t.integer "currency_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -594,23 +596,19 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
   create_table "transactions", force: :cascade do |t|
     t.bigint "credit_account_id"
     t.bigint "debit_account_id"
-    t.bigint "order_id"
-    t.bigint "swap_id"
     t.bigint "invoice_id"
     t.bigint "click_id"
-    t.integer "purchased_id"
-    t.string "purchased_type"
     t.float "amount", default: 0.0
+    t.bigint "currency_id"
     t.integer "status", default: 0
     t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["click_id"], name: "index_transactions_on_click_id"
     t.index ["credit_account_id"], name: "index_transactions_on_credit_account_id"
+    t.index ["currency_id"], name: "index_transactions_on_currency_id"
     t.index ["debit_account_id"], name: "index_transactions_on_debit_account_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
-    t.index ["order_id"], name: "index_transactions_on_order_id"
-    t.index ["swap_id"], name: "index_transactions_on_swap_id"
   end
 
   create_table "user_campaigns", force: :cascade do |t|
@@ -704,9 +702,8 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
   add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
   add_foreign_key "transactions", "clicks"
+  add_foreign_key "transactions", "currencies"
   add_foreign_key "transactions", "invoices"
-  add_foreign_key "transactions", "orders"
-  add_foreign_key "transactions", "swaps"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"
