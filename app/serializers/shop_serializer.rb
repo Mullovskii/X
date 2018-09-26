@@ -3,7 +3,7 @@ class ShopSerializer < ActiveModel::Serializer
   has_many :products
   has_many :picks
   has_many :active_campaigns
-  has_many :gift_products
+  # has_many :gift_products
   has_many :following
   has_many :followers
 end

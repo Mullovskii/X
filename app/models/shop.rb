@@ -51,9 +51,9 @@ class Shop < ApplicationRecord
 		self.campaigns.where(status: "fresh")
 	end
 
-	def gift_products
-		self.products.where(gift_mode: true)
-	end
+	# def gift_products
+	# 	self.products.where(gift_mode: true)
+	# end
 
 
 end

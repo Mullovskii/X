@@ -41,7 +41,8 @@ class Feed < ApplicationRecord
 	# end
 
 	def load_products
-		file = File.join(Rails.root, 'app', 'files', "Shopify.csv")
+		# file = File.join(Rails.root, 'app', 'files', "Shopify.csv")
+		file = File.join(Rails.root, 'app', 'files', "Google2.xml")
 		if file.match(".csv")
 			require "csv"
 	        CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
@@ -57,7 +58,7 @@ class Feed < ApplicationRecord
 			        		product.custom_id = row.to_h[:id]
 			        	end
 		        	end
-		        	if row.to_h[:title] && row.to_h[:title].length <= 100
+		        	if row.to_h[:title] && row.to_h[:title].length <= 1000
 		        		product.title = row.to_h[:title]
 		        	end
 
@@ -122,12 +123,12 @@ class Feed < ApplicationRecord
 		        	end
 		          	
 		          	if row.to_h[:availability]
-			        	if row.to_h[:availability].downcase == "in stock" || row.to_h[:availability].downcase == "out of stock" || ow.to_h[:availability] == "preorder" 
+			        	if row.to_h[:availability].downcase == "in stock" || row.to_h[:availability].downcase == "out of stock" || row.to_h[:availability] == "preorder" 
 			        		product.availability = row.to_h[:availability]
 			        	end
 			        end
 
-		          	if row.to_h[:availability_date] &&   #добавить проверку на формат даты
+		          	if row.to_h[:availability_date]
 		        		product.availability_date = Date.strptime(row.to_h[:availability_date]) rescue true
 		        	end
 
@@ -140,9 +141,9 @@ class Feed < ApplicationRecord
 		    #     		currencies = %w(USD RUB EUR TRY $ £)
 						# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
 						# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
-						if float_number = /(\d+[,.]\d+)/.match(row.to_h[:price])[1]
+						if float_number = /(\d+[,.]\d+)/.match(row.to_h[:price])[1] rescue false
 							product.price = float_number.to_f
-						elsif integer = row.to_h[:price].scan(/\d+|[A-Za-z]+/)[0]
+						elsif integer = row.to_h[:price].scan(/\d+|[A-Za-z]+/)[0] rescue false
 							product.price = integer.to_f
 						end      		
 		        	end
@@ -157,7 +158,7 @@ class Feed < ApplicationRecord
 		        	end
 		          	      
 		          	if row.to_h[:sale_price_effective_date] 
-		        		product.sale_price_effective_date = Date.strptime(row.to_h[:sale_price_effective_date]) rescue true
+		        		product.sale_price_effective_date = Date.strptime(row.to_h[:sale_price_effective_date]) rescue false
 		        	end    	
 		          	
 		          	# if row.to_h[:gift_mode]
@@ -323,6 +324,146 @@ class Feed < ApplicationRecord
 	        	end
 
 	        end	
+		elsif file.match(".xml")
+			#google xml format
+			# xml = File.open('app/files/Google.xml') { |f| Nokogiri::XML(f) }
+			xml = File.open('app/files/Google2.xml') { |f| Nokogiri::XML(f) }
+			# items = xml.xpath("//item")
+			
+			xml.xpath("//item").map do |item|
+				
+		    	if item.xpath('g:id').text && item.xpath('g:id').text.length <= 500 && self.shop.products.where(custom_id: item.xpath('g:id').text).take
+		        		product = self.shop.products.where(custom_id: item.xpath('g:id').text).take
+	        	else 
+		        	if item.xpath('g:id').text && item.xpath('g:id').text.length <= 500
+		        		product = Product.create(feed_id: self.id, shop_id: self.shop_id, country_id: self.country_id)
+		        		product.custom_id = item.xpath('g:id').text
+		        	end
+	        	end
+
+	        	if item.xpath('g:title').text != "" && item.xpath('g:title').text.length <= 1000
+	        		product.title = item.xpath('g:title').text
+	        	elsif item.xpath('title').text != "" && item.xpath('title').text.length <= 1000
+	        		product.title = item.xpath('title').text
+	        	end
+	        	
+	        	if item.xpath('g:description').text != "" && item.xpath('g:description').text.length <= 10000
+	        		product.description = item.xpath('g:description').text
+	        	elsif item.xpath('description').text != "" && item.xpath('description').text.length <= 10000
+	        		product.description = item.xpath('description').text
+	        	end
+
+	        	if item.xpath('g:link').text != "" && item.xpath('g:link').text.length <= 1000 
+	        		if /https?:\/\/[\S]+/.match(item.xpath('g:link').text) 
+	        			product.link = item.xpath('g:link').text	
+	        		end
+	        	end
+
+	        	if item.xpath('g:image_link').text != "" && item.xpath('g:image_link').text.length <= 1000 
+	        		if /https?:\/\/[\S]+/.match(item.xpath('g:image_link').text) 
+	        			product.image_link_0 = item.xpath('g:image_link').text	
+	        		end
+	        	end
+
+	        	if item.xpath('g:availability').text != ""
+		        	if item.xpath('g:availability').text.downcase == "in stock" || item.xpath('g:availability').text.downcase == "out of stock" || item.xpath('g:availability').text == "preorder" 
+		        		product.availability = item.xpath('g:availability').text
+		        	end
+		        end
+
+		        if item.xpath('g:availability_date').text != ""
+	        		product.availability_date = Date.strptime(item.xpath('g:availability_date').text) rescue true
+	        	end
+
+	        	if item.xpath('g:expiration_date').text != ""
+	        		product.expiration_date = Date.strptime(item.xpath('g:expiration_date').text) rescue true
+	        	end
+
+	        	if item.xpath('g:price').text != ""
+	        		# Currency.all.map{|c|c.name}
+	    #     		currencies = %w(USD RUB EUR TRY $ £)
+					# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
+					# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+					if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:price').text)[1] rescue false
+						product.price = float_number.to_f
+					elsif integer = item.xpath('g:price').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
+						product.price = integer.to_f
+					end      		
+		        end
+
+		        if item.xpath('g:sale_price').text != ""
+	        		# Currency.all.map{|c|c.name}
+	    #     		currencies = %w(USD RUB EUR TRY $ £)
+					# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
+					# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+					if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:sale_price').text)[1] rescue false
+						product.price = float_number.to_f
+					elsif integer = item.xpath('g:sale_price').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
+						product.price = integer.to_f
+					end      		
+		        end
+
+		        if item.xpath('g:sale_price_effective_date').text != ""
+	        		# Currency.all.map{|c|c.name}
+	    #     		currencies = %w(USD RUB EUR TRY $ £)
+					# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
+					# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+					if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:sale_price_effective_date').text)[1] rescue false
+						product.price = float_number.to_f
+					elsif integer = item.xpath('g:sale_price_effective_date').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
+						product.price = integer.to_f
+					end      		
+		        end
+
+
+		        if item.xpath('g:google_product_category').text != "" && item.xpath('g:google_product_category').text.length <= 100
+	        		product.product_type = item.xpath('g:google_product_category').text
+	        		if Category.where(name: product.product_type).take 
+	        			product.main_category_id = Category.where(name: product.product_type).take.id
+	        		elsif Category.where(google_category_id: product.product_type.to_i).take
+	        			product.main_category_id = Category.where(google_category_id: product.product_type.to_i).take
+	        		end
+	        	end
+
+
+	        	n = 1
+	        	item.xpath('g:additional_image_link').each do |link|
+					if /https?:\/\/[\S]+/.match(link) 
+        				if n == 1
+        					product.image_link_1 = link
+        				elsif n == 2
+        					product.image_link_2 = link
+        				elsif n == 3
+        					product.image_link_3 = link
+        				elsif n == 4
+        					product.image_link_4 = link
+        				end
+        			end
+        			n+=1
+				end
+
+	        	# if item.xpath('g:additional_image_link')[0].text != "" && item.xpath('g:additional_image_link')[0].text.length <= 10000 
+        		# 	if /https?:\/\/[\S]+/.match(item.xpath('g:additional_image_link')[0].text) 
+        		# 		product.image_link_1 = item.xpath('g:additional_image_link')[0].text
+        		# 	end
+	        	# end
+
+	        	# if item.xpath('g:additional_image_link').text != "" && item.xpath('g:additional_image_link').text.length <= 10000 
+        		# 	if /https?:\/\/[\S]+/.match(item.xpath('g:additional_image_link').text) 
+        		# 		unless product.image_link_2 == item.xpath('g:additional_image_link').text
+        		# 			product.image_link_2 = item.xpath('g:additional_image_link').text	
+        		# 		end
+        		# 	end
+	        	# end
+
+
+
+	        	product.save!
+
+
+		  	end
+			
+			
 		end
      
 	end
