@@ -38,13 +38,13 @@ module Api
       def create
         @feed = Feed.new(feed_params)
         if current_user.employed_in(@feed.shop)
-          @feed.url = params[:file]
+          # @feed.url = params[:file]
           if @feed.save
-            if reward = @feed.shop.reward 
-              if reward.country_id == @feed.country_id && reward.available_products == "all_country_products" && reward.product_reward == true
-                @feed.update(gift_mode: true)
-              end 
-            end
+            # if reward = @feed.shop.reward 
+            #   if reward.country_id == @feed.country_id && reward.available_products == "all_country_products" && reward.product_reward == true
+            #     @feed.update(gift_mode: true)
+            #   end 
+            # end
             render json: @feed, status: :created, meta: default_meta, include: [params[:include]]
           else
             render json: @feed.errors, status: :unprocessable_entity

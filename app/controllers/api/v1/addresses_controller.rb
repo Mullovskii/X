@@ -41,13 +41,13 @@ module Api
       end
 
       # DELETE /addresses/1
-      def destroy
-        if current_user.id == @address.owner_id
-          @address.destroy
-        else
-          render json: {errors: ['Unauthorized']}, status: :unauthorized
-        end
-      end
+      # def destroy
+      #   if current_user.id == @address.owner_id
+      #     @address.destroy
+      #   else
+      #     render json: {errors: ['Unauthorized']}, status: :unauthorized
+      #   end
+      # end
 
       private
         # Use callbacks to share common setup or constraints between actions.

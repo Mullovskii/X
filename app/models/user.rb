@@ -44,7 +44,7 @@ class User < ApplicationRecord
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
 
-    has_many :accounts
+    has_many :accounts, dependent: :destroy
     has_many :transactions, through: :accounts
     has_many :orders
     has_many :authorized_orders

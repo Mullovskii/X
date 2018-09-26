@@ -374,9 +374,6 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.integer "country_id"
     t.integer "shop_id"
     t.string "custom_id"
-    t.integer "status", default: 0
-    t.integer "item_id"
-    t.integer "model_id"
     t.string "venue"
     t.integer "venue_id"
     t.string "brand_name"
@@ -384,7 +381,6 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.string "title"
     t.text "description"
     t.string "link"
-    t.string "main_image_link"
     t.string "image_link_0"
     t.string "image_link_1"
     t.string "image_link_2"
@@ -397,11 +393,11 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.string "image_link_9"
     t.float "price", default: 0.0
     t.float "sale_price", default: 0.0
-    t.datetime "sale_price_effective_date"
+    t.date "sale_price_effective_date"
     t.float "point_price", default: 0.0
     t.string "availability"
-    t.datetime "availability_date"
-    t.datetime "expiration_date"
+    t.date "availability_date"
+    t.date "expiration_date"
     t.decimal "cost_of_goods_sold"
     t.string "unit_pricing_measure"
     t.string "unit_pricing_base_measure"
@@ -440,9 +436,8 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.string "tax"
     t.string "tax_category"
     t.string "production_country"
-    t.integer "barcode"
+    t.string "barcode"
     t.string "campaign_label"
-    t.boolean "gift_mode", default: false
     t.boolean "sample_mode", default: false
     t.bigint "sample_threshold", default: 0
     t.datetime "created_at", null: false

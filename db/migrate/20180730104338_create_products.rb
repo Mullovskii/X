@@ -8,9 +8,9 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       # t.integer :author_id #surf 
       # t.string :author_type #surf 
       #future
-      t.integer :status, default: 0 #surf enum
-      t.integer :item_id #surf - id of global product card (=Item)
-      t.integer :model_id #surf - id of global model card (=Model)
+      # t.integer :status, default: 0 #surf enum
+      # t.integer :item_id #surf - id of global product card (=Item)
+      # t.integer :model_id #surf - id of global model card (=Model)
       t.string :venue
       t.integer :venue_id #surf - for events - id of venue - taken from venue name above
       #future
@@ -21,7 +21,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :title
       t.text :description
       t.string :link
-      t.string :main_image_link
+      # t.string :main_image_link
       t.string :image_link_0
       t.string :image_link_1
       t.string :image_link_2
@@ -34,11 +34,11 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :image_link_9
       t.float :price, default: 0, precision: 5, scale: 3
       t.float :sale_price, default: 0, precision: 5, scale: 3
-      t.datetime :sale_price_effective_date
+      t.date :sale_price_effective_date
       t.float :point_price, default: 0, precision: 5, scale: 3
       t.string :availability
-      t.datetime :availability_date
-      t.datetime :expiration_date
+      t.date :availability_date
+      t.date :expiration_date
       t.decimal :cost_of_goods_sold
       t.string :unit_pricing_measure
       t.string :unit_pricing_base_measure
@@ -79,10 +79,10 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :tax_category
 
       t.string :production_country
-      t.integer :barcode 
+      t.string :barcode 
       
       t.string :campaign_label
-      t.boolean :gift_mode, default: false
+      # t.boolean :gift_mode, default: false
       t.boolean :sample_mode, default: false
       t.bigint :sample_threshold, default: 0
 
