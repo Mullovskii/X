@@ -48,7 +48,7 @@ class Shop < ApplicationRecord
 	end
 
 	def active_campaigns
-		self.campaigns.where(status: "fresh")
+		self.campaigns.where(status: "ongoing")
 	end
 
 	# def gift_products

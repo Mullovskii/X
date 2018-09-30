@@ -10,5 +10,6 @@ class CreateUserCampaigns < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+    add_index :user_campaigns, [:user_id, :campaign_id, :link_id], unique: true
   end
 end

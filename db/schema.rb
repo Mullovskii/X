@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.datetime "trigger_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "link_id", "pick_id"], name: "index_clicks_on_user_id_and_link_id_and_pick_id", unique: true
   end
 
   create_table "countries", force: :cascade do |t|
@@ -269,18 +270,22 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.bigint "account_id"
     t.bigint "campaign_id"
     t.bigint "shop_id"
+    t.bigint "user_id"
     t.integer "payment_method", default: 0
     t.float "amount", default: 0.0
     t.bigint "currency_id"
     t.integer "vat"
     t.string "custom_id"
     t.integer "status", default: 0
+    t.integer "kind", default: 0
+    t.bigint "card_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_invoices_on_account_id"
     t.index ["campaign_id"], name: "index_invoices_on_campaign_id"
     t.index ["currency_id"], name: "index_invoices_on_currency_id"
     t.index ["shop_id"], name: "index_invoices_on_shop_id"
+    t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 
   create_table "links", force: :cascade do |t|
@@ -297,6 +302,8 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["external_link", "linking_id", "linking_type"], name: "index_links_on_external_link_and_linking_id_and_linking_type", unique: true
+    t.index ["linked_id", "linked_type", "linking_id"], name: "index_links_on_linked_id_and_linked_type_and_linking_id", unique: true
     t.index ["medium_id"], name: "index_links_on_medium_id"
   end
 
@@ -307,6 +314,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["url", "mediable_id", "mediable_type"], name: "index_media_on_url_and_mediable_id_and_mediable_type", unique: true
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -405,7 +413,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.string "loyalty_points"
     t.integer "main_category_id"
     t.string "product_type"
-    t.integer "gtin"
+    t.string "gtin"
     t.string "mpn"
     t.boolean "identifier_exists"
     t.string "condition"
@@ -615,6 +623,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_user_campaigns_on_campaign_id"
     t.index ["link_id"], name: "index_user_campaigns_on_link_id"
+    t.index ["user_id", "campaign_id", "link_id"], name: "index_user_campaigns_on_user_id_and_campaign_id_and_link_id", unique: true
     t.index ["user_id"], name: "index_user_campaigns_on_user_id"
   end
 
@@ -678,6 +687,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_183808) do
   add_foreign_key "invoices", "campaigns"
   add_foreign_key "invoices", "currencies"
   add_foreign_key "invoices", "shops"
+  add_foreign_key "invoices", "users"
   add_foreign_key "links", "media"
   add_foreign_key "orders", "shops"
   add_foreign_key "orders", "users"

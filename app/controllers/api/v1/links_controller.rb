@@ -23,9 +23,9 @@ module Api
             
             elsif @link.kind == "product_pick"
               campaigns = []
-              if active_campaigns = @link.linked.feed.campaigns.where(status: "fresh").take
+              if active_campaigns = @link.linked.feed.campaigns.where(status: "ongoing").take
                 campaigns << active_campaigns
-              elsif active_campaigns = @link.linked.shop.campaigns.where(label_1: @link.linked.campaign_label).take
+              elsif active_campaigns = @link.linked.shop.campaigns.where(label_1: @link.linked.campaign_label, status: "ongoing").take
                 campaigns << active_campaigns
               end
               
@@ -62,7 +62,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def link_params
-          params.require(:link).permit(:linking_id, :linking_type, :linked_id, :linked_type, :kind, :external_link, :medium_id, :x, :y)
+          params.require(:link).permit(:linking_id, :linking_type, :linked_id, :linked_type, :external_link, :medium_id, :x, :y)
         end
     end
   end

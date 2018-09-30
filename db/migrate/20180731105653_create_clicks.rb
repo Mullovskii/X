@@ -6,8 +6,8 @@ class CreateClicks < ActiveRecord::Migration[5.1]
       t.integer :link_id
       t.integer :status, default: 0
       t.datetime :trigger_time 
-
       t.timestamps
     end
+    add_index :clicks, [:user_id, :link_id, :pick_id], unique: true
   end
 end

@@ -3,8 +3,16 @@ class UserCampaign < ApplicationRecord
   belongs_to :campaign
   belongs_to :link
   enum status: [:on, :off]
-
+  validates :user_id, uniqueness: { scope: [:campaign_id, :link_id] }
   after_create :generate_account
+
+  # def authentic?
+  #   unless UserCampaign.all.where(link_id: self.link_id).take
+  #     true
+  #   else
+  #     false
+  #   end
+  # end
 
   def generate_account
   	# unless self.user.accounts.where(shop_id: self.campaign.shop.id).take

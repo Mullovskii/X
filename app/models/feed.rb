@@ -3,7 +3,7 @@ class Feed < ApplicationRecord
 
 	belongs_to :shop
 	belongs_to :country
-	belongs_to :delivery
+	belongs_to :delivery, optional: true
 	belongs_to :currency
 	has_many :products, dependent: :destroy
 	# has_many :gifts, dependent: :destroy
@@ -13,6 +13,16 @@ class Feed < ApplicationRecord
 	enum format: [:xlsx, :csv, :txt]
 	enum kind: [:product_feed, :gift_feed]
 	mount_uploader :file, FeedUploader
+
+	after_create :create_shipping
+
+	def create_shipping
+		unless self.delivery && self.shop.deliveries.where(country_id: self.country_id).take
+			delivery = Delivery.create(name: "Delivery in #{self.country.name}", country_id: self.country_id, shop_id: self.shop_id, currency_id: self.currency_id)
+			self.delivery_id = delivery.id
+			self.save
+		end
+	end
 
 
 	# after_update :products_gift_mode
@@ -41,8 +51,9 @@ class Feed < ApplicationRecord
 	# end
 
 	def load_products
+		file = File.join(Rails.root, 'app', 'files', "Sheet.csv")
 		# file = File.join(Rails.root, 'app', 'files', "Shopify.csv")
-		file = File.join(Rails.root, 'app', 'files', "Google2.xml")
+		# file = File.join(Rails.root, 'app', 'files', "Google2.xml")
 		if file.match(".csv")
 			require "csv"
 	        CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
@@ -188,7 +199,7 @@ class Feed < ApplicationRecord
 		        	end
 
 		        	if row.to_h[:gender]
-			        	if row.to_h[:gender].downcase == "male" || row.to_h[:gender].downcase == "female" || row.to_h[:gender] == "unisex"
+			        	if row.to_h[:gender].downcase == "male" || row.to_h[:gender].downcase == "female" || row.to_h[:gender].downcase == "unisex"
 			        		product.gender = row.to_h[:gender]
 			        	end
 			        end
@@ -430,17 +441,68 @@ class Feed < ApplicationRecord
 	        	item.xpath('g:additional_image_link').each do |link|
 					if /https?:\/\/[\S]+/.match(link) 
         				if n == 1
-        					product.image_link_1 = link
+        					product.image_link_1 = link.text
         				elsif n == 2
-        					product.image_link_2 = link
+        					product.image_link_2 = link.text
         				elsif n == 3
-        					product.image_link_3 = link
+        					product.image_link_3 = link.text
         				elsif n == 4
-        					product.image_link_4 = link
+        					product.image_link_4 = link.text
         				end
         			end
         			n+=1
 				end
+
+				if item.xpath('g:brand').text != "" && item.xpath('g:brand').text.length <= 500
+	        		product.brand_name = item.xpath('g:brand').text
+	        		if Brand.where(name: product.brand_name).take
+	        			product.brand_id = Brand.where(name: product.brand_name).take.id
+	        		else 
+	        			brand = Brand.create(name: product.brand_name)
+	        			product.brand_id = brand.id
+	        		end
+	        	end
+
+	        	if item.xpath('g:color').text != "" && item.xpath('g:color').text.length <= 50
+	        		product.color = item.xpath('g:color').text
+	        	end
+
+	        	if item.xpath('g:gender').text != ""
+		        	if item.xpath('g:gender').text.downcase == "male" || item.xpath('g:gender').text.downcase == "female" || item.xpath('g:gender').text.downcase == "unisex"
+		        		product.gender = item.xpath('g:gender').text
+		        	end
+		        end
+
+		        if item.xpath('g:material').text != "" && item.xpath('g:material').text.length <= 500
+	        		product.material = item.xpath('g:material').text
+	        	end
+
+	        	if item.xpath('g:pattern').text != "" && item.xpath('g:pattern').text.length <= 500
+	        		product.pattern = item.xpath('g:pattern').text
+	        	end
+
+	        	if item.xpath('g:size').text != "" && item.xpath('g:size').text.length <= 50
+	        		product.size = item.xpath('g:size').text
+	        	end
+
+	        	if item.xpath('g:size_system').text != "" && ("US, UK, EU, DE, FR, JP, CN (China), IT, BR, MEX, AU, RU").match(item.xpath('g:size_system').text)
+	        		product.size_system = item.xpath('g:size_system').text
+	        	end
+
+	        	if item.xpath('g:tax').text != "" && item.xpath('g:tax').text.length <= 500
+	        		product.tax = item.xpath('g:tax').text
+	        	end
+
+	        	if item.xpath('g:adult').text != ""
+	          		if item.xpath('g:adult').text.downcase == "true" || item.xpath('g:adult').text.downcase == "false"
+	          			product.adult = item.xpath('g:adult').text
+	          		end
+	          	end
+
+	          	if item.xpath('g:gtin').text != "" && item.xpath('g:gtin').text.length <= 500
+	        		product.gtin = item.xpath('g:gtin').text
+	        	end
+
 
 	        	# if item.xpath('g:additional_image_link')[0].text != "" && item.xpath('g:additional_image_link')[0].text.length <= 10000 
         		# 	if /https?:\/\/[\S]+/.match(item.xpath('g:additional_image_link')[0].text) 

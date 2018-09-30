@@ -34,7 +34,7 @@ class Product < ApplicationRecord
     end
 
     def active_campaigns
-        self.feed.campaigns.where(status: "fresh") if self.feed
+        self.feed.campaigns.where(status: "ongoing") if self.feed
     end
 
     def add_country

@@ -18,7 +18,7 @@ module Api
       # POST /clicks
       def create
           @click = current_user.clicks.build(click_params.merge({ user_id: current_user.id }))
-          if @click.valid && @click.authentic && @click.self_made
+          if @click.valid && @click.not_self_made
             if @click.save
               render json: @click, status: :created
             else

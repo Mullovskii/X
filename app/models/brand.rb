@@ -7,6 +7,7 @@ class Brand < ApplicationRecord
     has_one :showroom, as: :owner
     has_many :products
     after_create :generate_showroom
+    # belongs_to :category, optional: true
 
     has_many :picks, as: :author, dependent: :destroy
     

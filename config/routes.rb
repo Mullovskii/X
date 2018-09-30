@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         end
       end
       resources :brands
+      resources :invoices
       resources :shops do
         resources :deliveries do
           resources :tariffs
@@ -34,7 +35,6 @@ Rails.application.routes.draw do
             get :generate_products
           end
         end
-        resources :invoices
         resources :products do 
         end
         resources :gifts

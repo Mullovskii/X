@@ -17,14 +17,14 @@ module Api
       end
 
       def campaign_products
-        @products = []
-        if @campaign.campaign_products == "all_country_products" || @campaign.campaign_products == "selected_feeds" 
-          @campaign.feeds.each do |feed|
-            @products << feed.products
-          end
-        else
-          @products << @campaign.shop.products.where(campaign_label: @campaign.label_1)
-        end
+        @products = @campaign.products
+        # if @campaign.campaign_products == "all_country_products" || @campaign.campaign_products == "selected_feeds" 
+        #   @campaign.feeds.each do |feed|
+        #     @products << feed.products
+        #   end
+        # else
+        #   @products << @campaign.shop.products.where(campaign_label: @campaign.label_1)
+        # end
         
         render json: @products, adapter: nil
 

@@ -53,6 +53,7 @@ class User < ApplicationRecord
     has_many :products, through: :transactions, source: :purchased, :source_type => 'Coupon'
     has_many :gifts, through: :transactions, source: :purchased, :source_type => 'Coupon'
     belongs_to :country, optional: true
+    has_many :invoices
     
     after_create :generate_showroom
     after_update :generate_account
