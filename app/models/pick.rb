@@ -19,6 +19,8 @@ class Pick < ApplicationRecord
     enum status: [:edited, :published, :moderated]
 
     after_update :main_image_updater
+    # before_update :whitelist
+    after_update :create_hashtag
 
     default_scope { order("created_at DESC") }
 
@@ -31,6 +33,25 @@ class Pick < ApplicationRecord
     		self.main_image = self.media.first.url
     	end
     end
+
+    # def whitelist
+    #     if self.saved_change_to_body?
+    #         #вычистить скрипты
+    #     end
+    # end
+
+    def create_hashtag
+        if self.saved_change_to_body? && self.body
+            self.body.scan(/\B(\#[a-zA-Z]+\b)(?!;)/).each do |matching| #upgrade to save #x_y
+                hashtag = Hashtag.find_or_create_by(name: matching[0].downcase)
+                Tag.create(tagger_id: hashtag.id, tagger_type: "Hashtag", tagged_id: self.id, tagged_type: "Pick")
+            end
+        end
+    end
+
+    # def content
+    #     body[0..550].gsub(/s*$/, '...')
+    # end
 
     # def check_user_campaigns
     # 	if self.products.take || self.brands.take

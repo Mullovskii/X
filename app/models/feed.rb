@@ -189,6 +189,10 @@ class Feed < ApplicationRecord
 		          			product.sample_mode = row.to_h[:sample_mode]
 		          		end
 		          	end
+
+		          	if row.to_h[:sample_threshold] && row.to_h[:sample_threshold].class == "Integer"
+		          		product.sample_threshold = row.to_h[:sample_threshold]
+		          	end
 		          	
 		          	if row.to_h[:campaign_label] && row.to_h[:campaign_label].length <= 50
 		        		product.campaign_label = row.to_h[:campaign_label]

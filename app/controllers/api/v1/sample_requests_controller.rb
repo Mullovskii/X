@@ -21,23 +21,19 @@ module Api
       # POST /sample_requests
       def create
         @sample_request = SampleRequest.new(sample_request_params)
-        if @sample_request.product.sample_mode == true && @sample_request.shop_id == @sample_request.product.shop_id
-          if SampleRequest.where(shop_id: @sample_request.shop_id, user_id: @sample_request.user_id).take
-              render json: {errors: ['Already requested']}, status: :unauthorized
+        if @sample_request.product.sample_mode == true && @sample_request.shop_id == @sample_request.product.shop_id && @sample_request.user.followers.length >= @sample_request.product.sample_threshold
+          if current_user.employed_in(@sample_request.shop) 
+            @sample_request.kind = :shop_request
+            @sample_request.shop_approval = true
+            @sample_request.save
+          elsif current_user.id == @sample_request.user_id
+            @sample_request.kind = :user_request
+            @sample_request.user_approval = true
+          end
+          if @sample_request.save
+            render json: @sample_request, status: :created
           else
-              if current_user.employed_in(@sample_request.shop)
-                @sample_request.kind = :shop_request
-                @sample_request.shop_approval = true
-                @sample_request.save
-              elsif current_user.id == @sample_request.user_id
-                @sample_request.kind = :user_request
-                @sample_request.user_approval = true
-              end
-              if @sample_request.save
-                render json: @sample_request, status: :created
-              else
-                render json: @sample_request.errors, status: :unprocessable_entity
-              end
+            render json: @sample_request.errors, status: :unprocessable_entity
           end
         else 
           render json: {errors: ['Product has no samples']}, status: :unauthorized

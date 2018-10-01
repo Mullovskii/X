@@ -5,6 +5,7 @@ class SampleRequest < ApplicationRecord
 
   enum status: [:pending, :approved]
   enum kind: [:user_request, :shop_request]
+  validates :user_id, uniqueness: { scope: [:shop_id] }
 
   after_update :generate_order
 
