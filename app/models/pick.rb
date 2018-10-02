@@ -20,7 +20,7 @@ class Pick < ApplicationRecord
 
     after_update :main_image_updater
     # before_update :whitelist
-    after_update :create_hashtag
+    after_update :find_hashtags, :add_brand_hashtag_and_category, :link_hashtags_to_categories
 
     default_scope { order("created_at DESC") }
 
@@ -40,11 +40,37 @@ class Pick < ApplicationRecord
     #     end
     # end
 
-    def create_hashtag
+    def find_hashtags
         if self.saved_change_to_body? && self.body
-            self.body.scan(/\B(\#[a-zA-Z]+\b)(?!;)/).each do |matching| #upgrade to save #x_y
-                hashtag = Hashtag.find_or_create_by(name: matching[0].downcase)
+            # self.body.scan(/\B(\#[a-zA-Z]+\b)(?!;)/).each do |matching| 
+            self.body.scan(/#\S+ */).each do |matching| #upgrade to save #x_y
+                hashtag = Hashtag.find_or_create_by(name: matching[0].downcase.gsub!(/[^0-9A-Za-z]/, ''))
                 Tag.create(tagger_id: hashtag.id, tagger_type: "Hashtag", tagged_id: self.id, tagged_type: "Pick")
+            end
+        end
+  
+    end
+
+    def add_brand_hashtag_and_category
+        if self.status == "published" && self.brands.take
+            self.brands.each do |brand|
+                hashtag = Hashtag.find_or_create_by(name: brand.name.downcase)
+                Tag.create(tagger_id: hashtag.id, tagger_type: "Hashtag", tagged_id: self.id, tagged_type: "Pick")
+                if brand.categories.take
+                    brand.categories.each do |category|
+                        Tag.create(tagger_id: category.id, tagger_type: "Category", tagged_id: self.id, tagged_type: "Pick")
+                    end
+                end
+            end
+        end
+    end
+
+    def link_hashtags_to_categories
+        if self.status == "published" && self.hashtags.take && self.categories.take
+            self.hashtags.each do |hashtag|
+                self.categories.each do |category|
+                    Tag.create(tagger_id: category.id, tagger_type: "Category", tagged_id: hashtag.id, tagged_type: "Hashtag")
+                end
             end
         end
     end

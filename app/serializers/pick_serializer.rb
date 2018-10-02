@@ -1,5 +1,5 @@
 class PickSerializer < ActiveModel::Serializer
-  attributes :id, :author_id, :author_type, :mana, :status, :main_image, :body
+  attributes :id, :author_id, :author_type, :main_image, :body, :created_at
   
   has_many :media
   has_many :brands

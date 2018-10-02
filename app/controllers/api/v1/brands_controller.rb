@@ -13,7 +13,7 @@ module Api
 
       # GET /brands/1
       def show
-        render json: @brand
+        render json: @brand, include: [params[:include]]
       end
 
       # POST /brands

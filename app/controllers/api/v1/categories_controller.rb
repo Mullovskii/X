@@ -48,7 +48,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def category_params
-          params.require(:category).permit(:name, :level, :google_category_id, :parent_id)
+          params.require(:category).permit(:name, :level, :google_category_id, :parent_id, :mana)
         end
     end
   end

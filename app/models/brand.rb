@@ -1,5 +1,5 @@
 class Brand < ApplicationRecord
-	enum status: [ :unactivated, :activated]
+	enum status: [ :user_generated, :active_ugc, :active_shop]
 	has_many :links, as: :linked, dependent: :destroy
 	has_many :picks, through: :links, :source => :linking,
     :source_type => 'Pick'
@@ -17,6 +17,10 @@ class Brand < ApplicationRecord
     :source_type => 'Category'
 
     validates :name, uniqueness: true
+    default_scope { order("mana DESC") }
+
+    include PgSearch
+    multisearchable :against => [:name]
 
  	def generate_showroom
   		Showroom.create(owner_id: self.id, owner_type: self.class.to_s)

@@ -5,8 +5,8 @@ module Api
       before_action :authenticate_request!, only: [:update, :create]
 
       # GET /picks
-      def index
-        @picks = Pick.all
+      def index    
+        @picks = Pick.where(status: "published")
         render json: @picks, meta: default_meta, include: [params[:include]]
       end
 

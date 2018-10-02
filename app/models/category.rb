@@ -6,4 +6,8 @@ class Category < ApplicationRecord
     :source_type => 'Product'
     has_many :shops, through: :tags, :source => :tagged,
     :source_type => 'Shop'
+    has_many :hashtags, through: :tags, :source => :tagged,
+    :source_type => 'Hashtag'
+
+    # default_scope { order("mana DESC") }
 end

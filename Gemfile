@@ -17,6 +17,7 @@ gem 'jwt'
 gem 'active_model_serializers'
 gem 'carrierwave'
 gem 'pg_search'
+gem 'kaminari'
 
 
 

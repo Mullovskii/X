@@ -28,9 +28,9 @@ class User < ApplicationRecord
 	has_many :passive_relationships, as: :followed, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
 	has_many :notifications, as: :notified
 	  
-	has_many :following, through: :active_relationships, :source => :follower,
+	has_many :following, through: :active_relationships, :source => :followed,
 	    :source_type => 'User'
-	has_many :followers, through: :passive_relationships, :source => :followed,
+	has_many :followers, through: :passive_relationships, :source => :follower,
 	    :source_type => 'User'
 
     has_many :employments
@@ -57,6 +57,11 @@ class User < ApplicationRecord
     
     after_create :generate_showroom
     after_update :generate_account
+
+    default_scope { order("mana DESC") }
+
+    include PgSearch
+  	multisearchable :against => [:username, :full_name]
 
 	def generate_showroom
 		Showroom.create(owner_id: self.id, owner_type: self.class.to_s)

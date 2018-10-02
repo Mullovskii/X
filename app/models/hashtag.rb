@@ -4,10 +4,13 @@ class Hashtag < ApplicationRecord
     :source_type => 'Pick'
     has_many :users, through: :tags, :source => :tagged,
     :source_type => 'User'
+    has_many :brands, through: :tags, :source => :tagged,
+    :source_type => 'Brand'
     has_many :shops, through: :tags, :source => :tagged,
     :source_type => 'Shop'
 
     include PgSearch
-  	pg_search_scope :search, against: [:name]
+  	multisearchable :against => :name
+  	paginates_per 10
 
 end

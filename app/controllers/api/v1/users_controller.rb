@@ -1,18 +1,28 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authenticate_request!, only: [:update, :create, :destroy, :accounts]
-      before_action :set_user, only: [:feed, :accounts, :showroom]
+      before_action :authenticate_request!, only: [:update, :create, :destroy, :accounts, :feed]
+      before_action :set_user, only: [:accounts, :showroom]
       before_action :set_username, only: [:show]
       
+      def index
+        @users = User.all 
+        render json: @users, meta: default_meta, include: [params[:include]]
+      end
 
       def show  
         render json: @user, meta: default_meta, include: [params[:include]]
       end
 
       def feed
-        @picks = Pick.all 
-        render json: @picks, meta: default_meta, include: [params[:include]]
+        picks = []
+        current_user.following.each do |user|
+          user.picks.each do |pick|
+            picks << pick
+          end
+        end
+        picks = picks.sort_by{:created_at} if picks
+        render json: picks, meta: default_meta, include: [params[:include]]
       end
 
       def accounts

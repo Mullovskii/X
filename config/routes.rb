@@ -63,7 +63,12 @@ Rails.application.routes.draw do
       resources :sample_requests
       resources :categories
       resources :tags
-      resources :hashtags
+      resources :hashtags do 
+        member do 
+          get "users", to: "hashtags#users"
+          get "brands", to: "hashtags#brands"
+        end
+      end
       resources :countries
       resources :country_shops
       resources :currencies
@@ -90,7 +95,9 @@ Rails.application.routes.draw do
     	put '/users/:id', to: 'registrations#update'
       get 'users/:id/accounts' => 'users#accounts'
       get 'users/:id/showroom' => 'users#showroom'
+      get 'users' => 'users#index'
       get 'users/:id/feed' => 'users#feed'
+      get 'feed' => 'users#feed'
       get '/users/:username' => 'users#show', :constrain => { :username => /[a-zA-Z-]+/ }
     end
   end

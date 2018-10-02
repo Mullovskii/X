@@ -4,41 +4,22 @@ module Api
       before_action :set_relationship, only: [:show, :update, :destroy]
       before_action :authenticate_request!, only: [:update, :create]
 
-      # GET /relationships
-      def index
-        @relationships = Relationship.all
-
-        render json: @relationships
-      end
-
-      # GET /relationships/1
-      def show
-        render json: @relationship
-      end
 
       # POST /relationships
       def create
-        @relationship = Relationship.new(relationship_params)
-
+        @relationship = current_user.active_relationships.build(relationship_params.merge({follower_id: current_user.id, follower_type: current_user.class.to_s }))
         if @relationship.save
           render json: @relationship, status: :created
         else
           render json: @relationship.errors, status: :unprocessable_entity
         end
       end
-
-      # PATCH/PUT /relationships/1
-      def update
-        if @relationship.update(relationship_params)
-          render json: @relationship
-        else
-          render json: @relationship.errors, status: :unprocessable_entity
-        end
-      end
-
+     
       # DELETE /relationships/1
       def destroy
-        @relationship.destroy
+        if current_user == @relationship.follower
+          @relationship.destroy  
+        end
       end
 
       private
@@ -49,7 +30,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def relationship_params
-          params.require(:relationship).permit(:follower_id, :follower_type, :followed_id, :followed_type)
+          params.require(:relationship).permit(:followed_id, :followed_type)
         end
     end
   end

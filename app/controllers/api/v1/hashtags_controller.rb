@@ -1,20 +1,32 @@
 module Api
   module V1
     class HashtagsController < ApplicationController
-      before_action :set_hashtag, only: [:show, :update, :destroy]
+      before_action :set_hashtag, only: [:show, :update, :destroy, :users, :brands]
       before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /hashtags
-      def index
-        @hashtags = Hashtag.all
-
-        render json: @hashtags
-      end
+      # def index
+      #   @hashtags = Hashtag.all
+      #   render json: @hashtags
+      # end
 
       # GET /hashtags/1
       def show
-        render json: @hashtag
+        @picks = @hashtag.picks.page(params[:page]).per(10)
+        render json: @picks, include: [params[:include]]
       end
+
+      def users
+        @users = @hashtag.users.page(params[:page]).per(10)
+        render json: @users, include: [params[:include]]
+      end
+
+       def brands
+        @brands = @hashtag.brands.page(params[:page]).per(10)
+        render json: @brands, include: [params[:include]]
+      end
+
+
 
       # POST /hashtags
       def create
@@ -49,7 +61,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def hashtag_params
-          params.require(:hashtag).permit(:name)
+          params.require(:hashtag).permit(:name, :mana)
         end
     end
   end
