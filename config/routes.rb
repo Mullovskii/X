@@ -84,6 +84,7 @@ Rails.application.routes.draw do
       resources :swaps
       resources :addresses
       resources :notifications
+      resources :search, only: [:index]
       
 
     	put '/users/:id', to: 'registrations#update'
