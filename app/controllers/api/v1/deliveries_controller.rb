@@ -60,7 +60,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def delivery_params
-          params.require(:delivery).permit(:name, :timezone, :shop_id, :country_id, :mode, :weekends_delivery, :holidays_delivery, :pickup, :days_from, :days_to)
+          params.require(:delivery).permit(:name, :timezone, :shop_id, :country_id, :mode, :weekends_delivery, :holidays_delivery, :pickup, :days_from, :days_to, :price, :product_id, :currency_id)
         end
     
     end

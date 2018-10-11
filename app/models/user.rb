@@ -16,7 +16,9 @@ class User < ApplicationRecord
 	has_many :clicks
 	has_many :addresses, as: :owner
 	has_many :notifications, as: :notified, dependent: :destroy
-	
+	has_many :likes, as: :liker
+	has_many :comments, as: :author
+	has_many :wishes
 
 	has_many :user_campaigns
 	has_many :campaigns, through: :user_campaigns

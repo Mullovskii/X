@@ -16,6 +16,10 @@ class Brand < ApplicationRecord
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
 
+    has_many :active_tags, as: :tagger, class_name: "Tag", dependent: :destroy
+    has_many :shops, through: :active_tags, :source => :tagged,
+    :source_type => 'Shop'
+
     validates :name, uniqueness: true
     default_scope { order("mana DESC") }
 

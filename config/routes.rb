@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
  
  
+  
   devise_for :users, controllers: { registrations: "registrations" }
   post '/api/auth_user' => 'authentication#authenticate_user'
 
@@ -22,7 +23,11 @@ Rails.application.routes.draw do
           resources :clicks
         end
       end
-      resources :brands
+      resources :brands do
+        member do
+          get :shops
+        end
+      end
       resources :invoices
       resources :shops do
         resources :deliveries do
@@ -48,7 +53,9 @@ Rails.application.routes.draw do
             get 'campaign_products', to: 'campaigns#campaign_products'
           end        
         end
-        # resources :feeds
+        member do 
+          get :categories
+        end
       end
       
       
@@ -86,10 +93,14 @@ Rails.application.routes.draw do
           end
       end
       resources :streets
+      resources :accounts, only: [:update]
       resources :swaps
       resources :addresses
       resources :notifications
       resources :search, only: [:index]
+      resources :wishes
+      resources :comments
+      resources :likes
       
 
     	put '/users/:id', to: 'registrations#update'

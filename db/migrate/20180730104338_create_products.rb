@@ -8,7 +8,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       # t.integer :author_id #surf 
       # t.string :author_type #surf 
       #future
-      # t.integer :status, default: 0 #surf enum
+      t.integer :status, default: 0 #surf enum
       # t.integer :item_id #surf - id of global product card (=Item)
       # t.integer :model_id #surf - id of global model card (=Model)
       t.string :venue
@@ -33,9 +33,13 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :image_link_8
       t.string :image_link_9
       t.float :price, default: 0, precision: 5, scale: 3
+      t.references :currency
       t.float :sale_price, default: 0, precision: 5, scale: 3
       t.date :sale_price_effective_date
-      t.float :point_price, default: 0, precision: 5, scale: 3
+      t.integer :quantity
+      # t.float :shipping_price, default: 0, precision: 5, scale: 3
+      # t.integer :shipping_currency_id
+      # t.float :point_price, default: 0, precision: 5, scale: 3
       t.string :availability
       t.date :availability_date
       t.date :expiration_date
@@ -45,6 +49,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.text :installment
       t.string :loyalty_points
       t.integer :main_category_id #surf -generating later from product_type
+      t.integer :google_category_id
       t.string :product_type # ex Women > Dresses > Maxi Dresses
       t.string :gtin
       t.string :mpn
@@ -67,8 +72,8 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :custom_label_0
       t.string :custom_label_1
       
-      t.string :shipping
-      t.string :shipping_label
+      # t.string :shipping
+      # t.string :shipping_label
       t.string :shipping_weight
       t.string :shipping_length
       t.string :shipping_width

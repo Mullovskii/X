@@ -4,7 +4,7 @@ class CreateClicks < ActiveRecord::Migration[5.1]
       t.integer :user_id
       t.integer :pick_id
       t.integer :link_id
-      t.integer :status, default: 0
+      # t.integer :status, default: 0
       t.datetime :trigger_time 
       t.timestamps
     end

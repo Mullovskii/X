@@ -1,45 +1,62 @@
 class Product < ApplicationRecord
+    enum status: [:unverified, :approved]
+    
+    default_scope { order("created_at DESC") }
+
 	belongs_to :shop
+    belongs_to :currency, optional: true
 	belongs_to :feed, optional: true
 	belongs_to :brand, optional: true
     has_many :orders, as: :ordered
-
+    belongs_to :main_category, class_name: 'Category', foreign_key: 'main_category_id', optional: true
+    has_many :deliveries
 	has_many :tags, as: :tagged, dependent: :destroy
 	has_many :categories, through: :tags, :source => :tagger,
     :source_type => 'Category'
     has_many :hashtags, through: :tags, :source => :tagger,
     :source_type => 'Hashtag'
-
     has_many :links, as: :linked
 	has_many :picks, through: :links, :source => :linking,
     :source_type => 'Pick'
-    has_many :campaigns, through: :links, :source => :linking,
-    :source_type => 'Campaign'
-    belongs_to :campaign, optional: true
-    has_many :clicks
-    has_many :gifts
-    has_many :product_coupons
-    has_many :coupons, through: :product_coupons
+    has_many :clicks, through: :links
+    has_many :product_showrooms
+    has_many :wishes
+    
+    after_create :add_category, :add_brand_tags_to_shop
 
-    has_many :active_campaigns
-    has_one :delivery
+    include PgSearch
+    multisearchable :against => :title
+    paginates_per 10
 
-    after_create :add_country
+    # has_many :campaigns, through: :links, :source => :linking,
+    # :source_type => 'Campaign'
+    # belongs_to :campaign, optional: true
+    # has_many :gifts
+    # has_many :product_coupons
+    # has_many :coupons, through: :product_coupons
+    # has_many :active_campaigns
+    # after_create :add_country
     # after_update :add_point_prices
 
-    default_scope { order("created_at DESC") }
+    def add_category
+        self.main_category_id = Category.where(name: self.product_type).first_or_create.id
+    end   
 
-    def delivery
-        self.feed.delivery if self.feed
+    def product_deliveries
+        self.shop.deliveries.where(kind: "default")
     end
 
-    def active_campaigns
-        self.feed.campaigns.where(status: "ongoing") if self.feed
+    def add_brand_tags_to_shop
+        self.shop.tags.create(tagger: self.brand)
     end
 
-    def add_country
-        self.update(country_id: self.feed.country_id) if self.feed        
-    end
+    # def active_campaigns
+    #     self.feed.campaigns.where(status: "ongoing") if self.feed
+    # end
+
+    # def add_country
+    #     self.update(country_id: self.feed.country_id) if self.feed        
+    # end
 
 
     # def add_point_prices

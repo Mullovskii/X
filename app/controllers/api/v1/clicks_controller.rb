@@ -18,7 +18,7 @@ module Api
       # POST /clicks
       def create
           @click = current_user.clicks.build(click_params.merge({ user_id: current_user.id }))
-          if @click.valid && @click.not_self_made
+          unless @click.self_made 
             if @click.save
               render json: @click, status: :created
             else
@@ -26,22 +26,22 @@ module Api
             end
         else
             render json: {errors: ['Click exists. Dont fraud']}, status: :unauthorized
-          end        
+        end        
       end
 
       # PATCH/PUT /clicks/1
-      def update
-        unless @click.status == "on"
-          if @click.update(click_params)
-            @click.add_points
-            render json: @click
-          else
-            render json: @click.errors, status: :unprocessable_entity
-          end
-        else
-          render json: {errors: ['Click is already on. Dont fraud']}, status: :unauthorized
-        end
-      end
+      # def update
+      #   unless @click.status == "on"
+      #     if @click.update(click_params)
+      #       @click.add_points
+      #       render json: @click
+      #     else
+      #       render json: @click.errors, status: :unprocessable_entity
+      #     end
+      #   else
+      #     render json: {errors: ['Click is already on. Dont fraud']}, status: :unauthorized
+      #   end
+      # end
 
       # DELETE /clicks/1
       def destroy
@@ -56,7 +56,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def click_params
-          params.require(:click).permit(:pick_id, :link_id, :status, :trigger_time)
+          params.require(:click).permit(:pick_id, :link_id, :trigger_time)
         end
     end
    end

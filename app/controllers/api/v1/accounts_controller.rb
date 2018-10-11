@@ -1,7 +1,7 @@
 module Api
   module V1
     class AccountsController < ApplicationController
-      before_action :set_account, only: [:show]
+      before_action :set_account, only: [:show, :update]
       before_action :authenticate_request!, only: [:update, :create]
 
       # GET /accounts
@@ -29,13 +29,17 @@ module Api
       # end
 
       # PATCH/PUT /accounts/1
-      # def update
-      #   if @account.update(account_params)
-      #     render json: @account
-      #   else
-      #     render json: @account.errors, status: :unprocessable_entity
-      #   end
-      # end
+      def update
+        if current_user.employed_in(@account.shop) || current_user.id == @account.user_id
+          if @account.update(account_params)
+            render json: @account
+          else
+            render json: @account.errors, status: :unprocessable_entity
+          end
+        else
+          render json: {errors: ['Unauthorized']}, status: :unauthorized
+        end
+      end
 
       # DELETE /accounts/1
       # def destroy
@@ -49,9 +53,9 @@ module Api
         end
 
         # Only allow a trusted parameter "white list" through.
-        # def account_params
-        #   params.require(:account).permit(:user_id, :shop_id, :balance, :campaign_id)
-        # end
+        def account_params
+          params.require(:account).permit(:kind)
+        end
     end
   end
 end

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  liker_id: 1
+  liker_type: MyString
+  liked_id: 1
+  liked_type: MyString
+
+two:
+  liker_id: 1
+  liker_type: MyString
+  liked_id: 1
+  liked_type: MyString

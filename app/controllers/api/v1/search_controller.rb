@@ -11,9 +11,9 @@ module Api
 			   else
 			     query = Pick.all
 			   end
-			   query = query.page(params[:page]).per(10)
+			    query = query.page(params[:page]).per(10)
           	 	# render json: query, meta: pagination_meta(query).merge(default_meta), include: [params[:include]]
-          	 	render json: query, include: [params[:include]]
+          	 	render json: query
 			 end
 		end
 	end

@@ -1,7 +1,7 @@
 module Api
   module V1
     class ShopsController < ApplicationController
-      before_action :set_shop, only: [:show, :update, :destroy]
+      before_action :set_shop, only: [:show, :update, :destroy, :categories]
       before_action :authenticate_request!, only: [:update, :create]
 
       # GET /shops
@@ -38,6 +38,24 @@ module Api
         end
       end
 
+      def categories
+        if params[:category].present?
+          main_category = Category.find_by_id(params[:category])
+          products = @shop.products.where(main_category_id: main_category.id)
+          ids = products.map{ |p| p.id}
+          # puts "hahahaa"
+          # puts ids
+          if params[:product].present?
+            query = PgSearch.multisearch(params[:product]).where(:searchable_type => "Product")
+            render json: query
+          else
+            render json: products.page(params[:page]).per(50).where(id: ids)  
+          end
+        else
+          render json: @shop.categories
+        end
+      end
+
 
       # DELETE /shops/1
       # def destroy
@@ -52,7 +70,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def shop_params
-          params.require(:shop).permit(:name, :brand_id, :accepted_rules, :customer_email, :order_email, :description, :legal_name, :website, :business_type, :status, :avatar, :background, :main_category_id, :main_country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :payment_rules)
+          params.require(:shop).permit(:name, :brand_id, :accepted_rules, :customer_email, :order_email, :description, :legal_name, :website, :kind, :avatar, :background, :country_id, :mana, :user_id, :registration_number, :phone, :integration_type, :brand_name)
         end
     end
   end

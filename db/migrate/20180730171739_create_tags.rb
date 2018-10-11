@@ -9,5 +9,6 @@ class CreateTags < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+    add_index :tags, [:tagged_id, :tagger_id, :tagger_type, :tagged_type], unique: true, name: 'check_tagging'
   end
 end

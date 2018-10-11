@@ -2,27 +2,29 @@ class Feed < ApplicationRecord
 	include ActionView::Helpers::SanitizeHelper
 
 	belongs_to :shop
-	belongs_to :country
-	belongs_to :delivery, optional: true
-	belongs_to :currency
 	has_many :products, dependent: :destroy
-	# has_many :gifts, dependent: :destroy
-	has_many :feed_campaigns
-	has_many :campaigns, through: :feed_campaigns
-	enum mode: [:file, :mannual]
 	enum format: [:xlsx, :csv, :txt]
-	enum kind: [:product_feed, :gift_feed]
 	mount_uploader :file, FeedUploader
+	
+	# belongs_to :country
+	# belongs_to :delivery, optional: true
+	# belongs_to :currency
+	# has_many :gifts, dependent: :destroy
+	# has_many :feed_campaigns
+	# has_many :campaigns, through: :feed_campaigns
+	# enum mode: [:file, :mannual]
+	# enum kind: [:product_feed, :gift_feed]
+	
 
-	after_create :create_shipping
+	# after_create :create_shipping
 
-	def create_shipping
-		unless self.delivery && self.shop.deliveries.where(country_id: self.country_id).take
-			delivery = Delivery.create(name: "Delivery in #{self.country.name}", country_id: self.country_id, shop_id: self.shop_id, currency_id: self.currency_id)
-			self.delivery_id = delivery.id
-			self.save
-		end
-	end
+	# def create_shipping
+	# 	unless self.delivery && self.shop.deliveries.where(country_id: self.country_id).take
+	# 		delivery = Delivery.create(name: "Delivery in #{self.country.name}", country_id: self.country_id, shop_id: self.shop_id, currency_id: self.currency_id)
+	# 		self.delivery_id = delivery.id
+	# 		self.save
+	# 	end
+	# end
 
 
 	# after_update :products_gift_mode
@@ -65,7 +67,7 @@ class Feed < ApplicationRecord
 		        		product = self.shop.products.where(custom_id: row.to_h[:id]).take
 		        	else 
 			        	if row.to_h[:id] && row.to_h[:id].length <= 50
-			        		product = Product.create(feed_id: self.id, shop_id: self.shop_id, country_id: self.country_id)
+			        		product = Product.create(feed_id: self.id, shop_id: self.shop_id)
 			        		product.custom_id = row.to_h[:id]
 			        	end
 		        	end
@@ -89,11 +91,12 @@ class Feed < ApplicationRecord
 
 		        	if row.to_h[:type] && row.to_h[:type].length <= 100
 		        		product.product_type = row.to_h[:type]
-		        		if Category.where(name: product.product_type).take 
-		        			product.main_category_id = Category.where(name: product.product_type).take.id
-		        		elsif Category.where(google_category_id: product.product_type.to_i).take
-		        			product.main_category_id = Category.where(google_category_id: product.product_type.to_i).take
-		        		end
+		        		# if Category.where(name: product.product_type).take 
+		        		# product.main_category_id = Category.where(name: product.product_type).first_or_create.id
+
+		        		# elsif Category.where(google_category_id: product.product_type.to_i).take
+		        		# 	product.main_category_id = Category.where(google_category_id: product.product_type.to_i).take.id
+		        		# end
 		        	end
 
 		        	if row.to_h[:link] && row.to_h[:link].length <= 300 
@@ -194,9 +197,9 @@ class Feed < ApplicationRecord
 		          		product.sample_threshold = row.to_h[:sample_threshold]
 		          	end
 		          	
-		          	if row.to_h[:campaign_label] && row.to_h[:campaign_label].length <= 50
-		        		product.campaign_label = row.to_h[:campaign_label]
-		        	end
+		         #  	if row.to_h[:campaign_label] && row.to_h[:campaign_label].length <= 50
+		        	# 	product.campaign_label = row.to_h[:campaign_label]
+		        	# end
 
 		        	if row.to_h[:color] && row.to_h[:color].length <= 50
 		        		product.color = row.to_h[:color]
@@ -220,7 +223,7 @@ class Feed < ApplicationRecord
 		        		product.size = row.to_h[:size]
 		        	end
 
-		        	if row.to_h[:size_system] && ("US, UK, EU, DE, FR, JP, CN (China), IT, BR, MEX, AU, RU").match(row.to_h[:size_system])
+		        	if row.to_h[:size_system] && ("male, female").match(row.to_h[:size_system])
 		        		product.size_system = row.to_h[:size_system]
 		        	end
 
@@ -249,7 +252,7 @@ class Feed < ApplicationRecord
 		        		product = self.shop.products.where(custom_id: row.to_h[:handle]).take
 		        	else 
 			        	if row.to_h[:handle] && row.to_h[:handle].length <= 500
-			        		product = Product.create(feed_id: self.id, shop_id: self.shop_id, country_id: self.country_id)
+			        		product = Product.create(feed_id: self.id, shop_id: self.shop_id)
 			        		product.custom_id = row.to_h[:handle]
 			        		product.link = self.shop.website+"products/"+product.custom_id
 			        	end
@@ -272,11 +275,12 @@ class Feed < ApplicationRecord
 		        	end
 		        	if row.to_h[:type] && row.to_h[:type].length <= 1000
 		        		product.product_type = row.to_h[:type]
-		        		Category.all.each do |category|
-		        			if (category.name).match(product.product_type)
-		        				product.main_category_id = category.id
-		        			end
-		        		end
+		        		# product.main_category_id = Category.where(name: product.product_type).first_or_create.id
+		        		# Category.all.each do |category|
+		        		# 	if (category.name).match(product.product_type)
+		        		# 		product.main_category_id = category.id
+		        		# 	end
+		        		# end
 		        	end
 		        	if row.to_h[:tags]
 		        		row.to_h[:tags].split.each do |tag|
@@ -318,7 +322,7 @@ class Feed < ApplicationRecord
 		        	end
 		        	if row.to_h[:google_shopping__google_product_category] && row.to_h[:google_shopping__google_product_category].length <= 100
 		        		if Category.where(name: row.to_h[:google_shopping__google_product_category]).take 
-		        			product.main_category_id = Category.where(name: row.to_h[:google_shopping__google_product_category]).take.id
+		        			product.google_category_id = Category.where(name: row.to_h[:google_shopping__google_product_category]).first_or_create.id
 		        		end
 		        	end
 
@@ -351,7 +355,7 @@ class Feed < ApplicationRecord
 		        		product = self.shop.products.where(custom_id: item.xpath('g:id').text).take
 	        	else 
 		        	if item.xpath('g:id').text && item.xpath('g:id').text.length <= 500
-		        		product = Product.create(feed_id: self.id, shop_id: self.shop_id, country_id: self.country_id)
+		        		product = Product.create(feed_id: self.id, shop_id: self.shop_id)
 		        		product.custom_id = item.xpath('g:id').text
 		        	end
 	        	end
@@ -433,11 +437,11 @@ class Feed < ApplicationRecord
 
 		        if item.xpath('g:google_product_category').text != "" && item.xpath('g:google_product_category').text.length <= 100
 	        		product.product_type = item.xpath('g:google_product_category').text
-	        		if Category.where(name: product.product_type).take 
-	        			product.main_category_id = Category.where(name: product.product_type).take.id
-	        		elsif Category.where(google_category_id: product.product_type.to_i).take
-	        			product.main_category_id = Category.where(google_category_id: product.product_type.to_i).take
-	        		end
+	        		# if Category.where(name: product.product_type).take 
+	        		product.google_category_id = Category.where(name: product.product_type).first_or_create.id
+	        		# elsif Category.where(google_category_id: product.product_type.to_i).take
+	        		# 	product.main_category_id = Category.where(google_category_id: product.product_type.to_i).take
+	        		# end
 	        	end
 
 
@@ -489,7 +493,7 @@ class Feed < ApplicationRecord
 	        		product.size = item.xpath('g:size').text
 	        	end
 
-	        	if item.xpath('g:size_system').text != "" && ("US, UK, EU, DE, FR, JP, CN (China), IT, BR, MEX, AU, RU").match(item.xpath('g:size_system').text)
+	        	if item.xpath('g:size_system').text != "" && ("male, female").match(item.xpath('g:size_system').text)
 	        		product.size_system = item.xpath('g:size_system').text
 	        	end
 

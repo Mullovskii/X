@@ -44,7 +44,7 @@ module Api
       private
 
       def user_params
-        params.require(:user).permit(:username, :full_name, :email, :role, :password, :password_confirmation, :phone, :description, :instagram, :twitch, :facebook, :sex, :avatar, :background)
+        params.require(:user).permit(:username, :full_name, :email, :role, :password, :password_confirmation, :phone, :phone_verified, :description, :instagram, :twitch, :facebook, :sex, :avatar, :background, :country_id)
       end
 
       def payload(user)

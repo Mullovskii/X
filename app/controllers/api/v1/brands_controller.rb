@@ -1,7 +1,7 @@
 module Api
   module V1
     class BrandsController < ApplicationController
-      before_action :set_brand, only: [:show, :update, :destroy]
+      before_action :set_brand, only: [:show, :update, :destroy, :shops]
       before_action :authenticate_request!, only: [:update, :create]
 
 
@@ -14,6 +14,11 @@ module Api
       # GET /brands/1
       def show
         render json: @brand, include: [params[:include]]
+      end
+
+      def shops
+        shops = @brand.shops.order("name ASC")
+        render json: shops, include: [params[:include]]
       end
 
       # POST /brands
@@ -49,7 +54,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def brand_params
-          params.require(:brand).permit(:name, :mana, :main_category_id, :description, :avatar, :background, :main_country_id, :status)
+          params.require(:brand).permit(:name, :mana, :description, :avatar, :background, :country_id, :status)
         end
     end
   end

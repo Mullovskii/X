@@ -6,7 +6,7 @@ class CreateAccounts < ActiveRecord::Migration[5.1]
       t.references :currency, foreign_key: true
       t.references :shop, foreign_key: true
       t.float :balance, default: 0, precision: 5, scale: 3
-      t.integer :kind, default: 0
+      t.integer :kind
 
       t.timestamps
     end

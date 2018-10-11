@@ -4,7 +4,7 @@ class PickSerializer < ActiveModel::Serializer
   has_many :media
   has_many :brands
   has_many :products
-  has_many :external_links
+  # has_many :external_links
   has_many :hashtags
   has_many :categories
 end

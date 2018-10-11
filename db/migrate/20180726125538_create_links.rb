@@ -12,10 +12,11 @@ class CreateLinks < ActiveRecord::Migration[5.1]
       t.bigint :y
       t.string :external_link
       t.integer :kind
+      t.integer :status
 
       t.timestamps
     end
-    add_index :links, [:external_link, :linking_id, :linking_type], unique: true
+    # add_index :links, [:external_link, :linking_id, :linking_type], unique: true
     add_index :links, [:linked_id, :linked_type, :linking_id], unique: true
   end
 end

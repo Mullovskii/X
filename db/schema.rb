@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_02_112550) do
+ActiveRecord::Schema.define(version: 2018_10_11_192804) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.bigint "currency_id"
     t.bigint "shop_id"
     t.float "balance", default: 0.0
-    t.integer "kind", default: 0
+    t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_accounts_on_campaign_id"
@@ -32,7 +32,9 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
 
   create_table "addresses", force: :cascade do |t|
     t.bigint "country_id"
+    t.string "city_name"
     t.bigint "city_id"
+    t.string "street_name"
     t.bigint "street_id"
     t.bigint "owner_id"
     t.string "owner_type"
@@ -52,12 +54,12 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.string "description"
     t.string "avatar"
     t.string "background"
-    t.integer "main_category_id"
-    t.integer "main_country_id"
+    t.bigint "country_id"
     t.integer "status", default: 0
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_brands_on_country_id"
     t.index ["name"], name: "index_brands_on_name", unique: true
   end
 
@@ -93,6 +95,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.integer "google_category_id"
     t.integer "parent_id"
     t.integer "level"
+    t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -109,11 +112,21 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.integer "user_id"
     t.integer "pick_id"
     t.integer "link_id"
-    t.integer "status", default: 0
     t.datetime "trigger_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "link_id", "pick_id"], name: "index_clicks_on_user_id_and_link_id_and_pick_id", unique: true
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.integer "author_id"
+    t.string "author_type"
+    t.integer "commented_id"
+    t.string "commented_type"
+    t.text "body"
+    t.string "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "countries", force: :cascade do |t|
@@ -175,6 +188,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
   create_table "deliveries", force: :cascade do |t|
     t.string "name"
     t.bigint "shop_id"
+    t.bigint "product_id"
     t.bigint "country_id"
     t.integer "mode", default: 0
     t.integer "currency_id"
@@ -183,10 +197,13 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.boolean "pickup"
     t.integer "days_from", default: 0
     t.integer "days_to", default: 1
+    t.decimal "price", precision: 5, scale: 3, default: "0.0"
     t.datetime "timezone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_deliveries_on_country_id"
+    t.index ["product_id", "shop_id", "country_id"], name: "index_deliveries_on_product_id_and_shop_id_and_country_id", unique: true
+    t.index ["product_id"], name: "index_deliveries_on_product_id"
     t.index ["shop_id"], name: "index_deliveries_on_shop_id"
   end
 
@@ -214,17 +231,8 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
 
   create_table "feeds", force: :cascade do |t|
     t.integer "shop_id"
-    t.integer "delivery_id"
-    t.integer "mode"
     t.integer "format"
-    t.integer "kind"
-    t.integer "country_id"
-    t.integer "currency_id"
-    t.string "name"
     t.string "url"
-    t.boolean "gift_mode", default: false
-    t.integer "author_id"
-    t.string "author_type"
     t.boolean "sample_mode", default: false
     t.bigint "sample_threshold"
     t.datetime "created_at", null: false
@@ -262,6 +270,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
 
   create_table "hashtags", force: :cascade do |t|
     t.string "name"
+    t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -288,6 +297,16 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 
+  create_table "likes", force: :cascade do |t|
+    t.integer "liker_id"
+    t.string "liker_type"
+    t.integer "liked_id"
+    t.string "liked_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["liker_id", "liker_type", "liked_id", "liked_type"], name: "check_likes", unique: true
+  end
+
   create_table "links", force: :cascade do |t|
     t.integer "author_id"
     t.string "author_type"
@@ -300,9 +319,9 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.bigint "y"
     t.string "external_link"
     t.integer "kind"
+    t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["external_link", "linking_id", "linking_type"], name: "index_links_on_external_link_and_linking_id_and_linking_type", unique: true
     t.index ["linked_id", "linked_type", "linking_id"], name: "index_links_on_linked_id_and_linked_type_and_linking_id", unique: true
     t.index ["medium_id"], name: "index_links_on_medium_id"
   end
@@ -379,7 +398,6 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
   create_table "product_showrooms", force: :cascade do |t|
     t.bigint "product_id"
     t.bigint "showroom_id"
-    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_product_showrooms_on_product_id"
@@ -391,6 +409,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.integer "country_id"
     t.integer "shop_id"
     t.string "custom_id"
+    t.integer "status", default: 0
     t.string "venue"
     t.integer "venue_id"
     t.string "brand_name"
@@ -409,9 +428,10 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.string "image_link_8"
     t.string "image_link_9"
     t.float "price", default: 0.0
+    t.bigint "currency_id"
     t.float "sale_price", default: 0.0
     t.date "sale_price_effective_date"
-    t.float "point_price", default: 0.0
+    t.integer "quantity"
     t.string "availability"
     t.date "availability_date"
     t.date "expiration_date"
@@ -421,6 +441,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.text "installment"
     t.string "loyalty_points"
     t.integer "main_category_id"
+    t.integer "google_category_id"
     t.string "product_type"
     t.string "gtin"
     t.string "mpn"
@@ -442,8 +463,6 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.string "item_group_id"
     t.string "custom_label_0"
     t.string "custom_label_1"
-    t.string "shipping"
-    t.string "shipping_label"
     t.string "shipping_weight"
     t.string "shipping_length"
     t.string "shipping_width"
@@ -459,6 +478,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.bigint "sample_threshold", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["currency_id"], name: "index_products_on_currency_id"
   end
 
   create_table "relationships", force: :cascade do |t|
@@ -511,6 +531,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_sample_requests_on_product_id"
     t.index ["shop_id"], name: "index_sample_requests_on_shop_id"
+    t.index ["user_id", "shop_id"], name: "index_sample_requests_on_user_id_and_shop_id", unique: true
     t.index ["user_id"], name: "index_sample_requests_on_user_id"
   end
 
@@ -519,30 +540,27 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.string "legal_name"
     t.string "description"
     t.string "website"
-    t.integer "business_type"
-    t.integer "status", default: 0
+    t.integer "kind", default: 0
     t.integer "kyc", default: 0
     t.string "avatar"
     t.string "background"
-    t.integer "main_category_id"
-    t.integer "main_country_id"
-    t.integer "main_currency_id"
+    t.bigint "country_id"
     t.decimal "mana", precision: 5, scale: 3, default: "0.0"
     t.integer "owner_id"
     t.string "owner_type"
-    t.integer "brand_id"
-    t.integer "registration_number"
+    t.bigint "brand_id"
+    t.string "brand_name"
     t.string "phone"
     t.string "customer_email"
     t.string "order_email"
     t.integer "integration_type", default: 0
-    t.text "payment_rules"
-    t.boolean "accepted_rules", default: false
+    t.boolean "accepted_rules", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_shops_on_brand_id"
+    t.index ["country_id"], name: "index_shops_on_country_id"
     t.index ["legal_name"], name: "index_shops_on_legal_name", unique: true
     t.index ["name"], name: "index_shops_on_name", unique: true
-    t.index ["registration_number"], name: "index_shops_on_registration_number", unique: true
     t.index ["website"], name: "index_shops_on_website", unique: true
   end
 
@@ -587,6 +605,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["tagged_id", "tagger_id", "tagger_type", "tagged_type"], name: "check_tagging", unique: true
   end
 
   create_table "tariffs", force: :cascade do |t|
@@ -643,6 +662,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.string "full_name"
     t.string "username"
     t.bigint "phone"
+    t.boolean "phone_verified", default: false
     t.integer "country_id"
     t.integer "sex", default: 0
     t.integer "city_id"
@@ -669,6 +689,16 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "wishes", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "product_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_wishes_on_product_id"
+    t.index ["user_id", "product_id"], name: "index_wishes_on_user_id_and_product_id", unique: true
+    t.index ["user_id"], name: "index_wishes_on_user_id"
+  end
+
   add_foreign_key "accounts", "campaigns"
   add_foreign_key "accounts", "currencies"
   add_foreign_key "accounts", "shops"
@@ -685,6 +715,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
   add_foreign_key "coupons", "shops"
   add_foreign_key "currencies", "countries"
   add_foreign_key "deliveries", "countries"
+  add_foreign_key "deliveries", "products"
   add_foreign_key "deliveries", "shops"
   add_foreign_key "employments", "shops"
   add_foreign_key "employments", "users"
@@ -721,4 +752,6 @@ ActiveRecord::Schema.define(version: 2018_10_02_112550) do
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"
+  add_foreign_key "wishes", "products"
+  add_foreign_key "wishes", "users"
 end

@@ -14,7 +14,9 @@ class Pick < ApplicationRecord
 	has_many :hashtags, through: :tags, :source => :tagger,
     :source_type => 'Hashtag'
     has_many :clicks
-    has_many :external_links
+    has_many :comments, as: :commented
+    has_many :likes, as: :liked
+    # has_many :external_links
 
     enum status: [:edited, :published, :moderated]
 
