@@ -18,38 +18,40 @@ module Api
       # end
 
       # POST /orders
-      # def create
-      #   @order = current_user.orders.build(order_params.merge({user_id: current_user.id}))
-      #   unless Order.where(user_id: @order.user_id, ordered_id: @order.ordered_id, ordered_type: @order.ordered_type, status: ["pending", "authorized"]).take 
-      #     if @order.ordered.gift_mode == true && @order.shop_id == @order.ordered.shop_id && current_user.has_account?(@order) && @order.amount == @order.ordered.point_price && current_user.has_points?(@order) 
-      #       if @order.save
-      #         render json: @order, status: :created
-      #       else
-      #         render json: @order.errors, status: :unprocessable_entity
-      #       end
-      #     else
-      #       render json: {errors: ['Low funds']}, status: :unauthorized
-      #     end
-      #   else
-      #     render json: {errors: ['Order already exists']}, status: :unauthorized
-      #   end
+      def create
+        @order = current_user.orders.build(order_params.merge({user_id: current_user.id}))
+          if @order.checked_for_quantity?
+            if @order.save
+              render json: @order, status: :created
+            else
+              render json: @order.errors, status: :unprocessable_entity
+            end
+          else
+            render json: {errors: ['Out of stock']}, status: :unauthorized
+          end
+        end
         
       # end
 
       # PATCH/PUT /orders/1
-      # def update
-      #   if current_user.employed_in(@order.shop) || @order.user_id == current_user.id
-      #     if @order.update(order_params)
-      #       if @order.status == "cancelled"
-      #         @order.operation.destroy if @order.operation
-      #       end
-      #       render json: @order
-      #     else
-      #       render json: @order.errors, status: :unprocessable_entity
-      #     end
-      #   else
-      #   end
-      # end
+      def update
+        if current_user.employed_in(@order.shop) || @order.user_id == current_user.id
+          unless @order.moderated?
+            if @order.update(order_params)
+              if @order.status == "cancelled"
+                @order.operation.destroy if @order.operation
+              end
+              render json: @order
+            else
+              render json: @order.errors, status: :unprocessable_entity
+            end
+          else
+            render json: {errors: ['Unauthorized']}, status: :unauthorized  
+          end
+        else
+          render json: {errors: ['Unauthorized']}, status: :unauthorized
+        end
+      end
 
       # DELETE /orders/1
       # def destroy
@@ -64,7 +66,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def order_params
-          params.require(:order).permit(:ordered_id, :ordered_type, :shop_id, :amount, :status, :kind, :confirmed_at, :cancelled_at  )
+          params.require(:order).permit(:product_id, :quantity, :shop_id, :address_id, :status, :kind, :confirmed_at, :cancelled_at, :phone)
         end
     end
   end

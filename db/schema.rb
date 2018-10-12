@@ -351,17 +351,29 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.integer "ordered_id"
-    t.string "ordered_type"
+    t.bigint "product_id"
+    t.integer "quantity", default: 1
     t.bigint "shop_id"
     t.bigint "user_id"
+    t.bigint "address_id"
+    t.bigint "currency_id"
+    t.bigint "phone"
     t.integer "status", default: 0
     t.integer "kind", default: 0
     t.float "amount", default: 0.0
+    t.float "shipping_amount", default: 0.0
+    t.float "total_amount", default: 0.0
+    t.float "vat", default: 0.0
+    t.float "blogger_reward", default: 0.0
+    t.float "surf_reward", default: 0.0
+    t.float "discount", default: 0.0
     t.datetime "confirmed_at"
     t.datetime "cancelled_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_orders_on_address_id"
+    t.index ["currency_id"], name: "index_orders_on_currency_id"
+    t.index ["product_id"], name: "index_orders_on_product_id"
     t.index ["shop_id"], name: "index_orders_on_shop_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
@@ -431,7 +443,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.bigint "currency_id"
     t.float "sale_price", default: 0.0
     t.date "sale_price_effective_date"
-    t.integer "quantity"
+    t.integer "quantity", default: 0
     t.string "availability"
     t.date "availability_date"
     t.date "expiration_date"
@@ -627,19 +639,19 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   create_table "transactions", force: :cascade do |t|
     t.bigint "credit_account_id"
     t.bigint "debit_account_id"
+    t.bigint "order_id"
     t.bigint "invoice_id"
-    t.bigint "click_id"
     t.float "amount", default: 0.0
     t.bigint "currency_id"
     t.integer "status", default: 0
     t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["click_id"], name: "index_transactions_on_click_id"
     t.index ["credit_account_id"], name: "index_transactions_on_credit_account_id"
     t.index ["currency_id"], name: "index_transactions_on_currency_id"
     t.index ["debit_account_id"], name: "index_transactions_on_debit_account_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
+    t.index ["order_id"], name: "index_transactions_on_order_id"
   end
 
   create_table "user_campaigns", force: :cascade do |t|
@@ -729,6 +741,9 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "invoices", "shops"
   add_foreign_key "invoices", "users"
   add_foreign_key "links", "media"
+  add_foreign_key "orders", "addresses"
+  add_foreign_key "orders", "currencies"
+  add_foreign_key "orders", "products"
   add_foreign_key "orders", "shops"
   add_foreign_key "orders", "users"
   add_foreign_key "product_coupons", "coupons"
@@ -746,9 +761,9 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "swaps", "shops"
   add_foreign_key "swaps", "users"
   add_foreign_key "tariffs", "deliveries"
-  add_foreign_key "transactions", "clicks"
   add_foreign_key "transactions", "currencies"
   add_foreign_key "transactions", "invoices"
+  add_foreign_key "transactions", "orders"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"

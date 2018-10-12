@@ -36,7 +36,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.references :currency
       t.float :sale_price, default: 0, precision: 5, scale: 3
       t.date :sale_price_effective_date
-      t.integer :quantity
+      t.integer :quantity, default: 1
       # t.float :shipping_price, default: 0, precision: 5, scale: 3
       # t.integer :shipping_currency_id
       # t.float :point_price, default: 0, precision: 5, scale: 3

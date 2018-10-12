@@ -43,7 +43,7 @@ class Product < ApplicationRecord
     end   
 
     def product_deliveries
-        self.shop.deliveries.where(kind: "default")
+        self.deliveries + self.shop.deliveries.where(mode: "default").where.not(country_id: self.deliveries.map{|d| d.country_id} ) 
     end
 
     def add_brand_tags_to_shop
