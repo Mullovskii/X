@@ -20,7 +20,7 @@ module Api
       # POST /orders
       def create
         @order = current_user.orders.build(order_params.merge({user_id: current_user.id}))
-          if @order.checked_for_quantity?
+          if @order.in_stock?
             if @order.save
               render json: @order, status: :created
             else

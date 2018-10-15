@@ -3,15 +3,18 @@ class CreateOrders < ActiveRecord::Migration[5.1]
     create_table :orders do |t|
       # t.integer :transaction_id
       t.references :product, foreign_key: true
+      t.float :product_price, default: 0, precision: 5, scale: 3
+      t.integer :product_currency
+      t.float :usd_price, default: 0, precision: 5, scale: 3
       t.integer :quantity, default: 1
       t.references :shop, foreign_key: true
       t.references :user, foreign_key: true
       t.references :address, foreign_key: true
-      t.references :currency, foreign_key: true
       t.bigint :phone
       t.integer :status, default: 0
       t.integer :kind, default: 0
       t.float :amount, default: 0, precision: 5, scale: 3
+      t.references :currency, foreign_key: true
       t.float :shipping_amount, default: 0, precision: 5, scale: 3
       t.float :total_amount, default: 0, precision: 5, scale: 3
       t.float :vat, default: 0, precision: 5, scale: 3

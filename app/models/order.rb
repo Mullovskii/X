@@ -13,7 +13,13 @@ class Order < ApplicationRecord
 
   def add_info
     self.shop = self.product.shop
-    self.amount = self.product.price
+    self.product_price = self.product.price
+    self.product_currency_id = self.product.currency_id
+    self.currency = self.user.country.currency
+    self.usd_price = self.product.currency.to_usd_price(amount)
+    self.amount = self.currency.to_local_price(self.usd_price)
+    
+    # self.address = self.user.address
     # self.currency = self.product.currency
     if self.product.deliveries.where(country_id: self.user.country_id).take
       self.shipping_amount = self.product.deliveries.where(country_id: self.user.country_id).take.price  
@@ -25,7 +31,7 @@ class Order < ApplicationRecord
     self.save
   end
 
-  def checked_for_quantity?
+  def in_stock?
     self.product.quantity >= self.quantity
   end
 
@@ -57,6 +63,7 @@ class Order < ApplicationRecord
 
   def change_virtual_balances
     if self.saved_change_to_status? && self.status == "cleared"
+      puts "hahahahahh"
       credit_shop_balance
       credit_surf_balance
       reward_blogger
@@ -64,19 +71,21 @@ class Order < ApplicationRecord
   end
 
   def credit_shop_balance
+    puts "hahahahahh"
     account = self.shop.account
-    Transaction.create(credit_account: account, order_id: self.id, product_id: self.product.id, amount: self.total_amount - self.surf_reward, currency_id: self.currency_id) 
+    Transaction.create(credit_account_id: account.id, order_id: self.id, product_id: self.product.id, amount: self.total_amount - self.surf_reward, currency_id: self.currency_id) 
   end
 
   def credit_surf_balance
     account = Account.where(kind: "surf").first_or_create
-    Transaction.create(credit_account: account, order_id: self.id, product_id: self.product.id, amount: self.surf_reward, currency_id: self.currency_id) 
+    Transaction.create(credit_account_id: account.id, order_id: self.id, product_id: self.product.id, amount: self.surf_reward, currency_id: self.currency_id, kind: "surf_reward") 
   end
 
   def reward_blogger
     if self.product.clicks.first
-      account = self.product.clicks.first.user.accounts.where(currency_id: self.currency_id).first_or_create
-      Transaction.create(credit_account: account, order_id: self.id, product_id: self.product.id, amount: self.surf_reward / 3, currency_id: self.currency_id) 
+      blogger_account = self.product.clicks.first.user.accounts.where(currency_id: self.currency_id).first_or_create
+      surf_account = Account.where(kind: "surf").first_or_create
+      Transaction.create(credit_account_id: blogger_account.id, debit_account_id: surf_account.id, order_id: self.id, product_id: self.product.id, amount: self.surf_reward / 3, currency_id: self.currency_id, kind: "blogger_reward")  
     end
   end
 

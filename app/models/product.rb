@@ -50,6 +50,12 @@ class Product < ApplicationRecord
         self.shop.tags.create(tagger: self.brand)
     end
 
+    def usd_price
+        self.price/self.currency.usd_rate
+    end
+
+   
+
     # def active_campaigns
     #     self.feed.campaigns.where(status: "ongoing") if self.feed
     # end

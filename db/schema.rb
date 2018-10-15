@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   create_table "accounts", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "campaign_id"
-    t.bigint "currency_id"
+    t.bigint "currency_id", default: 1
     t.bigint "shop_id"
     t.float "balance", default: 0.0
     t.integer "kind"
@@ -356,7 +356,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.bigint "shop_id"
     t.bigint "user_id"
     t.bigint "address_id"
-    t.bigint "currency_id"
+    t.bigint "currency_id", default: 1
     t.bigint "phone"
     t.integer "status", default: 0
     t.integer "kind", default: 0
@@ -443,7 +443,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.bigint "currency_id"
     t.float "sale_price", default: 0.0
     t.date "sale_price_effective_date"
-    t.integer "quantity", default: 0
+    t.integer "quantity", default: 1
     t.string "availability"
     t.date "availability_date"
     t.date "expiration_date"
@@ -640,6 +640,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.bigint "credit_account_id"
     t.bigint "debit_account_id"
     t.bigint "order_id"
+    t.bigint "product_id"
     t.bigint "invoice_id"
     t.float "amount", default: 0.0
     t.bigint "currency_id"
@@ -652,6 +653,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.index ["debit_account_id"], name: "index_transactions_on_debit_account_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
     t.index ["order_id"], name: "index_transactions_on_order_id"
+    t.index ["product_id"], name: "index_transactions_on_product_id"
   end
 
   create_table "user_campaigns", force: :cascade do |t|
@@ -764,6 +766,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "transactions", "currencies"
   add_foreign_key "transactions", "invoices"
   add_foreign_key "transactions", "orders"
+  add_foreign_key "transactions", "products"
   add_foreign_key "user_campaigns", "campaigns"
   add_foreign_key "user_campaigns", "links"
   add_foreign_key "user_campaigns", "users"
