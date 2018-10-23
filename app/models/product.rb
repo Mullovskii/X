@@ -22,11 +22,14 @@ class Product < ApplicationRecord
     has_many :product_showrooms
     has_many :wishes
     
-    after_create :add_category, :add_brand_tags_to_shop
+    after_create :add_category, :add_brand_tags_to_shop, :price_to_cents
+    # before_create :price_to_cents
 
     include PgSearch
     multisearchable :against => :title
     paginates_per 10
+
+    
 
     # has_many :campaigns, through: :links, :source => :linking,
     # :source_type => 'Campaign'
@@ -37,6 +40,14 @@ class Product < ApplicationRecord
     # has_many :active_campaigns
     # after_create :add_country
     # after_update :add_point_prices
+
+    def price_to_cents
+        unless self.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+            self.price_in_cents = self.price_in_cents.to_f*100
+            self.sale_price_in_cents = self.sale_price_in_cents.to_f*100
+        end
+        self.save
+    end
 
     def add_category
         self.main_category_id = Category.where(name: self.product_type).first_or_create.id
@@ -50,10 +61,20 @@ class Product < ApplicationRecord
         self.shop.tags.create(tagger: self.brand)
     end
 
-    def usd_price
-        self.price/self.currency.usd_rate
+    def price_to_usd
+        Money.new(self.price, self.currency.name).exchange_to("USD")
     end
 
+    def destock(order_quantity)
+        self.quantity -= order_quantity
+        self.save
+        puts "4hahahah"
+    end
+
+    def return_stock(order_quantity)
+        self.quantity += order_quantity
+        self.save
+    end
    
 
     # def active_campaigns

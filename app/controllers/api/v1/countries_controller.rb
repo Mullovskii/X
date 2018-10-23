@@ -2,7 +2,7 @@ module Api
   module V1
     class CountriesController < ApplicationController
       before_action :set_country, only: [:gifts, :show, :update, :destroy, :products, :shops, :samples]
-      before_action :authenticate_request!, only: [:update, :create]
+      # before_action :authenticate_request!, only: [:update, :create]
 
 
       # GET /countries
@@ -75,7 +75,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def country_params
-          params.require(:country).permit(:name, :status, :vat)
+          params.require(:country).permit(:name, :status, :vat, :currency_id)
         end
     end
   end

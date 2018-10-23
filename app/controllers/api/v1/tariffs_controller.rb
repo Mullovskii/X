@@ -18,6 +18,9 @@ module Api
       # POST /tariffs
       def create
         @tariff = Tariff.new(tariff_params)
+        unless @tariff.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+            @tariff.price_in_cents = @tariff.price_in_cents.to_f*100
+        end
         if current_user.employed_in(@tariff.delivery.shop)
           if @tariff.save
             render json: @tariff, status: :created
@@ -59,7 +62,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def tariff_params
-          params.require(:tariff).permit(:name, :kind, :delivery_id, :mode, :product_price_from, :product_price_to, :weight_from, :weight_to, :price)
+          params.require(:tariff).permit(:name, :kind, :delivery_id, :mode, :product_price_from, :product_price_to, :weight_from, :weight_to, :price_in_cents)
         end
     end
   end

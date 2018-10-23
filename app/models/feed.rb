@@ -53,9 +53,9 @@ class Feed < ApplicationRecord
 	# end
 
 	def load_products
-		file = File.join(Rails.root, 'app', 'files', "Sheet.csv")
+		# file = File.join(Rails.root, 'app', 'files', "Sheet.csv")
 		# file = File.join(Rails.root, 'app', 'files', "Shopify.csv")
-		# file = File.join(Rails.root, 'app', 'files', "Google2.xml")
+		file = File.join(Rails.root, 'app', 'files', "Google2.xml")
 		if file.match(".csv")
 			require "csv"
 	        CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
@@ -151,23 +151,48 @@ class Feed < ApplicationRecord
 		        	end
 
 		        	if row.to_h[:price]
-		        		# Currency.all.map{|c|c.name}
-		    #     		currencies = %w(USD RUB EUR TRY $ £)
-						# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
-						# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+		        		       		
+		        		currencies = Currency.all.map{|c| c.name} + Currency.all.map{|c| c.symbolic_name.to_s}
+		        		currencies = currencies.reject { |c| c.empty? }
+						currencies_pattern = currencies.compact.map {|c| Regexp.escape(c) }.join("|")
+						full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+						if currency_name = full_pattern.match(row.to_h[:price])[1] rescue false
+							product.currency = Currency.find_by_name(currency_name) || product.currency = Currency.find_by_symbolic_name(currency_name)
+						end
+
 						if float_number = /(\d+[,.]\d+)/.match(row.to_h[:price])[1] rescue false
-							product.price = float_number.to_f
+							unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+								product.price_in_cents = float_number.to_f*100
+							else
+								product.price_in_cents = float_number.to_f
+							end
+							
 						elsif integer = row.to_h[:price].scan(/\d+|[A-Za-z]+/)[0] rescue false
-							product.price = integer.to_f
+							
+							unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+								product.price_in_cents = integer.to_f*100
+							else
+								product.price_in_cents = integer.to_f
+							end
 						end      		
 		        	end
 
 		        	if row.to_h[:sale_price] 
-		        		# Currency.all.map{|c|c.name}
 		        		if float_number = /(\d+[,.]\d+)/.match(row.to_h[:sale_price])[1] rescue false
-							product.sale_price = float_number.to_f
+							
+							unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+								product.sale_price_in_cents = float_number.to_f*100
+							else
+								product.sale_price_in_cents = float_number.to_f
+							end
 						elsif integer = row.to_h[:sale_price].scan(/\d+|[A-Za-z]+/)[0] rescue false
-							product.sale_price = integer.to_f
+							unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+								product.sale_price_in_cents = integer.to_f*100
+							else
+								product.sale_price_in_cents = integer.to_f
+							end
+
+							
 						end 
 		        	end
 		          	      
@@ -294,10 +319,30 @@ class Feed < ApplicationRecord
 			        	end
 			        end
 			        if row.to_h[:variant_price]
+
+			        	currencies = Currency.all.map{|c| c.name} + Currency.all.map{|c| c.symbolic_name.to_s}
+		        		currencies = currencies.reject { |c| c.empty? }
+						currencies_pattern = currencies.compact.map {|c| Regexp.escape(c) }.join("|")
+						full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+						if currency_name = full_pattern.match(row.to_h[:variant_price])[1] rescue false
+							product.currency = Currency.find_by_name(currency_name) || product.currency = Currency.find_by_symbolic_name(currency_name)
+						end
+
+
 						if float_number = /(\d+[,.]\d+)/.match(row.to_h[:variant_price])[1] rescue false
-							product.price = float_number
+							
+							unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+								product.price_in_cents = float_number.to_f*100
+							else
+								product.price_in_cents = float_number.to_f
+							end
 						elsif integer = row.to_h[:variant_price].scan(/\d+|[A-Za-z]+/)[0] rescue false
-							product.price = integer
+							
+							unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+								product.price_in_cents = integer.to_f*100
+							else
+								product.price_in_cents = integer.to_f
+							end
 						end
 		        	end
 		        	if row.to_h[:image_src] && row.to_h[:image_src].length <= 500 
@@ -399,14 +444,28 @@ class Feed < ApplicationRecord
 	        	end
 
 	        	if item.xpath('g:price').text != ""
-	        		# Currency.all.map{|c|c.name}
-	    #     		currencies = %w(USD RUB EUR TRY $ £)
-					# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
-					# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+	        		
+	        		currencies = Currency.all.map{|c| c.name} + Currency.all.map{|c| c.symbolic_name.to_s}
+	        		currencies = currencies.reject { |c| c.empty? }
+					currencies_pattern = currencies.compact.map {|c| Regexp.escape(c) }.join("|")
+					full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+					if currency_name = full_pattern.match(item.xpath('g:price').text)[1] rescue false
+						product.currency = Currency.find_by_name(currency_name) || product.currency = Currency.find_by_symbolic_name(currency_name)
+					end
+
 					if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:price').text)[1] rescue false
-						product.price = float_number.to_f
+						unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+							product.price_in_cents = float_number.to_f*100
+						else
+							product.price_in_cents = float_number.to_f
+						end
+						
 					elsif integer = item.xpath('g:price').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
-						product.price = integer.to_f
+						unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+							product.price_in_cents = integer.to_f*100
+						else
+							product.price_in_cents = integer.to_f
+						end
 					end      		
 		        end
 
@@ -416,23 +475,33 @@ class Feed < ApplicationRecord
 					# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
 					# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
 					if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:sale_price').text)[1] rescue false
-						product.price = float_number.to_f
+						
+						unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+							product.sale_price_in_cents = float_number.to_f*100
+						else
+							product.sale_price_in_cents = float_number.to_f
+						end
 					elsif integer = item.xpath('g:sale_price').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
-						product.price = integer.to_f
+						
+						unless product.currency == Currency.where(name: ["KRW", 'JPY', 'HUF', 'ISK']).take
+							product.sale_price_in_cents = integer.to_f*100
+						else
+							product.sale_price_in_cents = integer.to_f
+						end
 					end      		
 		        end
 
-		        if item.xpath('g:sale_price_effective_date').text != ""
-	        		# Currency.all.map{|c|c.name}
-	    #     		currencies = %w(USD RUB EUR TRY $ £)
-					# currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
-					# full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
-					if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:sale_price_effective_date').text)[1] rescue false
-						product.price = float_number.to_f
-					elsif integer = item.xpath('g:sale_price_effective_date').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
-						product.price = integer.to_f
-					end      		
-		        end
+		   #      if item.xpath('g:sale_price_effective_date').text != ""
+	    #     		# Currency.all.map{|c|c.name}
+	    # #     		currencies = %w(USD RUB EUR TRY $ £)
+					# # currencies_pattern = currencies.map {|c| Regexp.escape(c) }.join("|")
+					# # full_pattern = /(?<!\w)\d*\s*(#{currencies_pattern})\s*\d*(?!\w)/i
+					# if float_number = /(\d+[,.]\d+)/.match(item.xpath('g:sale_price_effective_date').text)[1] rescue false
+					# 	product.price = float_number.to_f
+					# elsif integer = item.xpath('g:sale_price_effective_date').text.scan(/\d+|[A-Za-z]+/)[0] rescue false
+					# 	product.price = integer.to_f
+					# end      		
+		   #      end
 
 
 		        if item.xpath('g:google_product_category').text != "" && item.xpath('g:google_product_category').text.length <= 100

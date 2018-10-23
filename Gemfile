@@ -21,6 +21,8 @@ gem 'kaminari'
 gem 'i18n'
 gem 'money'
 gem 'eu_central_bank', '~> 1.3.0'
+# gem 'money-rails', '~>1'
+
 # gem 'i18n', '~> 0.9'
 # gem 'money', '~> 6.12.0'
 # gem 'eu_central_bank', git: 'https://github.com/RubyMoney/eu_central_bank.git'

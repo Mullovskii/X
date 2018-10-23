@@ -1,7 +1,7 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authenticate_request!, only: [:update, :create, :destroy, :accounts, :feed]
+      before_action :authenticate_request!, only: [:update, :create, :destroy, :accounts, :feed, :user_addresses]
       before_action :set_user, only: [:accounts, :showroom]
       before_action :set_username, only: [:show]
       
@@ -31,6 +31,10 @@ module Api
         else 
           render json: {errors: ['Unauthorized']}, status: :unauthorized
         end
+      end
+
+      def user_addresses
+        render json: current_user.addresses, meta: default_meta, include: [params[:include]]
       end
 
       def showroom

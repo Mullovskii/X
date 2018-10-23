@@ -12,9 +12,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       t.string :username
       t.bigint :phone
       t.boolean :phone_verified, default: false
-      t.integer :country_id, default: 0
+      t.references :country
       t.integer :sex, default: 0
-      t.integer :city_id
+      t.references :city
       t.string :description
       t.string :avatar
       t.string :background

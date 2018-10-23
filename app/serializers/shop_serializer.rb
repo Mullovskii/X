@@ -6,5 +6,5 @@ class ShopSerializer < ActiveModel::Serializer
   # has_many :gift_products
   has_many :following
   has_many :followers
-  has_one :account
+  has_many :accounts
 end

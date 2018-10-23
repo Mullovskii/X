@@ -4,6 +4,7 @@ class CreateCountries < ActiveRecord::Migration[5.1]
       t.string :name
       t.integer :status
       t.integer :vat
+      t.references :currency, foreign_key: true
       
       t.timestamps
     end

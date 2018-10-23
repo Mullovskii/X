@@ -17,14 +17,13 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
 
   create_table "accounts", force: :cascade do |t|
     t.bigint "user_id"
-    t.bigint "campaign_id"
-    t.bigint "currency_id", default: 1
+    t.bigint "currency_id"
     t.bigint "shop_id"
-    t.float "balance", default: 0.0
+    t.boolean "main"
+    t.float "balance_in_cents", default: 0.0
     t.integer "kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campaign_id"], name: "index_accounts_on_campaign_id"
     t.index ["currency_id"], name: "index_accounts_on_currency_id"
     t.index ["shop_id"], name: "index_accounts_on_shop_id"
     t.index ["user_id"], name: "index_accounts_on_user_id"
@@ -133,8 +132,10 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.string "name"
     t.integer "status"
     t.integer "vat"
+    t.bigint "currency_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["currency_id"], name: "index_countries_on_currency_id"
   end
 
   create_table "country_shops", force: :cascade do |t|
@@ -177,12 +178,9 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
 
   create_table "currencies", force: :cascade do |t|
     t.string "name"
-    t.decimal "usd_rate", precision: 5, scale: 3, default: "1.0"
-    t.decimal "ruble_rate", precision: 5, scale: 3, default: "0.0"
-    t.bigint "country_id"
+    t.string "symbolic_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_currencies_on_country_id"
   end
 
   create_table "deliveries", force: :cascade do |t|
@@ -191,13 +189,13 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.bigint "product_id"
     t.bigint "country_id"
     t.integer "mode", default: 0
-    t.integer "currency_id"
     t.boolean "weekends_delivery"
     t.boolean "holidays_delivery"
     t.boolean "pickup"
     t.integer "days_from", default: 0
     t.integer "days_to", default: 1
-    t.decimal "price", precision: 5, scale: 3, default: "0.0"
+    t.float "price_in_cents"
+    t.integer "currency_id"
     t.datetime "timezone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -281,9 +279,9 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.bigint "shop_id"
     t.bigint "user_id"
     t.integer "payment_method", default: 0
-    t.float "amount", default: 0.0
+    t.integer "amount_in_cents"
     t.bigint "currency_id"
-    t.integer "vat"
+    t.integer "vat_in_cents"
     t.string "custom_id"
     t.integer "status", default: 0
     t.integer "kind", default: 0
@@ -352,21 +350,28 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
 
   create_table "orders", force: :cascade do |t|
     t.bigint "product_id"
+    t.float "product_price_in_cents"
+    t.float "shipping_price_in_cents"
+    t.integer "product_currency_id"
     t.integer "quantity", default: 1
     t.bigint "shop_id"
     t.bigint "user_id"
     t.bigint "address_id"
-    t.bigint "currency_id", default: 1
     t.bigint "phone"
     t.integer "status", default: 0
     t.integer "kind", default: 0
-    t.float "amount", default: 0.0
-    t.float "shipping_amount", default: 0.0
-    t.float "total_amount", default: 0.0
-    t.float "vat", default: 0.0
-    t.float "blogger_reward", default: 0.0
-    t.float "surf_reward", default: 0.0
-    t.float "discount", default: 0.0
+    t.float "amount_in_cents"
+    t.bigint "currency_id"
+    t.float "shipping_amount_in_cents"
+    t.float "total_amount_in_cents"
+    t.float "vat_in_cents"
+    t.float "blogger_reward_in_cents"
+    t.float "surf_reward_in_cents"
+    t.integer "discount_in_cents"
+    t.string "psp_payment_id"
+    t.datetime "paid_at"
+    t.string "psp_refund_id"
+    t.datetime "refunded_at"
     t.datetime "confirmed_at"
     t.datetime "cancelled_at"
     t.datetime "created_at", null: false
@@ -439,15 +444,15 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.string "image_link_7"
     t.string "image_link_8"
     t.string "image_link_9"
-    t.float "price", default: 0.0
+    t.float "price_in_cents"
     t.bigint "currency_id"
-    t.float "sale_price", default: 0.0
+    t.float "sale_price_in_cents"
     t.date "sale_price_effective_date"
     t.integer "quantity", default: 1
     t.string "availability"
     t.date "availability_date"
     t.date "expiration_date"
-    t.decimal "cost_of_goods_sold"
+    t.float "cost_of_goods_sold_in_cents"
     t.string "unit_pricing_measure"
     t.string "unit_pricing_base_measure"
     t.text "installment"
@@ -597,7 +602,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   create_table "swaps", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "account_id"
-    t.float "amount"
+    t.integer "amount_in_cents"
     t.float "bonuses"
     t.bigint "shop_id"
     t.integer "status", default: 0
@@ -625,32 +630,31 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.string "name"
     t.integer "mode", default: 0
     t.integer "kind", default: 0
-    t.integer "product_price_from"
-    t.integer "product_price_to"
+    t.float "product_price_from"
+    t.float "product_price_to"
     t.integer "weight_from"
     t.integer "weight_to"
     t.integer "unit", default: 0
-    t.decimal "price", precision: 5, scale: 3, default: "0.0"
+    t.float "price_in_cents"
+    t.integer "currency_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["delivery_id"], name: "index_tariffs_on_delivery_id"
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.bigint "credit_account_id"
-    t.bigint "debit_account_id"
+    t.integer "credit_account_id"
+    t.integer "debit_account_id"
     t.bigint "order_id"
     t.bigint "product_id"
     t.bigint "invoice_id"
-    t.float "amount", default: 0.0
+    t.float "amount_in_cents"
     t.bigint "currency_id"
     t.integer "status", default: 0
     t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["credit_account_id"], name: "index_transactions_on_credit_account_id"
     t.index ["currency_id"], name: "index_transactions_on_currency_id"
-    t.index ["debit_account_id"], name: "index_transactions_on_debit_account_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
     t.index ["order_id"], name: "index_transactions_on_order_id"
     t.index ["product_id"], name: "index_transactions_on_product_id"
@@ -677,9 +681,9 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.string "username"
     t.bigint "phone"
     t.boolean "phone_verified", default: false
-    t.integer "country_id"
+    t.bigint "country_id"
     t.integer "sex", default: 0
-    t.integer "city_id"
+    t.bigint "city_id"
     t.string "description"
     t.string "avatar"
     t.string "background"
@@ -697,6 +701,8 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.inet "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_users_on_city_id"
+    t.index ["country_id"], name: "index_users_on_country_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone"], name: "index_users_on_phone", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -713,7 +719,6 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.index ["user_id"], name: "index_wishes_on_user_id"
   end
 
-  add_foreign_key "accounts", "campaigns"
   add_foreign_key "accounts", "currencies"
   add_foreign_key "accounts", "shops"
   add_foreign_key "accounts", "users"
@@ -722,12 +727,12 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "addresses", "streets"
   add_foreign_key "campaigns", "currencies"
   add_foreign_key "cities", "countries"
+  add_foreign_key "countries", "currencies"
   add_foreign_key "country_shops", "countries"
   add_foreign_key "country_shops", "shops"
   add_foreign_key "coupons", "countries"
   add_foreign_key "coupons", "currencies"
   add_foreign_key "coupons", "shops"
-  add_foreign_key "currencies", "countries"
   add_foreign_key "deliveries", "countries"
   add_foreign_key "deliveries", "products"
   add_foreign_key "deliveries", "shops"
@@ -752,6 +757,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "product_coupons", "products"
   add_foreign_key "product_showrooms", "products"
   add_foreign_key "product_showrooms", "showrooms"
+  add_foreign_key "products", "currencies"
   add_foreign_key "rewards", "countries"
   add_foreign_key "rewards", "currencies"
   add_foreign_key "rewards", "shops"

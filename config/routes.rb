@@ -109,6 +109,7 @@ Rails.application.routes.draw do
       get 'users' => 'users#index'
       get 'users/:id/feed' => 'users#feed'
       get 'feed' => 'users#feed'
+      get 'user_addresses' => 'users#user_addresses'
       get '/users/:username' => 'users#show', :constrain => { :username => /[a-zA-Z-]+/ }
     end
   end

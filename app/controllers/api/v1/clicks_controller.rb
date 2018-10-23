@@ -18,6 +18,7 @@ module Api
       # POST /clicks
       def create
           @click = current_user.clicks.build(click_params.merge({ user_id: current_user.id }))
+          @click.pick_id = @click.link.linked_id
           unless @click.self_made 
             if @click.save
               render json: @click, status: :created

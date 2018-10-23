@@ -3,7 +3,7 @@ class Address < ApplicationRecord
   belongs_to :city, optional: true
   belongs_to :street, optional: true
   belongs_to :owner, polymorphic: true
-  enum kind: [:offline_store, :pick_up_point]
+  enum kind: [:offline_store, :pick_up_point, :home]
 
   after_create :add_city, :add_street
 

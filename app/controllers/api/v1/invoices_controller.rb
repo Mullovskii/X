@@ -56,7 +56,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def invoice_params
-          params.require(:invoice).permit(:shop_id, :status, :payment_method, :amount, :vat, :campaign_id, :card_number, :kind, :account_id)
+          params.require(:invoice).permit(:shop_id, :status, :payment_method, :amount_in_cents, :vat_in_cents, :campaign_id, :card_number, :kind, :account_id)
         end
     end
   end

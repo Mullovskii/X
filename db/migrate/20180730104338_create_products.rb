@@ -32,9 +32,9 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :image_link_7
       t.string :image_link_8
       t.string :image_link_9
-      t.float :price, default: 0, precision: 5, scale: 3
-      t.references :currency
-      t.float :sale_price, default: 0, precision: 5, scale: 3
+      t.float :price_in_cents
+      t.references :currency, foreign_key: true
+      t.float :sale_price_in_cents
       t.date :sale_price_effective_date
       t.integer :quantity, default: 1
       # t.float :shipping_price, default: 0, precision: 5, scale: 3
@@ -43,7 +43,7 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :availability
       t.date :availability_date
       t.date :expiration_date
-      t.decimal :cost_of_goods_sold
+      t.float :cost_of_goods_sold_in_cents
       t.string :unit_pricing_measure
       t.string :unit_pricing_base_measure
       t.text :installment

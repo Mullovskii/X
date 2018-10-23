@@ -24,6 +24,10 @@ class Click < ApplicationRecord
 		# self.link.campaign
 	# end
 
+	def blogger
+		self.pick.author
+	end
+
 	def self_made
 		if self.user_id == self.pick.author_id
 			true

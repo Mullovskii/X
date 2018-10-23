@@ -6,9 +6,11 @@ class User < ApplicationRecord
 
 	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :god ]
 	enum sex: [:female, :male]
+	validates :country_id, presence: true
 	# validates :username, uniqueness: true
 	# validates :phone, uniqueness: true
-
+	belongs_to :country
+	belongs_to :city, optional: true
 	has_many :links, as: :author, dependent: :destroy
 	has_many :picks, as: :author, dependent: :destroy
 	has_many :shops, as: :owner
@@ -57,10 +59,11 @@ class User < ApplicationRecord
     belongs_to :country, optional: true
     has_many :invoices
     
-    after_create :generate_showroom
-    after_update :generate_account
+    after_create :generate_showroom, :generate_account
+    after_update :change_account
 
     default_scope { order("mana DESC") }
+
 
     include PgSearch
   	multisearchable :against => [:username, :full_name]
@@ -78,12 +81,24 @@ class User < ApplicationRecord
 		end
 	end
 
-	def generate_account
-		if self.saved_change_to_country_id? && self.country_id
-			unless self.accounts.where(currency_id: self.country.currency).take
-				Account.create(user_id: self.id, currency_id: self.country.currency.id)	
-			end
+	def change_account
+		if self.saved_change_to_country_id?
+			generate_account
   		end
+	end
+
+	def generate_account
+		account = Account.where(user_id: self.id, currency_id: self.country.currency.id).first_or_create
+		account.main = true
+		account.save
+	end
+
+	def main_account
+		self.accounts.where(main: true).take
+	end
+
+	def main_address
+		self.addresses.first
 	end
 
 	def true_picker?(user_campaign)
