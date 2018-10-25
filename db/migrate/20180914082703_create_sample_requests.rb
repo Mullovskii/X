@@ -11,6 +11,6 @@ class CreateSampleRequests < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
-    add_index :sample_requests, [:user_id, :shop_id], unique: true
+    add_index :sample_requests, [:user_id, :product_id], unique: true
   end
 end

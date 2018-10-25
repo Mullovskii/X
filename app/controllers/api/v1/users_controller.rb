@@ -41,6 +41,19 @@ module Api
         render json: @user.showroom.products, meta: default_meta, include: [params[:include]]
       end
 
+      def new_orders
+        render json: @user.orders.where(status: "edited"), meta: default_meta, include: [params[:include]]
+      end
+
+      def history
+        orders_samples = @user.orders.where(status: ["cleared", "fulfilled", "delivered", "user_cancelled", "shop_cancelled", "user_refunded", "settled_to_shop"]) + @user.samples
+        render json: orders_samples, meta: default_meta, include: [params[:include]]
+      end
+
+      def disputes
+        
+      end
+
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_user

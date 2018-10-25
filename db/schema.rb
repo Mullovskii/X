@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_11_192804) do
+ActiveRecord::Schema.define(version: 2018_10_23_134149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -205,6 +205,33 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.index ["shop_id"], name: "index_deliveries_on_shop_id"
   end
 
+  create_table "disputes", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "shop_id"
+    t.bigint "order_id"
+    t.integer "reason"
+    t.string "proof1"
+    t.string "proof2"
+    t.string "proof3"
+    t.string "proof4"
+    t.string "proof5"
+    t.text "comment"
+    t.boolean "shop_agreement"
+    t.bigint "address_id"
+    t.string "parcel_proof1"
+    t.string "parcel_proof2"
+    t.string "parcel_proof3"
+    t.string "parcel_proof4"
+    t.string "parcel_proof5"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_disputes_on_address_id"
+    t.index ["order_id"], name: "index_disputes_on_order_id"
+    t.index ["shop_id"], name: "index_disputes_on_shop_id"
+    t.index ["user_id"], name: "index_disputes_on_user_id"
+  end
+
   create_table "employments", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "shop_id"
@@ -371,6 +398,7 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.string "psp_payment_id"
     t.datetime "paid_at"
     t.string "psp_refund_id"
+    t.datetime "delivered_at"
     t.datetime "refunded_at"
     t.datetime "confirmed_at"
     t.datetime "cancelled_at"
@@ -548,8 +576,28 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_sample_requests_on_product_id"
     t.index ["shop_id"], name: "index_sample_requests_on_shop_id"
-    t.index ["user_id", "shop_id"], name: "index_sample_requests_on_user_id_and_shop_id", unique: true
+    t.index ["user_id", "product_id"], name: "index_sample_requests_on_user_id_and_product_id", unique: true
     t.index ["user_id"], name: "index_sample_requests_on_user_id"
+  end
+
+  create_table "shippings", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.bigint "order_id"
+    t.bigint "dispute_id"
+    t.integer "provider"
+    t.string "tracking_number"
+    t.text "note"
+    t.boolean "shop_delivery_confirmation"
+    t.boolean "user_delivery_confirmation"
+    t.boolean "surf_delivery_confirmation"
+    t.integer "status", default: 0
+    t.integer "kind", default: 0
+    t.datetime "delivered_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dispute_id"], name: "index_shippings_on_dispute_id"
+    t.index ["order_id"], name: "index_shippings_on_order_id"
+    t.index ["shop_id"], name: "index_shippings_on_shop_id"
   end
 
   create_table "shops", force: :cascade do |t|
@@ -736,6 +784,10 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "deliveries", "countries"
   add_foreign_key "deliveries", "products"
   add_foreign_key "deliveries", "shops"
+  add_foreign_key "disputes", "addresses"
+  add_foreign_key "disputes", "orders"
+  add_foreign_key "disputes", "shops"
+  add_foreign_key "disputes", "users"
   add_foreign_key "employments", "shops"
   add_foreign_key "employments", "users"
   add_foreign_key "feed_campaigns", "campaigns"
@@ -764,6 +816,9 @@ ActiveRecord::Schema.define(version: 2018_10_11_192804) do
   add_foreign_key "sample_requests", "products"
   add_foreign_key "sample_requests", "shops"
   add_foreign_key "sample_requests", "users"
+  add_foreign_key "shippings", "disputes"
+  add_foreign_key "shippings", "orders"
+  add_foreign_key "shippings", "shops"
   add_foreign_key "streets", "cities"
   add_foreign_key "swaps", "accounts"
   add_foreign_key "swaps", "shops"

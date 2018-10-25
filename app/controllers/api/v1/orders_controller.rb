@@ -36,20 +36,17 @@ module Api
       # PATCH/PUT /orders/1
       def update
         if current_user.employed_in(@order.shop) || @order.user_id == current_user.id
-          unless @order.moderated?
+          unless @order.moderated? || @order.cancellation_expired? 
             if @order.update(order_params)
-              if @order.status == "cancelled"
-                @order.operation.destroy if @order.operation
-              end
               render json: @order
             else
               render json: @order.errors, status: :unprocessable_entity
             end
           else
-            render json: {errors: ['Unauthorized']}, status: :unauthorized  
+            render json: {errors: ['Unauthorized action']}, status: :unauthorized  
           end
         else
-          render json: {errors: ['Unauthorized']}, status: :unauthorized
+          render json: {errors: ['Unauthorized user or admin']}, status: :unauthorized
         end
       end
 

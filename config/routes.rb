@@ -6,6 +6,8 @@ Rails.application.routes.draw do
  
  
   
+  
+  
   devise_for :users, controllers: { registrations: "registrations" }
   post '/api/auth_user' => 'authentication#authenticate_user'
 
@@ -82,7 +84,12 @@ Rails.application.routes.draw do
       resources :user_campaigns
       resources :relationships
       resources :employments
-      resources :orders
+      resources :orders do
+        member do
+          resources :shippings
+          resources :disputes
+        end
+      end
     resources :cities
       resources :countries do
         member do

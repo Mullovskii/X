@@ -38,7 +38,8 @@ class Shop < ApplicationRecord
 	has_many :likes, as: :liker
 	has_many :comments, as: :author
 	# validates :registration_number, :uniqueness => { :allow_blank => true, :case_sensitive => false }
-
+	has_many :disputes
+	has_many :shippings
 	enum kind: [:user_owned, :brand_owned, :marketplace]
 	enum kyc: [:unverified, :in_progress, :verified]
 	enum integration_type: [:manual, :api]

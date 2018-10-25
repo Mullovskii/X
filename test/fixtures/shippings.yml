@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop_id: one
+  order_id: one
+  provider: 1
+  tracking_number: MyString
+  note: MyText
+  status: 1
+
+two:
+  shop_id: two
+  order_id: two
+  provider: 1
+  tracking_number: MyString
+  note: MyText
+  status: 1

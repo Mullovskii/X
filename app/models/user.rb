@@ -4,7 +4,7 @@ class User < ApplicationRecord
 	devise :database_authenticatable, :registerable,
 	         :recoverable, :rememberable, :trackable, :validatable
 
-	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :god ]
+	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :surf_god ]
 	enum sex: [:female, :male]
 	validates :country_id, presence: true
 	# validates :username, uniqueness: true
@@ -21,7 +21,8 @@ class User < ApplicationRecord
 	has_many :likes, as: :liker
 	has_many :comments, as: :author
 	has_many :wishes
-
+	has_many :disputes
+	
 	has_many :user_campaigns
 	has_many :campaigns, through: :user_campaigns
 	has_many :launched_campaigns, as: :author, class_name: "Campaign", foreign_key: "author_id"
@@ -58,6 +59,7 @@ class User < ApplicationRecord
     has_many :gifts, through: :transactions, source: :purchased, :source_type => 'Coupon'
     belongs_to :country, optional: true
     has_many :invoices
+    has_many :sample_requests
     
     after_create :generate_showroom, :generate_account
     after_update :change_account

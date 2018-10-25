@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  enum status: [:edited, :no_shipping, :user_confirmed, :cleared, :fulfilled, :delivered, :paid, :unauthorized, :user_cancelled, :shop_cancelled, :user_refunded]
+  enum status: [:edited, :no_shipping, :user_confirmed, :unauthorized, :cleared, :fulfilled, :delivered, :user_cancelled, :shop_cancelled, :user_refunded, :settled_to_shop]
   enum kind: [:product, :sample_product]
   belongs_to :user
   belongs_to :product
@@ -7,13 +7,18 @@ class Order < ApplicationRecord
   belongs_to :address, optional: true
   belongs_to :currency, optional: true
   has_many :transactions, dependent: :destroy
-  has_one :operation, class_name: "Transaction", foreign_key: "order_id"
-  after_create :add_info
-  after_update :update_address, :update_order_quantity, :payment_authorization, :change_virtual_balances, :cancel_order, :refund_order
-
+  has_one :shipping, dependent: :destroy
+  has_one :dispute, dependent: :destroy
+  after_create :add_info, unless: :sample_product?
+  after_update :update_address, :update_order_quantity, :payment_authorization, :change_virtual_balances,  :refund_order, unless: :sample_product?
+  after_update :cancel_order
   # SURF_FEE = 0.15
   # YANDEX_PROCESSOR_FEE = 0.035
   # SURF_GROSS_FEE = SURF_FEE-YANDEX_PROCESSOR_FEE
+
+  def sample_product?
+    self.kind == "sample_product"
+  end
   
 
   def add_info
@@ -48,18 +53,37 @@ class Order < ApplicationRecord
     # self.currency = self.product.currency
   end
 
+  def moderated?
+    # self.saved_change_to_status? && self.status == "delivered"
+  end
+
   def in_stock?
     self.product.quantity >= self.quantity
   end
 
-  def moderated?
-    self.saved_change_to_status? && self.status == "delivered"
+  def cancellation_expired?
+    if self.paid_at.nil?
+      false
+    else
+      ((Time.now - self.paid_at)/1.hour).round >= 7 && self.saved_change_to_status && self.status == "user_cancelled" || ((Time.now - self.paid_at)/1.hour).round >= 7 && self.saved_change_to_status && self.status == "shop_cancelled"
+    end
+  end
+
+  def refund_invalid?
+    self.status == "user_refunded" && self.shipping.nil?
+  end
+
+  def refund_expired?
+    if self.paid_at.nil?
+      false
+    else
+      ((Time.now - self.paid_at)/1.day).round >= 14 && self.saved_change_to_status && self.status == "user_refunded"
+    end
   end
 
   def payment_authorization
-    puts "1hahahah"
-    if self.saved_change_to_status? && self.status == "user_confirmed"
-      #ходим в платежную систему за авторизацией
+    if self.saved_change_to_status? && self.status == "user_confirmed" && self.in_stock?
+      #ходим в платежную систему за холдированием
       # если успех, то
       if true
         payment_clearing
@@ -73,8 +97,7 @@ class Order < ApplicationRecord
     #ходим в платежную систему за клирингом
     # если успех, то
     if true
-      self.update(status: 'cleared')
-      puts "3hahahah"
+      self.update(status: 'cleared', psp_payment_id: "X", paid_at: DateTime.now)
     else
       self.update(status: 'unauthorized')
     end   
@@ -91,16 +114,11 @@ class Order < ApplicationRecord
 
   def destock_product
     self.product.destock(self.quantity)
-    puts "4.5hahahah"
   end
 
   def credit_shop_balance
     account = self.shop.accounts.where(currency_id: self.currency_id).first_or_create
-    puts "5hahahah"
-    puts account
-    Transaction.create(credit_account_id: account.id, order_id: self.id, product_id: self.product_id, amount_in_cents: (self.total_amount_in_cents - self.surf_reward_in_cents), currency_id: self.currency_id) 
-    puts "6hahahah"
-    
+    Transaction.create(credit_account_id: account.id, order_id: self.id, product_id: self.product_id, amount_in_cents: (self.total_amount_in_cents - self.surf_reward_in_cents), currency_id: self.currency_id)     
   end
 
   def credit_surf_balance
@@ -160,12 +178,15 @@ class Order < ApplicationRecord
     if self.saved_change_to_status? && self.status == "user_cancelled" ||  self.saved_change_to_status? && self.status == "shop_cancelled"# before fullfilment start / before / clearing / before settlement to YM
       # calculate return for user munus shipping, processing costs + refund fine (if any)
       cancel_transactions
+      return_stock
     end
   end
 
   def refund_order
     if self.saved_change_to_status? && self.status == "user_refunded" # after fullfilment start
-      # calculate return for user munus shipping, processing costs + refund fine (if any)
+      # - shipping - processing costs - refund fine (if any)
+      # refund_sum = (self.total_amount_in_cents - self.shipping_amount_in_cents - YANDEX_REFUND_FEE - (self.total_amount_in_cents*YANDEX_PROCESSOR_FEE))
+      # - processing costs - refund fine (if any)
       refund_sum = (self.total_amount_in_cents - self.shipping_amount_in_cents - YANDEX_REFUND_FEE - (self.total_amount_in_cents*YANDEX_PROCESSOR_FEE))
       refund_currency = self.currency.name
       payment_id = self.psp_payment_id
@@ -178,7 +199,7 @@ class Order < ApplicationRecord
     if true
       cancel_transactions
       return_stock
-      shop_shipping_refund
+      # shop_shipping_refund
     end
   end
 
@@ -189,16 +210,13 @@ class Order < ApplicationRecord
   end
 
   def return_stock
-    puts "10hahahah"
     self.product.return_stock(self.quantity)
   end
 
-  def shop_shipping_refund
-    puts "11hahahah"
-    account = self.shop.accounts.where(currency_id: self.currency_id).first
-    transaction = Transaction.create(credit_account_id: account.id, order_id: self.id, product_id: self.product_id, amount_in_cents: self.shipping_amount_in_cents, currency_id: self.currency_id, kind: "shipping_refund") 
-  end
-
+  # def shop_shipping_refund
+  #   account = self.shop.accounts.where(currency_id: self.currency_id).first
+  #   transaction = Transaction.create(credit_account_id: account.id, order_id: self.id, product_id: self.product_id, amount_in_cents: self.shipping_amount_in_cents, currency_id: self.currency_id, kind: "shipping_refund") 
+  # end
   
 
   # def authorize_order

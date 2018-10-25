@@ -25,6 +25,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.string :psp_payment_id
       t.datetime :paid_at
       t.string :psp_refund_id
+      t.datetime :delivered_at
       t.datetime :refunded_at
       t.datetime :confirmed_at 
       t.datetime :cancelled_at 
