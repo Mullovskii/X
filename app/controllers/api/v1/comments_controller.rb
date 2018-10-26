@@ -6,6 +6,7 @@ module Api
  
       # POST /comments
       def create
+        # @comment = current_user.comments.build(comment_params.merge({ author_id: current_user.id, author_type: current_user.class.to_s }))
         @comment = Comment.new(comment_params)
         if current_user == @comment.author || current_user.employed_in(@comment.author) 
           if @comment.save

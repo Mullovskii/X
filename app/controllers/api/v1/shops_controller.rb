@@ -43,8 +43,6 @@ module Api
           main_category = Category.find_by_id(params[:category])
           products = @shop.products.where(main_category_id: main_category.id)
           ids = products.map{ |p| p.id}
-          # puts "hahahaa"
-          # puts ids
           if params[:product].present?
             query = PgSearch.multisearch(params[:product]).where(:searchable_type => "Product")
             render json: query

@@ -2,6 +2,7 @@ class SampleRequest < ApplicationRecord
   belongs_to :user
   belongs_to :product
   belongs_to :shop
+  belongs_to :address, optional: true
 
   enum status: [:pending, :approved, :delivered, :fraud_detected]
   enum kind: [:user_request, :shop_request]
@@ -17,6 +18,6 @@ class SampleRequest < ApplicationRecord
   end
 
   def generate_order
-  		Order.where(product_id: self.product_id, user_id: self.user_id, shop_id: self.shop_id, kind: "sample_product").first_or_create
+  		Order.where(product_id: self.product_id, user_id: self.user_id, shop_id: self.shop_id, kind: "sample_product", status: "cleared").first_or_create
   end
 end

@@ -7,7 +7,7 @@ class Click < ApplicationRecord
 	before_destroy :reverse_transaction
 	validates :user_id, uniqueness: { scope: [:link_id, :pick_id] }
 	# enum status: [:off, :on]
-	# after_create :add_points
+	after_create :notify_blogger
 	# after_update :add_points_for_product
 	
 	 
@@ -40,12 +40,9 @@ class Click < ApplicationRecord
 		self.operation.destroy if self.operation
 	end
 
-	# def add_points
-	# 	if self.status == "on" && self.link.campaign.status == "ongoing"
-	# 		Transaction.create(debit_account: self.link.campaign.account, credit_account: self.link.linking.author.accounts.where(currency_id: self.link.campaign.account.currency_id).take, amount: self.link.campaign.currency_per_referral, currency_id: self.link.campaign.currency_id, kind: "reward", click_id: self.id)
-	# 		Notification.create(notified_id: self.pick.author_id, notified_type: "User", notifier_id: self.user_id, notifier_type: "User", kind: "reward", attached_id: self.link_id, attached_type: "Link", amount: self.operation.amount, currency_id: self.operation.currency_id)
-	# 	end
-	# end
+	def notify_blogger
+		Notification.create(notified_id: self.pick.author_id, notified_type: "User", notifier_id: self.user_id, notifier_type: "User", kind: "interest", attached_id: self.link_id, attached_type: "Link")
+	end
 
 	
 

@@ -21,6 +21,7 @@ class Product < ApplicationRecord
     has_many :clicks, through: :links
     has_many :product_showrooms
     has_many :wishes
+    has_many :likes, as: :liked
     
     after_create :add_category, :add_brand_tags_to_shop, :price_to_cents
     # before_create :price_to_cents

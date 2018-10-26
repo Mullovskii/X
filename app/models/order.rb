@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  enum status: [:edited, :no_shipping, :user_confirmed, :unauthorized, :cleared, :fulfilled, :delivered, :user_cancelled, :shop_cancelled, :user_refunded, :settled_to_shop]
+  enum status: [:edited, :no_shipping, :user_confirmed, :unauthorized, :cleared, :fulfilled, :delivered, :user_cancelled, :shop_cancelled, :disputed, :user_refunded, :refund_refused, :settled_to_shop]
   enum kind: [:product, :sample_product]
   belongs_to :user
   belongs_to :product
@@ -12,6 +12,7 @@ class Order < ApplicationRecord
   after_create :add_info, unless: :sample_product?
   after_update :update_address, :update_order_quantity, :payment_authorization, :change_virtual_balances,  :refund_order, unless: :sample_product?
   after_update :cancel_order
+  default_scope { order("created_at DESC") }
   # SURF_FEE = 0.15
   # YANDEX_PROCESSOR_FEE = 0.035
   # SURF_GROSS_FEE = SURF_FEE-YANDEX_PROCESSOR_FEE

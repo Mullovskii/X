@@ -4,6 +4,8 @@ class ProductSerializer < ActiveModel::Serializer
   has_many :picks
   # has_many :active_campaigns
   has_many :product_deliveries
+  has_many :wishes
+  has_many :likes
 
   def product_deliveries
     self.object.deliveries + self.object.shop.deliveries.where(mode: "default").where.not(country_id: self.object.deliveries.map{|d| d.country_id} ) 

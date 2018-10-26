@@ -99,7 +99,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def sample_request_params
-          params.require(:sample_request).permit(:user_id, :product_id, :shop_id, :user_approval, :shop_approval)
+          params.require(:sample_request).permit(:user_id, :product_id, :shop_id, :user_approval, :shop_approval, :address_id, :comment)
         end
       end
    end

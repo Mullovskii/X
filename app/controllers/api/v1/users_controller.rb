@@ -1,7 +1,7 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authenticate_request!, only: [:update, :create, :destroy, :accounts, :feed, :user_addresses]
+      before_action :authenticate_request!, only: [:update, :create, :destroy, :accounts, :feed, :user_addresses, :new_orders, :history, :disputes, :activities]
       before_action :set_user, only: [:accounts, :showroom]
       before_action :set_username, only: [:show]
       
@@ -42,16 +42,19 @@ module Api
       end
 
       def new_orders
-        render json: @user.orders.where(status: "edited"), meta: default_meta, include: [params[:include]]
+        render json: current_user.orders.where(status: "edited"), meta: default_meta, include: [params[:include]]
       end
 
       def history
-        orders_samples = @user.orders.where(status: ["cleared", "fulfilled", "delivered", "user_cancelled", "shop_cancelled", "user_refunded", "settled_to_shop"]) + @user.samples
-        render json: orders_samples, meta: default_meta, include: [params[:include]]
+        render json: current_user.orders.where(status: ["cleared", "fulfilled", "delivered", "user_cancelled", "shop_cancelled", "settled_to_shop"]), meta: default_meta, include: [params[:include]]
       end
 
       def disputes
-        
+        render json: current_user.orders.where(status: ["disputed", "user_refunded", "refund_refused"]), meta: default_meta, include: [params[:include]]
+      end
+
+      def activities
+        render json: current_user.notifications, meta: default_meta, include: [params[:include]]
       end
 
       private

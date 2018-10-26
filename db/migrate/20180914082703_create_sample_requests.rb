@@ -8,6 +8,8 @@ class CreateSampleRequests < ActiveRecord::Migration[5.1]
       t.boolean :shop_approval, default: false
       t.boolean :user_approval, default: false
       t.integer :kind, default: 0
+      t.text :comment
+      t.references :address, foreign_key: true
 
       t.timestamps
     end
