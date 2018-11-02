@@ -10,15 +10,19 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       t.integer :role, default: 0
       t.string :full_name
       t.string :username
-      t.integer :phone
-      t.integer :country_id
-      t.integer :city_id
+      t.bigint :phone
+      t.boolean :phone_verified, default: false
+      t.references :country
+      t.integer :sex, default: 0
+      t.references :city
       t.string :description
+      t.string :avatar
+      t.string :background
       t.string :instagram
       t.string :twitch
       t.string :facebook
      
-      t.integer :mana, default: 0
+      t.decimal :mana, default: 0, precision: 5, scale: 3
 
       ## Recoverable
       t.string   :reset_password_token
@@ -51,6 +55,8 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
 
     add_index :users, :email,                unique: true
     add_index :users, :reset_password_token, unique: true
+    add_index :users, :username, unique: true
+    add_index :users, :phone, unique: true
     # add_index :users, :confirmation_token,   unique: true
     # add_index :users, :unlock_token,         unique: true
   end

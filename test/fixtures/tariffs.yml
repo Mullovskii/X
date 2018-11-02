@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  delivery: one
+  mode: 1
+  price_from: 1
+  price_to: 1
+  weight_from: 1
+  weight_to: 1
+  days: 1
+  price: 1
+  currency_id: 1
+
+two:
+  delivery: two
+  mode: 1
+  price_from: 1
+  price_to: 1
+  weight_from: 1
+  weight_to: 1
+  days: 1
+  price: 1
+  currency_id: 1

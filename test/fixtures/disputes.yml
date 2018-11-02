@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  shop: one
+  order: one
+  reason: 1
+  proof1: MyString
+  proof2: MyString
+  proof3: MyString
+  proof4: MyString
+  proof5: MyString
+  comment: MyText
+  shop_agreement: false
+  address: one
+  shipping: one
+  status: 1
+
+two:
+  user: two
+  shop: two
+  order: two
+  reason: 1
+  proof1: MyString
+  proof2: MyString
+  proof3: MyString
+  proof4: MyString
+  proof5: MyString
+  comment: MyText
+  shop_agreement: false
+  address: two
+  shipping: two
+  status: 1

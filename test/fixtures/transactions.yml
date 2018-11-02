@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  purchased_id: 1
+  purchased_type: MyString
+  amount: 1.5
+  status: 1
+
+two:
+  account: two
+  purchased_id: 1
+  purchased_type: MyString
+  amount: 1.5
+  status: 1

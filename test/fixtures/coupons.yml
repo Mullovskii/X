@@ -1,0 +1,41 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop: one
+  kind: 1
+  discount_mode: 1
+  discount: 1
+  discount_products: 1
+  additional_info: 1
+  coupon_use: 1
+  instruction: MyText
+  background: MyString
+  point_price: 1.5
+  secret_key: MyString
+  generated_amount: 1
+  generated_number: 1
+  parent_id: 1
+  status: 1
+  buyer_id: 1
+  purchased_at: 1
+  utilized_at: 1
+
+two:
+  shop: two
+  kind: 1
+  discount_mode: 1
+  discount: 1
+  discount_products: 1
+  additional_info: 1
+  coupon_use: 1
+  instruction: MyText
+  background: MyString
+  point_price: 1.5
+  secret_key: MyString
+  generated_amount: 1
+  generated_number: 1
+  parent_id: 1
+  status: 1
+  buyer_id: 1
+  purchased_at: 1
+  utilized_at: 1

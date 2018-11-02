@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  usd_rate: 9.99
+  ruble_rate: 9.99
+
+two:
+  name: MyString
+  usd_rate: 9.99
+  ruble_rate: 9.99

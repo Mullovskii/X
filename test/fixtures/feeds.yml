@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mode: 1
+  format: 1
+  target_country_id: 1
+  content_language: 1
+  currency: 1
+  name: MyString
+  input_type: 1
+  url: MyString
+  author_id: 1
+  author_type: MyString
+
+two:
+  mode: 1
+  format: 1
+  target_country_id: 1
+  content_language: 1
+  currency: 1
+  name: MyString
+  input_type: 1
+  url: MyString
+  author_id: 1
+  author_type: MyString

@@ -1,0 +1,35 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop: one
+  campaign: one
+  product: one
+  name: MyString
+  description: MyText
+  main_image_link: MyString
+  image_link_0: MyString
+  image_link_1: MyString
+  image_link_2: MyString
+  image_link_3: MyString
+  image_link_4: MyString
+  status: 1
+  expiration_date: 2018-08-02 15:19:15
+  number_of_units: 1
+  delivery_details: MyText
+
+two:
+  shop: two
+  campaign: two
+  product: two
+  name: MyString
+  description: MyText
+  main_image_link: MyString
+  image_link_0: MyString
+  image_link_1: MyString
+  image_link_2: MyString
+  image_link_3: MyString
+  image_link_4: MyString
+  status: 1
+  expiration_date: 2018-08-02 15:19:15
+  number_of_units: 1
+  delivery_details: MyText

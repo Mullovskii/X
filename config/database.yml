@@ -80,6 +80,8 @@ test:
 #
 production:
   <<: *default
-  database: surf_production
+  database: surf
+  host: 35.204.174.217
+  socket: /cloudsql/surf-216611:europe-west4:surf
   username: surf
   password: <%= ENV['SURF_DATABASE_PASSWORD'] %>

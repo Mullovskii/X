@@ -11,11 +11,25 @@ gem 'rails', '~> 5.2.1'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1.3'
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.12.0'
 gem 'devise'
 gem 'jwt'
 gem 'bundler'
 gem 'active_model_serializers'
+gem 'carrierwave'
+gem 'pg_search'
+gem 'kaminari'
+gem 'i18n'
+gem 'money'
+gem 'eu_central_bank', '1.3.1'
+# gem 'money-rails', '~>1'
+
+# gem 'i18n', '~> 0.9'
+# gem 'money', '~> 6.12.0'
+# gem 'eu_central_bank', git: 'https://github.com/RubyMoney/eu_central_bank.git'
+
+
+
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'

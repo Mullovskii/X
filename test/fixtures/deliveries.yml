@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop: one
+  country: one
+  mode: 1
+  weekends_delivery: false
+  holidays_delivery: false
+  pickup: false
+
+two:
+  shop: two
+  country: two
+  mode: 1
+  weekends_delivery: false
+  holidays_delivery: false
+  pickup: false

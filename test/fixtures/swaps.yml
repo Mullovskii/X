@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  points: 1.5
+  bonuses: 1.5
+  shop: one
+  status: 1
+  card_number: 
+
+two:
+  user: two
+  points: 1.5
+  bonuses: 1.5
+  shop: two
+  status: 1
+  card_number: 
