@@ -50,7 +50,7 @@ module Api
             render json: products.page(params[:page]).per(50).where(id: ids)  
           end
         else
-          render json: @shop.categories
+          render json: @shop.categories.where(level: 2) + @shop.categories.where(level: 1)
         end
       end
 

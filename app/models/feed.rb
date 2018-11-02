@@ -91,6 +91,32 @@ class Feed < ApplicationRecord
 
 		        	if row.to_h[:type] && row.to_h[:type].length <= 100
 		        		product.product_type = row.to_h[:type]
+
+		        		Category.where(level: 2).each do |category|
+		        			if product.product_type.match(category.name)
+		        			   product.main_category_id = category.id
+		        			end
+		        		end
+
+		        		if product.main_category_id == nil
+		        			Category.where(level: 1).each do |category|
+			        			if product.product_type.match(category.name)
+			        			   product.main_category_id = category.id
+			        			end
+		        			end
+		        		end
+		        		
+		        		if product.main_category_id == nil
+		        			Category.where(level: 0).each do |category|
+			        			if product.product_type.match(category.name)
+			        			   product.main_category_id = category.id
+			        			end
+		        			end
+		        		end
+		        		
+		        		if product.main_category_id == nil
+		        			product.main_category_id = Category.where(name: product.product_type, level: 2).first_or_create.id
+		        		end
 		        		# if Category.where(name: product.product_type).take 
 		        		# product.main_category_id = Category.where(name: product.product_type).first_or_create.id
 
@@ -300,6 +326,32 @@ class Feed < ApplicationRecord
 		        	end
 		        	if row.to_h[:type] && row.to_h[:type].length <= 1000
 		        		product.product_type = row.to_h[:type]
+
+		        		Category.where(level: 2).each do |category|
+		        			if product.product_type.match(category.name)
+		        			   product.main_category_id = category.id
+		        			end
+		        		end
+
+		        		if product.main_category_id == nil
+		        			Category.where(level: 1).each do |category|
+			        			if product.product_type.match(category.name)
+			        			   product.main_category_id = category.id
+			        			end
+		        			end
+		        		end
+		        		
+		        		if product.main_category_id == nil
+		        			Category.where(level: 0).each do |category|
+			        			if product.product_type.match(category.name)
+			        			   product.main_category_id = category.id
+			        			end
+		        			end
+		        		end
+		        		
+		        		if product.main_category_id == nil
+		        			product.main_category_id = Category.where(name: product.product_type, level: 2).first_or_create.id
+		        		end
 		        		# product.main_category_id = Category.where(name: product.product_type).first_or_create.id
 		        		# Category.all.each do |category|
 		        		# 	if (category.name).match(product.product_type)
@@ -507,7 +559,35 @@ class Feed < ApplicationRecord
 		        if item.xpath('g:google_product_category').text != "" && item.xpath('g:google_product_category').text.length <= 100
 	        		product.product_type = item.xpath('g:google_product_category').text
 	        		# if Category.where(name: product.product_type).take 
-	        		product.google_category_id = Category.where(name: product.product_type).first_or_create.id
+	        		Category.where(level: 2).each do |category|
+	        			if product.product_type.match(category.name)
+	        			   product.main_category_id = category.id
+	        			end
+	        		end
+	        		
+	        		if product.main_category_id == nil
+	        			Category.where(level: 1).each do |category|
+		        			if product.product_type.match(category.name)
+		        			   product.main_category_id = category.id
+		        			end
+	        			end
+	        			
+	        		end
+	        		
+	        		if product.main_category_id == nil
+	        			Category.where(level: 0).each do |category|
+		        			if product.product_type.match(category.name)
+		        			   product.main_category_id = category.id
+		        			end
+	        			end
+	        			
+	        		end
+	        		
+	        		if product.main_category_id == nil
+	        			product.main_category_id = Category.where(name: product.product_type, level: 2).first_or_create.id
+	        		end
+	        		
+	        		# product.google_category_id = Category.where(name: product.product_type).first_or_create.id
 	        		# elsif Category.where(google_category_id: product.product_type.to_i).take
 	        		# 	product.main_category_id = Category.where(google_category_id: product.product_type.to_i).take
 	        		# end

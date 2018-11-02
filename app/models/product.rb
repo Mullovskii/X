@@ -23,7 +23,8 @@ class Product < ApplicationRecord
     has_many :wishes
     has_many :likes, as: :liked
     
-    after_create :add_category, :add_brand_tags_to_shop, :price_to_cents
+    after_create :add_brand_tags_to_shop, :price_to_cents
+    after_update :add_category_for_shop
     # before_create :price_to_cents
 
     include PgSearch
@@ -50,9 +51,9 @@ class Product < ApplicationRecord
         self.save
     end
 
-    def add_category
-        self.main_category_id = Category.where(name: self.product_type).first_or_create.id
-    end   
+    # def add_category
+    #     self.main_category_id = Category.where(name: self.product_type).first_or_create.id
+    # end   
 
     def product_deliveries
         self.deliveries + self.shop.deliveries.where(mode: "default").where.not(country_id: self.deliveries.map{|d| d.country_id} ) 
@@ -75,6 +76,12 @@ class Product < ApplicationRecord
     def return_stock(order_quantity)
         self.quantity += order_quantity
         self.save
+    end
+
+    def add_category_for_shop
+        if self.saved_change_to_main_category_id
+            self.shop.tags.create(tagger: self.main_category)
+        end
     end
    
 

@@ -7,7 +7,7 @@ class User < ApplicationRecord
 	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :surf_god ]
 	enum sex: [:female, :male]
 	validates :country_id, presence: true
-	# validates :username, uniqueness: true
+	validates :username, uniqueness: true
 	# validates :phone, uniqueness: true
 	belongs_to :country
 	belongs_to :city, optional: true
@@ -22,7 +22,7 @@ class User < ApplicationRecord
 	has_many :comments, as: :author
 	has_many :wishes
 	has_many :disputes
-	
+
 	has_many :user_campaigns
 	has_many :campaigns, through: :user_campaigns
 	has_many :launched_campaigns, as: :author, class_name: "Campaign", foreign_key: "author_id"
@@ -90,9 +90,14 @@ class User < ApplicationRecord
 	end
 
 	def generate_account
-		account = Account.where(user_id: self.id, currency_id: self.country.currency.id).first_or_create
-		account.main = true
-		account.save
+		previous_account = self.main_account
+		if previous_account
+			previous_account.main = false
+			previous_account.save
+		end
+		new_account = Account.where(user_id: self.id, currency_id: self.country.currency.id).first_or_create
+		new_account.main = true
+		new_account.save
 	end
 
 	def main_account

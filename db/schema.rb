@@ -572,8 +572,11 @@ ActiveRecord::Schema.define(version: 2018_10_23_134149) do
     t.boolean "shop_approval", default: false
     t.boolean "user_approval", default: false
     t.integer "kind", default: 0
+    t.text "comment"
+    t.bigint "address_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_sample_requests_on_address_id"
     t.index ["product_id"], name: "index_sample_requests_on_product_id"
     t.index ["shop_id"], name: "index_sample_requests_on_shop_id"
     t.index ["user_id", "product_id"], name: "index_sample_requests_on_user_id_and_product_id", unique: true
@@ -813,6 +816,7 @@ ActiveRecord::Schema.define(version: 2018_10_23_134149) do
   add_foreign_key "rewards", "countries"
   add_foreign_key "rewards", "currencies"
   add_foreign_key "rewards", "shops"
+  add_foreign_key "sample_requests", "addresses"
   add_foreign_key "sample_requests", "products"
   add_foreign_key "sample_requests", "shops"
   add_foreign_key "sample_requests", "users"

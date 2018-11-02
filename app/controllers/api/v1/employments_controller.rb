@@ -5,40 +5,51 @@ module Api
       before_action :authenticate_request!, only: [:update, :create, :destroy]
 
       # GET /employments
-      def index
-        @employments = Employment.all
+      # def index
+      #   @employments = Employment.all
 
-        render json: @employments
-      end
+      #   render json: @employments
+      # end
 
       # GET /employments/1
-      def show
-        render json: @employment
-      end
+      # def show
+      #   render json: @employment
+      # end
 
       # POST /employments
       def create
         @employment = Employment.new(employment_params)
-
-        if @employment.save
-          render json: @employment, status: :created
+        if current_user.employed_in(@employment.shop) 
+          if @employment.save
+            render json: @employment, status: :created
+          else
+            render json: @employment.errors, status: :unprocessable_entity
+          end
         else
-          render json: @employment.errors, status: :unprocessable_entity
+            render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # PATCH/PUT /employments/1
       def update
-        if @employment.update(employment_params)
-          render json: @employment
+        if current_user.employed_in(@employment.shop) 
+          if @employment.update(employment_params)
+            render json: @employment
+          else
+            render json: @employment.errors, status: :unprocessable_entity
+          end
         else
-          render json: @employment.errors, status: :unprocessable_entity
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
         end
       end
 
       # DELETE /employments/1
       def destroy
-        @employment.destroy
+        if current_user.employed_in(@employment.shop) 
+          @employment.destroy
+        else
+          render json: {errors: ['Unauthorized shop admin']}, status: :unauthorized
+        end
       end
 
       private
