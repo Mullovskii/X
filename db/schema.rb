@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_23_134149) do
+ActiveRecord::Schema.define(version: 2018_11_03_182127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,6 +135,8 @@ ActiveRecord::Schema.define(version: 2018_10_23_134149) do
     t.bigint "currency_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "country_code"
+    t.string "country_iso"
     t.index ["currency_id"], name: "index_countries_on_currency_id"
   end
 

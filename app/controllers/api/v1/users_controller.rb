@@ -14,6 +14,10 @@ module Api
         render json: @user, meta: default_meta, include: [params[:include]]
       end
 
+      def get_user
+        render json: payload(current_user), meta: default_meta, include: [params[:include]]
+      end
+
       def feed
         picks = []
         current_user.following.each do |user|

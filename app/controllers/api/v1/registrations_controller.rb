@@ -7,7 +7,11 @@ module Api
       before_action :authenticate_request!, only: [:update]
 
       def create
-        user = User.new(user_params)
+        params = user_params;
+        country = Country.find_by(country_iso: user_params[:country].downcase);
+        params.delete('country');
+        params[:country_id] = country[:id];
+        user = User.new(params)
         if user.save
           render json: payload(user), status: :created
         else
@@ -18,8 +22,14 @@ module Api
 
       def update
         if current_user == @user
-          if @user.update_attributes(user_params)
-            render json: @user, status: :ok
+
+          params = user_params;
+          country = Country.find_by(country_iso: user_params[:country].downcase);
+          params.delete('country');
+          params[:country_id] = country[:id];
+
+          if @user.update_attributes(params)
+            render json: {username: @user.username, full_name: @user.full_name, country: @user.country}, status: :ok
           else
             render_error(@user, :unprocessable_entity)
           end
@@ -44,14 +54,14 @@ module Api
       private
 
       def user_params
-        params.require(:user).permit(:username, :full_name, :email, :role, :password, :password_confirmation, :phone, :phone_verified, :description, :instagram, :twitch, :facebook, :sex, :avatar, :background, :country_id)
+        params.require(:user).permit(:username, :country, :full_name, :email, :role, :password, :password_confirmation, :phone, :phone_verified, :description, :instagram, :twitch, :facebook, :sex, :avatar, :background, :country_id)
       end
 
       def payload(user)
         return nil unless user and user.id
         {
             auth_token: JsonWebToken.encode({user_id: user.id}),
-            user: {id: user.id, email: user.email, username: user.username, full_name: user.full_name, role: user.role}
+            user: {id: user.id, email: user.email, username: user.username, full_name: user.full_name, role: user.role, country: user.country}
         }
       end
 

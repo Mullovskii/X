@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   
   devise_for :users, controllers: { registrations: "registrations" }
   post '/api/auth_user' => 'authentication#authenticate_user'
-
+  get '/api/user' => 'authentication#get_user'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   namespace :api, defaults: {format: 'json'} do
@@ -110,10 +110,11 @@ Rails.application.routes.draw do
       resources :likes
       
 
-    	put '/users/:id', to: 'registrations#update'
+    	patch '/users/:id', to: 'registrations#update'
       get 'users/:id/accounts' => 'users#accounts'
       get 'users/:id/showroom' => 'users#showroom'
       get 'users' => 'users#index'
+      get 'current' => 'users#get_user'
       get 'users/:id/feed' => 'users#feed'
       get 'feed' => 'users#feed'
       get 'new_orders' => 'users#new_orders'

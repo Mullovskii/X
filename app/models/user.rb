@@ -2,12 +2,12 @@ class User < ApplicationRecord
 	# Include default devise modules. Others available are:
 	# :confirmable, :lockable, :timeoutable and :omniauthable
 	devise :database_authenticatable, :registerable,
-	         :recoverable, :rememberable, :trackable, :validatable
+	         :recoverable, :rememberable
 
 	enum role: [ :swimming_pool_baby, :swimming_coach, :versed_surfer, :surf_god ]
 	enum sex: [:female, :male]
 	validates :country_id, presence: true
-	validates :username, uniqueness: true
+	# validates :username, uniqueness: true
 	# validates :phone, uniqueness: true
 	belongs_to :country
 	belongs_to :city, optional: true
