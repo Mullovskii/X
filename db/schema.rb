@@ -360,7 +360,6 @@ ActiveRecord::Schema.define(version: 2018_11_03_182127) do
     t.integer "kind", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["url", "mediable_id", "mediable_type"], name: "index_media_on_url_and_mediable_id_and_mediable_type", unique: true
   end
 
   create_table "notifications", force: :cascade do |t|

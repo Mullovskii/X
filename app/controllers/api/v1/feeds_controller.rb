@@ -2,9 +2,10 @@ module Api
   module V1
 
     class FeedsController < ApplicationController
-      before_action :set_feed, only: [:show, :update, :destroy, :upload, :remove_file, :generate_products]
-      before_action :authenticate_request!, only: [:update, :create, :destroy, :upload, :remove_file, :generate_products]
-
+      before_action :set_feed, only: [:show, :update, :destroy, :remove_url, :generate_products]
+      before_action :authenticate_request!, only: [:update, :create, :destroy, :upload, :remove_url, :generate_products]
+      # skip_before_action :check_header, only: :create, :remove_url
+      
       # GET /feeds
       def index
         @feeds = Feed.all
@@ -16,17 +17,17 @@ module Api
         render json: @feed
       end
 
-      def upload
-        @feed.update(params.permit(:file, :id))
-        if @feed.save
-          render json: @feed, meta: default_meta
-        else
-          render json: @feed.errors, status: :unprocessable_entity
-        end
-      end
+      # def upload
+      #   @feed.update(params.permit(:file, :id))
+      #   if @feed.save
+      #     render json: @feed, meta: default_meta
+      #   else
+      #     render json: @feed.errors, status: :unprocessable_entity
+      #   end
+      # end
 
-      def remove_file
-        @feed.remove_file!
+      def remove_url
+        @feed.remove_url!
         if @feed.save
           render json: @feed, meta: default_meta
         else
@@ -36,7 +37,7 @@ module Api
 
       # POST /feeds
       def create
-        @feed = Feed.new(feed_params)
+        @feed = Feed.new(params.permit(:shop_id, :format, :url, :sample_mode, :sample_threshold))
         if current_user.employed_in(@feed.shop)
           # @feed.url = params[:file]
           if @feed.save

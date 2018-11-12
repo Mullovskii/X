@@ -20,7 +20,11 @@ Rails.application.routes.draw do
          resources :transactions
       end
       resources :picks do
-        resources :media
+        resources :media do
+          member do
+            delete :remove_url
+          end
+        end
         resources :links do
           resources :clicks
         end
@@ -37,8 +41,8 @@ Rails.application.routes.draw do
         end
         resources :feeds do
           member do
-            post :upload
-            delete :remove_file
+            
+            delete :remove_url
             get :generate_products
           end
         end

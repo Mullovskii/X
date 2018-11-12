@@ -8,6 +8,6 @@ class CreateMedia < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
-    add_index :media, [:url, :mediable_id, :mediable_type], unique: true
+    # add_index :media, [:url, :mediable_id, :mediable_type], unique: true
   end
 end

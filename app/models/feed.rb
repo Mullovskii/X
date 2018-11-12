@@ -4,7 +4,7 @@ class Feed < ApplicationRecord
 	belongs_to :shop
 	has_many :products, dependent: :destroy
 	enum format: [:xlsx, :csv, :txt]
-	mount_uploader :file, FeedUploader
+	mount_uploader :url, FeedUploader
 	
 	# belongs_to :country
 	# belongs_to :delivery, optional: true
