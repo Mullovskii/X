@@ -7,7 +7,11 @@ module Api
 
       # GET /brands
       def index
-        @brands = Brand.all
+        if params[:q].present?
+          @brands = PgSearch.multisearch(params[:q]).where(:searchable_type => "Shop")
+        else
+          @brands = Brand.all
+        end        
         render json: @brands
       end
 

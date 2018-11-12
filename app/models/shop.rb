@@ -46,6 +46,9 @@ class Shop < ApplicationRecord
 
 	after_create :employ_owner, :add_brand, :generate_account
 
+	include PgSearch
+    multisearchable :against => [:name]
+
 	def employ_owner
 		Employment.create(user_id: self.owner_id, shop_id: self.id, status: :approved)
 	end

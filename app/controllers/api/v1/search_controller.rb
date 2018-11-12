@@ -14,7 +14,11 @@ module Api
 			    query = query.page(params[:page]).per(10)
           	 	# render json: query, meta: pagination_meta(query).merge(default_meta), include: [params[:include]]
           	 	render json: query
-			 end
+			end
+
+			
+
+
 		end
 	end
 end
