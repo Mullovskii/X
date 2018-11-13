@@ -24,7 +24,13 @@ class Brand < ApplicationRecord
     default_scope { order("mana DESC") }
 
     include PgSearch
-    multisearchable :against => [:name]
+    # multisearchable :against => [:name]
+
+     pg_search_scope :whose_name_starts_with,
+                  :against => :name,
+                  :using => {
+                    :tsearch => {:prefix => true}
+                  }
 
  	def generate_showroom
   		Showroom.create(owner_id: self.id, owner_type: self.class.to_s)
