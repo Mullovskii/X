@@ -8,7 +8,7 @@ module Api
       # GET /brands
       def index
         if params[:q].present?
-          @brands = PgSearch.multisearch(params[:q]).where(:searchable_type => "Shop")
+          @brands = PgSearch.multisearch(params[:q]).where(:searchable_type => "Brand")
         else
           @brands = Brand.all
         end        
