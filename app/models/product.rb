@@ -28,8 +28,10 @@ class Product < ApplicationRecord
     # before_create :price_to_cents
 
     include PgSearch
-    multisearchable :against => :title
-    paginates_per 10
+    pg_search_scope :search_by_title, :against => [:title], :using => {
+		:tsearch => {:prefix => true}
+	  }
+    # paginates_per 10
 
     
 

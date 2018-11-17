@@ -47,7 +47,9 @@ class Shop < ApplicationRecord
 	after_create :employ_owner, :add_brand, :generate_account
 
 	include PgSearch
-    multisearchable :against => [:name]
+	pg_search_scope :search_by_name, :against => [:name], :using => {
+		:tsearch => {:prefix => true}
+	  }
 
 	def employ_owner
 		Employment.create(user_id: self.owner_id, shop_id: self.id, status: :approved)

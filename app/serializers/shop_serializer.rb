@@ -7,4 +7,5 @@ class ShopSerializer < ActiveModel::Serializer
   has_many :following
   has_many :followers
   has_many :accounts
+  has_many :categories
 end

@@ -6,9 +6,20 @@ module Api
 
       # GET /products
       def index
-        @products = Product.all
-
-        render json: @products
+        products = Product.all
+        if params[:filter]
+          products = products.where(["main_category_id = ? and shop_id = ?", params[:filter][:category], params[:filter][:shop]])
+        end
+        p 'filter'
+        p params[:filter]
+        p 'filter'
+        p '----'
+        p products
+        p '----'
+        if params[:q].present?
+          products = products.search_by_title(params[:q]);
+        end
+        render json: products, include: [params[:include]]
       end
 
       def gift_products
